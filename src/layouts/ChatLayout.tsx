@@ -1,15 +1,13 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Clock, Diamond, User, HelpCircle, ArrowUp, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Home, Clock, Diamond, User, HelpCircle, ArrowUp, Menu } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import Footer from "@/components/ui/Footer";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-interface DashboardLayoutProps {
+interface ChatLayoutProps {
   children: ReactNode;
 }
 
@@ -20,7 +18,7 @@ const navItems = [
   { path: "/profile", label: "Profile", icon: User },
 ];
 
-const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+const ChatLayout = ({ children }: ChatLayoutProps) => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -122,7 +120,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <SidebarContent />
         </aside>
 
-        {/* Main Content */}
+        {/* Main Content - No Footer in Chat */}
         <main className="flex-1 flex flex-col min-w-0">
           <div className="hidden md:block">
             <DashboardHeader />
@@ -130,11 +128,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <div className="flex-1 p-4 md:p-8">
             {children}
           </div>
-          <Footer />
         </main>
       </div>
     </div>
   );
 };
 
-export default DashboardLayout;
+export default ChatLayout;

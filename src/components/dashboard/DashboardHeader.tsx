@@ -1,5 +1,4 @@
-import { Moon, Sun, Menu, User } from "lucide-react";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Moon, Sun, User } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useTheme } from "@/hooks/use-theme";
 
@@ -9,6 +8,7 @@ const pageTitles: Record<string, string> = {
   "/premium": "PREMIUM",
   "/profile": "PROFILE",
   "/faqs": "HELP CENTER",
+  "/chat": "CHAT",
 };
 
 const DashboardHeader = () => {
@@ -19,12 +19,7 @@ const DashboardHeader = () => {
   return (
     <header className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-border bg-card">
       <div className="flex items-center gap-4">
-        {/* Mobile Menu Trigger - Always visible hamburger */}
-        <SidebarTrigger className="p-2 rounded-lg border border-border hover:bg-secondary transition-colors">
-          <Menu className="w-5 h-5" />
-        </SidebarTrigger>
-        
-        <p className="text-xs font-semibold tracking-widest text-muted-foreground hidden sm:block">
+        <p className="text-xs font-semibold tracking-widest text-muted-foreground">
           {pageTitle}
         </p>
       </div>

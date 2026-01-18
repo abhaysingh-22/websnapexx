@@ -11,7 +11,7 @@ import {
   X
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import DashboardLayout from "@/layouts/DashboardLayout";
+import ChatLayout from "@/layouts/ChatLayout";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useChatStorage, ChatMessage } from "@/hooks/use-chat-storage";
@@ -19,12 +19,13 @@ import { useChatStorage, ChatMessage } from "@/hooks/use-chat-storage";
 const Chat = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { featureTitle, selectedImages } = location.state || { 
+  const { featureTitle, selectedImages, conversationId } = location.state || { 
     featureTitle: "AI Assistant", 
-    selectedImages: [] 
+    selectedImages: [],
+    conversationId: undefined
   };
   
-  const { messages, addMessage, completeConversation } = useChatStorage(undefined, featureTitle);
+  const { messages, addMessage, completeConversation, isLoaded } = useChatStorage(conversationId, featureTitle);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
@@ -34,18 +35,15 @@ const Chat = () => {
 
   const shouldAutoScrollRef = useRef(false);
 
+  // Scroll to bottom when viewing existing conversation with messages
   useEffect(() => {
-    // Ensure the page starts at the top when navigating here (prevents "auto-scroll" feeling)
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-
-    // Also ensure the message list starts at the top
-    requestAnimationFrame(() => {
-      const viewport = scrollAreaWrapRef.current?.querySelector(
-        "[data-radix-scroll-area-viewport]"
-      ) as HTMLElement | null;
-      viewport?.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    });
-  }, []);
+    if (isLoaded && messages.length > 0 && conversationId) {
+      // Viewing existing chat - scroll to bottom to show latest messages
+      requestAnimationFrame(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+      });
+    }
+  }, [isLoaded, conversationId]);
 
   useEffect(() => {
     // Convert selected files to preview URLs and hold them in input area (don't auto-send)
@@ -130,7 +128,7 @@ const Chat = () => {
   };
 
   return (
-    <DashboardLayout>
+    <ChatLayout>
       <div className="flex flex-col h-[calc(100vh-120px)] sm:h-[calc(100vh-140px)] max-w-4xl mx-auto">
         {/* Header */}
         <motion.div 
@@ -324,7 +322,7 @@ const Chat = () => {
           </p>
         </motion.div>
       </div>
-    </DashboardLayout>
+    </ChatLayout>
   );
 };
 
