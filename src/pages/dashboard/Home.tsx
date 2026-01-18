@@ -33,7 +33,18 @@ const Home = () => {
   const [mediaDialogOpen, setMediaDialogOpen] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState("");
 
-  const handleFeatureClick = (featureTitle: string) => {
+  // For featured cards - go directly to chat without media picker
+  const handleFeaturedClick = (featureTitle: string) => {
+    navigate("/chat", { 
+      state: { 
+        featureTitle: featureTitle,
+        selectedImages: [] 
+      } 
+    });
+  };
+
+  // For Creative Tool Suite - show media picker dialog
+  const handleToolClick = (featureTitle: string) => {
     setSelectedFeature(featureTitle);
     setMediaDialogOpen(true);
   };
@@ -76,7 +87,7 @@ const Home = () => {
               title="AI Ad Video Generation"
               description="Transform raw scripts into high-converting cinema instantly. Next-gen synthesis for professional campaigns."
               buttonLabel="Generate Now"
-              onButtonClick={() => handleFeatureClick("AI Ad Video Generation")}
+              onButtonClick={() => handleFeaturedClick("AI Ad Video Generation")}
             />
           </div>
           
@@ -84,7 +95,7 @@ const Home = () => {
             className="card-feature group cursor-pointer"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
-            onClick={() => handleFeatureClick("Prompt to Picture")}
+            onClick={() => handleFeaturedClick("Prompt to Picture")}
           >
             <div className="icon-box-purple mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
               <Wand2 className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -117,7 +128,7 @@ const Home = () => {
                 title="Edit/Enhance Photo"
                 description="Enhance your photos with AI-powered editing tools for professional results."
                 buttonLabel="Start Editing"
-                onButtonClick={() => handleFeatureClick("Edit/Enhance Photo")}
+                onButtonClick={() => handleToolClick("Edit/Enhance Photo")}
               />
             </motion.div>
             <motion.div variants={itemVariants}>
@@ -127,7 +138,7 @@ const Home = () => {
                 title="Professional Mode"
                 description="Advanced studio controls for pixel-perfect adjustments and seed-based consistency."
                 buttonLabel="Open Studio"
-                onButtonClick={() => handleFeatureClick("Professional Mode")}
+                onButtonClick={() => handleToolClick("Professional Mode")}
               />
             </motion.div>
             <motion.div variants={itemVariants}>
@@ -137,7 +148,7 @@ const Home = () => {
                 title="Compare Pictures"
                 description="Side-by-side analysis tool to evaluate different models and lighting setups."
                 buttonLabel="Start Analysis"
-                onButtonClick={() => handleFeatureClick("Compare Pictures")}
+                onButtonClick={() => handleToolClick("Compare Pictures")}
               />
             </motion.div>
           </motion.div>
