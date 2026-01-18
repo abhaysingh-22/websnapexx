@@ -29,7 +29,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const SidebarContent = ({ isCollapsed = false, showCollapseButton = false, onToggleCollapse }: { isCollapsed?: boolean; showCollapseButton?: boolean; onToggleCollapse?: () => void }) => (
     <>
       {/* Logo */}
-      <div className={cn("p-6 border-b border-border flex items-center", isCollapsed ? "justify-center p-4" : "justify-between")}>
+      <div className={cn("px-6 py-4 border-b border-border flex items-center", isCollapsed ? "justify-center px-4" : "justify-between")}>
         <Logo size={isCollapsed ? "sm" : "md"} showSubtitle={!isCollapsed} iconOnly={isCollapsed} />
       </div>
 
