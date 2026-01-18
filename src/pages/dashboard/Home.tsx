@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ImageIcon, Wand2, GitCompare, Sparkles, Zap, Palette, Camera } from "lucide-react";
+import { ImageIcon, Wand2, GitCompare, Sparkles } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import FeaturedCard from "@/components/dashboard/FeaturedCard";
 import ToolCard from "@/components/dashboard/ToolCard";
@@ -117,28 +117,6 @@ const Home = () => {
           </motion.div>
         </motion.div>
 
-        {/* Quick Actions */}
-        <motion.div variants={itemVariants}>
-          <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            {[
-              { icon: Zap, label: "Quick Edit", color: "text-yellow-500" },
-              { icon: Palette, label: "Color Grade", color: "text-pink-500" },
-              { icon: Camera, label: "Headshots", color: "text-blue-500" },
-              { icon: Sparkles, label: "Enhance", color: "text-purple-500" },
-            ].map((action) => (
-              <motion.button
-                key={action.label}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex flex-col items-center gap-2 sm:gap-3 p-4 sm:p-6 rounded-xl bg-card border border-border hover:border-accent/50 hover:shadow-lg transition-all duration-300"
-              >
-                <action.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${action.color}`} />
-                <span className="text-xs sm:text-sm font-semibold">{action.label}</span>
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
       </motion.div>
     </DashboardLayout>
   );
