@@ -1,8 +1,17 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquarePlus, Frown, Meh, Smile, Send, User, Mail, Shield, LogOut, Trash2 } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+import TypewriterPlaceholder from "@/components/ui/TypewriterPlaceholder";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -24,8 +33,45 @@ const itemVariants = {
   },
 };
 
+// Simulated user data - in real app this would come from auth context
+const userData = {
+  name: "NextEra Admin",
+  email: "nextera.admin@snapexx.ai",
+  role: "Creative Director",
+  memberSince: "Oct 2023"
+};
+
 const Profile = () => {
+  const navigate = useNavigate();
   const [rating, setRating] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState("");
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleteError, setDeleteError] = useState(false);
+
+  const handleLogout = () => {
+    navigate('/signin');
+  };
+
+  const handleDeleteAccount = () => {
+    setShowDeleteDialog(true);
+    setDeleteConfirmText("");
+    setDeleteError(false);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteConfirmText.toLowerCase() === "confirm") {
+      navigate('/register');
+    } else {
+      setDeleteError(true);
+    }
+  };
+
+  const handleDeleteKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleConfirmDelete();
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -42,20 +88,13 @@ const Profile = () => {
               <User className="w-8 h-8 sm:w-10 sm:h-10 text-accent-foreground" />
             </div>
             <div className="text-center sm:text-left flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold">NextEra Admin</h1>
-              <p className="text-muted-foreground text-sm sm:text-base">Creative Director</p>
+              <h1 className="text-xl sm:text-2xl font-bold">{userData.name}</h1>
+              <p className="text-muted-foreground text-sm sm:text-base">{userData.role}</p>
               <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
                 <span className="badge-pro">PRO MEMBER</span>
-                <span className="text-xs text-muted-foreground">Since Oct 2023</span>
+                <span className="text-xs text-muted-foreground">Since {userData.memberSince}</span>
               </div>
             </div>
-            <motion.button 
-              className="btn-outline text-sm font-semibold"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Edit Profile
-            </motion.button>
           </div>
         </motion.div>
 
@@ -68,7 +107,7 @@ const Profile = () => {
             <div>
               <h2 className="text-lg sm:text-xl font-bold">Account Management</h2>
               <p className="text-muted-foreground text-xs sm:text-sm">
-                Manage your account credentials
+                Your account credentials
               </p>
             </div>
           </div>
@@ -79,22 +118,18 @@ const Profile = () => {
                 <User className="w-4 h-4 text-muted-foreground" />
                 Display Name
               </label>
-              <input 
-                type="text"
-                defaultValue="NextEra Admin"
-                className="input-field text-sm sm:text-base"
-              />
+              <div className="input-field text-sm sm:text-base bg-muted/50 cursor-not-allowed">
+                {userData.name}
+              </div>
             </div>
             <div>
               <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
                 <Mail className="w-4 h-4 text-muted-foreground" />
                 Email Address
               </label>
-              <input 
-                type="email"
-                defaultValue="nextera.admin@snapexx.ai"
-                className="input-field text-sm sm:text-base"
-              />
+              <div className="input-field text-sm sm:text-base bg-muted/50 cursor-not-allowed">
+                {userData.email}
+              </div>
             </div>
           </div>
         </motion.div>
@@ -117,9 +152,11 @@ const Profile = () => {
             </div>
           </div>
 
-          <textarea 
+          <TypewriterPlaceholder
             placeholder="Type your suggestions here..."
-            className="input-field min-h-[100px] sm:min-h-[120px] resize-y mb-4 text-sm sm:text-base"
+            value={feedback}
+            onChange={setFeedback}
+            className="input-field min-h-[100px] sm:min-h-[120px] resize-y mb-4 text-sm sm:text-base w-full"
           />
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -178,6 +215,7 @@ const Profile = () => {
               </div>
             </div>
             <motion.button 
+              onClick={handleLogout}
               className="w-full px-4 py-2.5 rounded-xl bg-warning/10 text-warning font-bold text-sm hover:bg-warning/20 transition-all duration-300"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -203,6 +241,7 @@ const Profile = () => {
               </div>
             </div>
             <motion.button 
+              onClick={handleDeleteAccount}
               className="w-full px-4 py-2.5 rounded-xl border border-destructive text-destructive font-bold text-sm hover:bg-destructive/10 transition-all duration-300"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -220,6 +259,60 @@ const Profile = () => {
           © 2024 SnapExx AI. All rights reserved.
         </motion.div>
       </motion.div>
+
+      {/* Delete Account Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-destructive flex items-center gap-2">
+              <Trash2 className="w-5 h-5" />
+              Delete Account Permanently
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4">
+              <p>
+                This action cannot be undone. All your data, projects, and settings will be permanently deleted.
+              </p>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Type <span className="font-bold text-destructive">confirm</span> to delete your account:
+                </label>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => {
+                    setDeleteConfirmText(e.target.value);
+                    setDeleteError(false);
+                  }}
+                  onKeyDown={handleDeleteKeyPress}
+                  placeholder="Type 'confirm' here"
+                  className={cn(
+                    "input-field w-full",
+                    deleteError && "border-destructive focus:ring-destructive"
+                  )}
+                  autoFocus
+                />
+                {deleteError && (
+                  <p className="text-destructive text-xs mt-1">Please type "confirm" exactly to proceed.</p>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex flex-col-reverse sm:flex-row gap-2 mt-4">
+            <button
+              onClick={() => setShowDeleteDialog(false)}
+              className="flex-1 px-4 py-2.5 rounded-xl border border-border font-semibold text-sm hover:bg-secondary transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmDelete}
+              className="flex-1 px-4 py-2.5 rounded-xl bg-destructive text-destructive-foreground font-bold text-sm hover:bg-destructive/90 transition-colors"
+            >
+              Delete Account
+            </button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 };
