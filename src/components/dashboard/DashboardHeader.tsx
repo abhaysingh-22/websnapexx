@@ -104,7 +104,7 @@ const DashboardHeader = () => {
   );
 
   return (
-    <header className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-border bg-card">
+    <header className="h-[72px] flex items-center justify-between px-4 md:px-8 border-b border-border bg-card">
       <div className="flex items-center gap-4">
         {/* Mobile Menu Toggle */}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
