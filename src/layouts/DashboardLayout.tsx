@@ -26,7 +26,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 
-  const SidebarContent = ({ isCollapsed = false }: { isCollapsed?: boolean }) => (
+  const SidebarContent = ({ isCollapsed = false, showCollapseButton = false, onToggleCollapse }: { isCollapsed?: boolean; showCollapseButton?: boolean; onToggleCollapse?: () => void }) => (
     <>
       {/* Logo */}
       <div className={cn("p-6 border-b border-border flex items-center", isCollapsed ? "justify-center p-4" : "justify-between")}>
@@ -35,6 +35,29 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       {/* Navigation */}
       <nav className="flex-1 p-4">
+        {/* Collapse Toggle Button - Above Navigation */}
+        {showCollapseButton && (
+          <div className={cn("mb-2", isCollapsed ? "flex justify-center" : "flex justify-end")}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={onToggleCollapse}
+                >
+                  {isCollapsed ? (
+                    <PanelLeft className="w-4 h-4" />
+                  ) : (
+                    <PanelLeftClose className="w-4 h-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>{isCollapsed ? "Expand sidebar" : "Collapse sidebar"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        )}
         <ul className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -183,29 +206,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             collapsed ? "w-16" : "w-64"
           )}
         >
-          {/* Collapse Toggle Button - At Top */}
-          <div className="p-2 border-b border-border flex justify-end">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => setCollapsed(!collapsed)}
-                >
-                  {collapsed ? (
-                    <PanelLeft className="w-4 h-4" />
-                  ) : (
-                    <PanelLeftClose className="w-4 h-4" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>{collapsed ? "Expand sidebar" : "Collapse sidebar"}</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          
-          <SidebarContent isCollapsed={collapsed} />
+          <SidebarContent isCollapsed={collapsed} showCollapseButton onToggleCollapse={() => setCollapsed(!collapsed)} />
         </aside>
 
         {/* Main Content */}
