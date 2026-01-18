@@ -84,17 +84,17 @@ const Home = () => {
             className="card-feature group cursor-pointer"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
-            onClick={() => handleFeatureClick("Edit/Enhance Photo")}
+            onClick={() => handleFeatureClick("Prompt to Picture")}
           >
-            <div className="icon-box-blue mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
-              <Pencil className="w-5 h-5 sm:w-6 sm:h-6" />
+            <div className="icon-box-purple mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+              <Wand2 className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <h3 className="font-bold text-base sm:text-lg mb-2">Edit/Enhance Photo</h3>
+            <h3 className="font-bold text-base sm:text-lg mb-2">Prompt to Picture</h3>
             <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 leading-relaxed">
-              Enhance your photos with AI-powered editing tools for professional results.
+              Transform your text prompts into stunning AI-generated images instantly.
             </p>
             <button className="btn-outline w-full text-xs sm:text-sm font-semibold">
-              Start Editing
+              Generate Image
             </button>
           </motion.div>
         </motion.div>
