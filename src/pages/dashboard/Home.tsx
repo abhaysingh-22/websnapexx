@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ImageIcon, Wand2, GitCompare, Sparkles } from "lucide-react";
+import { Pencil, Wand2, GitCompare, Sparkles, Video } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import FeaturedCard from "@/components/dashboard/FeaturedCard";
 import ToolCard from "@/components/dashboard/ToolCard";
+import MediaPickerDialog from "@/components/dashboard/MediaPickerDialog";
 import aiPortraitHero from "@/assets/ai-portrait-hero.jpg";
 
 const containerVariants = {
@@ -26,6 +29,24 @@ const itemVariants = {
 };
 
 const Home = () => {
+  const navigate = useNavigate();
+  const [mediaDialogOpen, setMediaDialogOpen] = useState(false);
+  const [selectedFeature, setSelectedFeature] = useState("");
+
+  const handleFeatureClick = (featureTitle: string) => {
+    setSelectedFeature(featureTitle);
+    setMediaDialogOpen(true);
+  };
+
+  const handleMediaSelected = (files: File[]) => {
+    navigate("/chat", { 
+      state: { 
+        featureTitle: selectedFeature,
+        selectedImages: files 
+      } 
+    });
+  };
+
   return (
     <DashboardLayout>
       <motion.div
@@ -55,23 +76,25 @@ const Home = () => {
               title="AI Ad Video Generation"
               description="Transform raw scripts into high-converting cinema instantly. Next-gen synthesis for professional campaigns."
               buttonLabel="Generate Now"
+              onButtonClick={() => handleFeatureClick("AI Ad Video Generation")}
             />
           </div>
           
           <motion.div 
-            className="card-feature group"
+            className="card-feature group cursor-pointer"
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
+            onClick={() => handleFeatureClick("Edit/Enhance Photo")}
           >
             <div className="icon-box-blue mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
-              <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+              <Pencil className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <h3 className="font-bold text-base sm:text-lg mb-2">Prompt to Picture</h3>
+            <h3 className="font-bold text-base sm:text-lg mb-2">Edit/Enhance Photo</h3>
             <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 leading-relaxed">
-              Generate ultra-realistic visuals and illustrations from simple text descriptions.
+              Enhance your photos with AI-powered editing tools for professional results.
             </p>
             <button className="btn-outline w-full text-xs sm:text-sm font-semibold">
-              Launch Creator
+              Start Editing
             </button>
           </motion.div>
         </motion.div>
@@ -89,11 +112,12 @@ const Home = () => {
           >
             <motion.div variants={itemVariants}>
               <ToolCard 
-                icon={ImageIcon}
+                icon={Pencil}
                 iconColorClass="icon-box-blue"
-                title="Prompt to Picture"
-                description="Generate ultra-realistic visuals and illustrations from simple text descriptions."
-                buttonLabel="Launch Creator"
+                title="Edit/Enhance Photo"
+                description="Enhance your photos with AI-powered editing tools for professional results."
+                buttonLabel="Start Editing"
+                onButtonClick={() => handleFeatureClick("Edit/Enhance Photo")}
               />
             </motion.div>
             <motion.div variants={itemVariants}>
@@ -103,6 +127,7 @@ const Home = () => {
                 title="Professional Mode"
                 description="Advanced studio controls for pixel-perfect adjustments and seed-based consistency."
                 buttonLabel="Open Studio"
+                onButtonClick={() => handleFeatureClick("Professional Mode")}
               />
             </motion.div>
             <motion.div variants={itemVariants}>
@@ -112,12 +137,21 @@ const Home = () => {
                 title="Compare Pictures"
                 description="Side-by-side analysis tool to evaluate different models and lighting setups."
                 buttonLabel="Start Analysis"
+                onButtonClick={() => handleFeatureClick("Compare Pictures")}
               />
             </motion.div>
           </motion.div>
         </motion.div>
 
       </motion.div>
+
+      {/* Media Picker Dialog */}
+      <MediaPickerDialog
+        open={mediaDialogOpen}
+        onOpenChange={setMediaDialogOpen}
+        onMediaSelected={handleMediaSelected}
+        featureTitle={selectedFeature}
+      />
     </DashboardLayout>
   );
 };
