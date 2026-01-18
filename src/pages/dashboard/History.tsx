@@ -111,7 +111,7 @@ const History = () => {
                       <motion.button 
                         className="p-2 rounded-lg hover:bg-secondary transition-all duration-300 text-accent"
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => navigate("/chat", { state: { featureTitle: item.featureTitle } })}
+                        onClick={() => navigate("/chat", { state: { conversationId: item.id, featureTitle: item.featureTitle } })}
                       >
                         <Eye className="w-4 h-4" />
                       </motion.button>
@@ -182,7 +182,7 @@ const History = () => {
                         className="p-2 rounded-lg hover:bg-secondary transition-all duration-300 text-accent"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => navigate("/chat", { state: { featureTitle: item.featureTitle } })}
+                        onClick={() => navigate("/chat", { state: { conversationId: item.id, featureTitle: item.featureTitle } })}
                       >
                         <Eye className="w-5 h-5" />
                       </motion.button>

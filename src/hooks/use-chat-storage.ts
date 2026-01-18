@@ -50,18 +50,24 @@ const saveConversations = (conversations: Conversation[]) => {
 export const useChatStorage = (conversationId?: string, featureTitle?: string) => {
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Load or create conversation
   useEffect(() => {
     if (conversationId) {
+      // Load existing conversation by ID
       const conversations = getConversations();
       const existing = conversations.find((c) => c.id === conversationId);
       if (existing) {
         setConversation(existing);
         setMessages(existing.messages);
+        setIsLoaded(true);
+        return;
       }
-    } else if (featureTitle) {
-      // Create new conversation
+    }
+    
+    if (featureTitle && !conversationId) {
+      // Create new conversation only if no conversationId
       const newConv: Conversation = {
         id: Date.now().toString(),
         featureTitle,
@@ -72,6 +78,7 @@ export const useChatStorage = (conversationId?: string, featureTitle?: string) =
       };
       setConversation(newConv);
       setMessages([]);
+      setIsLoaded(true);
     }
   }, [conversationId, featureTitle]);
 
@@ -135,6 +142,7 @@ export const useChatStorage = (conversationId?: string, featureTitle?: string) =
     addMessage,
     completeConversation,
     conversationId: conversation?.id,
+    isLoaded,
   };
 };
 
