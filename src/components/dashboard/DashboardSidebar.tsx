@@ -80,14 +80,14 @@ const DashboardSidebar = () => {
         </div>
 
         {/* Upgrade Button */}
-        <button className="w-full btn-primary flex items-center justify-center gap-2">
+        <Link to="/premium" className="w-full btn-primary flex items-center justify-center gap-2">
           <ArrowUp className="w-4 h-4" />
           Upgrade to Pro
-        </button>
+        </Link>
 
         {/* Help */}
         <Link 
-          to="#" 
+          to="/faqs" 
           className="flex items-center gap-3 px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <HelpCircle className="w-5 h-5" />

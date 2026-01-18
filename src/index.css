@@ -86,8 +86,8 @@
     --muted: 215 35% 20%;
     --muted-foreground: 215 15% 65%;
 
-    --accent: 215 35% 20%;
-    --accent-foreground: 210 20% 98%;
+    --accent: 187 85% 53%;
+    --accent-foreground: 215 45% 18%;
 
     --destructive: 0 62% 45%;
     --destructive-foreground: 210 20% 98%;
@@ -200,19 +200,19 @@
   }
 
   .icon-box-blue {
-    @apply icon-box bg-blue-50 text-blue-500;
+    @apply icon-box bg-blue-500/10 text-blue-400;
   }
 
   .icon-box-purple {
-    @apply icon-box bg-purple-50 text-purple-500;
+    @apply icon-box bg-purple-500/10 text-purple-400;
   }
 
   .icon-box-green {
-    @apply icon-box bg-green-50 text-green-500;
+    @apply icon-box bg-green-500/10 text-green-400;
   }
 
   .icon-box-cyan {
-    @apply icon-box bg-cyan-50 text-cyan-500;
+    @apply icon-box bg-cyan-500/10 text-cyan-400;
   }
 }
 
