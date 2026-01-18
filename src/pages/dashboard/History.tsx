@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Eye, Download, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Download, ChevronLeft, ChevronRight, Calendar, Clock } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import aiPortraitHero from "@/assets/ai-portrait-hero.jpg";
 
@@ -39,16 +39,67 @@ const History = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
+        className="max-w-7xl mx-auto"
       >
         <motion.h1 
           variants={itemVariants}
-          className="text-3xl md:text-4xl font-extrabold mb-8"
+          className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-6 sm:mb-8"
         >
           Activity Feed
         </motion.h1>
 
-        {/* Table */}
-        <motion.div variants={itemVariants} className="card-elevated overflow-hidden">
+        {/* Mobile Cards View */}
+        <div className="block lg:hidden space-y-4">
+          {historyData.map((item, index) => (
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              className="card-elevated p-4 hover:shadow-lg transition-all duration-300"
+            >
+              <div className="flex gap-4">
+                <img 
+                  src={item.image} 
+                  alt={item.taskName}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm sm:text-base truncate">{item.taskName}</p>
+                  <p className="text-xs sm:text-sm text-accent font-medium truncate">{item.package}</p>
+                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {item.date}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {item.time}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+                <span className="badge-completed text-xs font-semibold">{item.status}</span>
+                <div className="flex gap-2">
+                  <motion.button 
+                    className="p-2 rounded-lg hover:bg-secondary transition-all duration-300 text-accent"
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Eye className="w-4 h-4" />
+                  </motion.button>
+                  <motion.button 
+                    className="p-2 rounded-lg hover:bg-secondary transition-all duration-300 text-accent"
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Download className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Desktop Table View */}
+        <motion.div variants={itemVariants} className="hidden lg:block card-elevated overflow-hidden">
           {/* Table Header */}
           <div className="table-header grid grid-cols-12 gap-4 p-4">
             <div className="col-span-2 font-bold">PREVIEW</div>
@@ -113,7 +164,7 @@ const History = () => {
           {/* Pagination */}
           <motion.div 
             variants={itemVariants}
-            className="p-4 flex items-center justify-between border-t border-border"
+            className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-border"
           >
             <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
               <span>Show</span>
@@ -123,7 +174,7 @@ const History = () => {
                 <option>50</option>
               </select>
               <span>per page</span>
-              <span className="ml-4">Showing 1-10 of 248 entries</span>
+              <span className="ml-4 hidden sm:inline">Showing 1-10 of 248 entries</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -157,6 +208,17 @@ const History = () => {
             </div>
           </motion.div>
         </motion.div>
+
+        {/* Mobile Pagination */}
+        <div className="lg:hidden flex items-center justify-center gap-2 mt-6">
+          <button className="p-2 rounded-lg border border-border hover:bg-secondary transition-colors">
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <span className="text-sm font-medium px-4">Page 1 of 25</span>
+          <button className="p-2 rounded-lg border border-border hover:bg-secondary transition-colors">
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
       </motion.div>
     </DashboardLayout>
   );
