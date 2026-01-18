@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Send, 
@@ -8,22 +8,13 @@ import {
   Loader2,
   User,
   Bot,
-  X,
-  Camera,
-  Images
+  X
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  images?: string[];
-  timestamp: Date;
-}
+import { useChatStorage, ChatMessage } from "@/hooks/use-chat-storage";
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -33,7 +24,7 @@ const Chat = () => {
     selectedImages: [] 
   };
   
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { messages, addMessage, completeConversation } = useChatStorage(undefined, featureTitle);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
@@ -75,7 +66,7 @@ const Chat = () => {
   const handleSend = async () => {
     if (!input.trim() && previewImages.length === 0) return;
 
-    const userMessage: Message = {
+    const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: "user",
       content: input,
@@ -84,7 +75,7 @@ const Chat = () => {
     };
 
     shouldAutoScrollRef.current = true;
-    setMessages(prev => [...prev, userMessage]);
+    addMessage(userMessage);
     setInput("");
     setPreviewImages([]);
     setIsLoading(true);
@@ -99,14 +90,15 @@ const Chat = () => {
         "I've processed your request. The enhanced version is ready!",
       ];
       
-      const aiResponse: Message = {
+      const aiResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: responses[Math.floor(Math.random() * responses.length)] + "\n\nIs there anything else you'd like me to adjust or any other modifications you'd like to make?",
         timestamp: new Date(),
       };
       shouldAutoScrollRef.current = true;
-      setMessages(prev => [...prev, aiResponse]);
+      addMessage(aiResponse);
+      completeConversation();
       setIsLoading(false);
     }, 1500);
   };
