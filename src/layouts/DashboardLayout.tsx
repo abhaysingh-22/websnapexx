@@ -29,12 +29,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const SidebarContent = ({ isCollapsed = false }: { isCollapsed?: boolean }) => (
     <>
       {/* Logo */}
-      <div className={cn("p-6 border-b border-border", isCollapsed && "p-4 flex justify-center")}>
-        {isCollapsed ? (
-          <Logo size="sm" />
-        ) : (
-          <Logo size="md" showSubtitle />
-        )}
+      <div className={cn("p-6 border-b border-border flex items-center", isCollapsed ? "justify-center p-4" : "justify-between")}>
+        <Logo size={isCollapsed ? "sm" : "md"} showSubtitle={!isCollapsed} iconOnly={isCollapsed} />
       </div>
 
       {/* Navigation */}
@@ -187,16 +183,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             collapsed ? "w-16" : "w-64"
           )}
         >
-          <SidebarContent isCollapsed={collapsed} />
-          
-          {/* Collapse Toggle Button */}
-          <div className="p-2 border-t border-border">
+          {/* Collapse Toggle Button - At Top */}
+          <div className="p-2 border-b border-border flex justify-end">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
                   variant="ghost" 
-                  size="icon" 
-                  className="w-full"
+                  size="icon"
                   onClick={() => setCollapsed(!collapsed)}
                 >
                   {collapsed ? (
@@ -211,6 +204,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               </TooltipContent>
             </Tooltip>
           </div>
+          
+          <SidebarContent isCollapsed={collapsed} />
         </aside>
 
         {/* Main Content */}
