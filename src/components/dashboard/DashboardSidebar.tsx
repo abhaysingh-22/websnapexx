@@ -1,7 +1,18 @@
 import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { Home, Clock, Diamond, User, HelpCircle, ArrowUp } from "lucide-react";
+import { Home, Clock, Diamond, User, HelpCircle, ArrowUp, Menu } from "lucide-react";
 import Logo from "@/components/ui/Logo";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 const navItems = [
   { path: "/home", label: "Home", icon: Home },
@@ -14,44 +25,50 @@ const DashboardSidebar = () => {
   const location = useLocation();
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 h-screen bg-card border-r border-border">
+    <Sidebar>
       {/* Logo */}
-      <div className="p-6 border-b border-border">
+      <SidebarHeader className="p-6 border-b border-sidebar-border">
         <Logo size="md" showSubtitle />
-      </div>
+      </SidebarHeader>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4">
-        <ul className="space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path;
-            
-            return (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
-                    isActive 
-                      ? "bg-accent/10 text-accent" 
-                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                  )}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="flex-1">{item.label}</span>
-                  {item.badge && (
-                    <span className="badge-pro">{item.badge}</span>
-                  )}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                
+                return (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton asChild isActive={isActive}>
+                      <Link
+                        to={item.path}
+                        className={cn(
+                          "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                          isActive 
+                            ? "bg-accent/10 text-accent" 
+                            : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                        )}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span className="flex-1">{item.label}</span>
+                        {item.badge && (
+                          <span className="badge-pro">{item.badge}</span>
+                        )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
 
       {/* Bottom Section */}
-      <div className="p-4 space-y-4">
+      <SidebarFooter className="p-4 space-y-4">
         {/* Plan Card */}
         <div className="bg-secondary rounded-xl p-4">
           <p className="text-xs font-semibold text-accent mb-1">CURRENT PLAN</p>
@@ -76,8 +93,8 @@ const DashboardSidebar = () => {
           <HelpCircle className="w-5 h-5" />
           Help Center
         </Link>
-      </div>
-    </aside>
+      </SidebarFooter>
+    </Sidebar>
   );
 };
 
