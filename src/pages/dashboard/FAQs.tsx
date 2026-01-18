@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { HelpCircle, ChevronDown, ChevronUp, MessageCircle, Search } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -64,13 +64,11 @@ const FAQItem = ({
   answer, 
   isOpen, 
   onToggle,
-  index 
 }: { 
   question: string; 
   answer: string; 
   isOpen: boolean; 
   onToggle: () => void;
-  index: number;
 }) => {
   return (
     <motion.div 
@@ -82,20 +80,21 @@ const FAQItem = ({
       <motion.button
         onClick={onToggle}
         className={cn(
-          "w-full flex items-center justify-between p-4 md:p-6 text-left transition-all duration-300",
+          "w-full flex items-center justify-between p-3 sm:p-4 md:p-6 text-left transition-all duration-300",
           isOpen ? "bg-secondary" : "hover:bg-secondary/50"
         )}
         whileTap={{ scale: 0.99 }}
       >
-        <span className="font-semibold text-sm md:text-base pr-4">{question}</span>
+        <span className="font-semibold text-xs sm:text-sm md:text-base pr-3 sm:pr-4">{question}</span>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.3 }}
+          className="flex-shrink-0"
         >
           {isOpen ? (
-            <ChevronUp className="w-5 h-5 text-accent flex-shrink-0" />
+            <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+            <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
           )}
         </motion.div>
       </motion.button>
@@ -105,10 +104,10 @@ const FAQItem = ({
           height: isOpen ? "auto" : 0, 
           opacity: isOpen ? 1 : 0 
         }}
-        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+        transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        <p className="p-4 md:p-6 pt-0 md:pt-0 text-muted-foreground text-sm md:text-base leading-relaxed">
+        <p className="p-3 sm:p-4 md:p-6 pt-0 text-muted-foreground text-xs sm:text-sm md:text-base leading-relaxed">
           {answer}
         </p>
       </motion.div>
@@ -118,6 +117,13 @@ const FAQItem = ({
 
 const FAQs = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredFaqs = faqs.filter(
+    faq => 
+      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <DashboardLayout>
@@ -128,54 +134,79 @@ const FAQs = () => {
         className="max-w-4xl mx-auto"
       >
         {/* Header */}
-        <motion.div variants={itemVariants} className="flex items-start gap-4 mb-8">
+        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start gap-4 mb-6 sm:mb-8">
           <motion.div 
-            className="icon-box-blue"
+            className="icon-box-blue flex-shrink-0"
             whileHover={{ scale: 1.1, rotate: 5 }}
             transition={{ duration: 0.2 }}
           >
-            <HelpCircle className="w-6 h-6" />
+            <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6" />
           </motion.div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-extrabold mb-2">
+          <div className="flex-1">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-1 sm:mb-2">
               Frequently Asked Questions
             </h1>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground text-xs sm:text-sm md:text-base leading-relaxed">
               Find answers to common questions about SnapExx AI
             </p>
           </div>
         </motion.div>
 
+        {/* Search */}
+        <motion.div variants={itemVariants} className="mb-4 sm:mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search FAQs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="input-field pl-10 sm:pl-12 text-sm sm:text-base"
+            />
+          </div>
+        </motion.div>
+
         {/* FAQ List */}
         <motion.div 
-          className="space-y-3"
+          className="space-y-2 sm:space-y-3"
           variants={containerVariants}
         >
-          {faqs.map((faq, index) => (
-            <FAQItem
-              key={index}
-              question={faq.question}
-              answer={faq.answer}
-              isOpen={openIndex === index}
-              onToggle={() => setOpenIndex(openIndex === index ? null : index)}
-              index={index}
-            />
-          ))}
+          {filteredFaqs.length > 0 ? (
+            filteredFaqs.map((faq, index) => (
+              <FAQItem
+                key={index}
+                question={faq.question}
+                answer={faq.answer}
+                isOpen={openIndex === index}
+                onToggle={() => setOpenIndex(openIndex === index ? null : index)}
+              />
+            ))
+          ) : (
+            <motion.div 
+              variants={itemVariants}
+              className="text-center py-8 sm:py-12"
+            >
+              <p className="text-muted-foreground text-sm sm:text-base">No FAQs found matching your search.</p>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Contact Support */}
         <motion.div 
           variants={itemVariants}
-          className="card-elevated p-6 mt-8 text-center"
+          className="card-elevated p-4 sm:p-6 mt-6 sm:mt-8 text-center"
           whileHover={{ scale: 1.01 }}
           transition={{ duration: 0.2 }}
         >
-          <h3 className="font-bold text-lg mb-2">Still have questions?</h3>
-          <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 text-accent" />
+          </div>
+          <h3 className="font-bold text-base sm:text-lg mb-1 sm:mb-2">Still have questions?</h3>
+          <p className="text-muted-foreground text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed max-w-md mx-auto">
             Can't find the answer you're looking for? Reach out to our support team.
           </p>
           <motion.button 
-            className="btn-primary font-bold"
+            className="btn-primary font-bold text-sm sm:text-base"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
           >

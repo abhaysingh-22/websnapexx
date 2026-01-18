@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { MessageSquarePlus, Frown, Meh, Smile, Send } from "lucide-react";
+import { MessageSquarePlus, Frown, Meh, Smile, Send, User, Mail, Shield, LogOut, Trash2 } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -33,48 +33,85 @@ const Profile = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="max-w-4xl mx-auto space-y-6"
+        className="max-w-4xl mx-auto space-y-4 sm:space-y-6"
       >
-        {/* Account Management */}
-        <motion.div variants={itemVariants} className="card-elevated p-6">
-          <h2 className="text-xl font-bold mb-2">Account Management</h2>
-          <p className="text-muted-foreground mb-6 leading-relaxed">
-            Manage your public presence and account credentials.
-          </p>
+        {/* Profile Header Card */}
+        <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-accent to-cyan-400 flex items-center justify-center ring-4 ring-accent/20">
+              <User className="w-8 h-8 sm:w-10 sm:h-10 text-accent-foreground" />
+            </div>
+            <div className="text-center sm:text-left flex-1">
+              <h1 className="text-xl sm:text-2xl font-bold">NextEra Admin</h1>
+              <p className="text-muted-foreground text-sm sm:text-base">Creative Director</p>
+              <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
+                <span className="badge-pro">PRO MEMBER</span>
+                <span className="text-xs text-muted-foreground">Since Oct 2023</span>
+              </div>
+            </div>
+            <motion.button 
+              className="btn-outline text-sm font-semibold"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Edit Profile
+            </motion.button>
+          </div>
+        </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Account Management */}
+        <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
+          <div className="flex items-center gap-3 mb-4 sm:mb-6">
+            <div className="icon-box-blue">
+              <Shield className="w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
             <div>
-              <label className="block text-sm font-semibold mb-2">Display Name</label>
+              <h2 className="text-lg sm:text-xl font-bold">Account Management</h2>
+              <p className="text-muted-foreground text-xs sm:text-sm">
+                Manage your account credentials
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div>
+              <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+                <User className="w-4 h-4 text-muted-foreground" />
+                Display Name
+              </label>
               <input 
                 type="text"
                 defaultValue="NextEra Admin"
-                className="input-field"
+                className="input-field text-sm sm:text-base"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-2">Email Address</label>
+              <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+                <Mail className="w-4 h-4 text-muted-foreground" />
+                Email Address
+              </label>
               <input 
                 type="email"
                 defaultValue="nextera.admin@snapexx.ai"
-                className="input-field"
+                className="input-field text-sm sm:text-base"
               />
             </div>
           </div>
         </motion.div>
 
         {/* Feedback */}
-        <motion.div variants={itemVariants} className="card-elevated p-6">
-          <div className="flex items-start gap-4 mb-4">
+        <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
+          <div className="flex items-start gap-3 sm:gap-4 mb-4">
             <motion.div 
-              className="icon-box-blue"
+              className="icon-box-purple"
               whileHover={{ scale: 1.1, rotate: 5 }}
               transition={{ duration: 0.2 }}
             >
-              <MessageSquarePlus className="w-6 h-6" />
+              <MessageSquarePlus className="w-5 h-5 sm:w-6 sm:h-6" />
             </motion.div>
             <div>
-              <h2 className="text-xl font-bold">Feedback</h2>
-              <p className="text-muted-foreground leading-relaxed">
+              <h2 className="text-lg sm:text-xl font-bold">Feedback</h2>
+              <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
                 How can we improve your AI generation experience?
               </p>
             </div>
@@ -82,35 +119,37 @@ const Profile = () => {
 
           <textarea 
             placeholder="Type your suggestions here..."
-            className="input-field min-h-[120px] resize-y mb-4"
+            className="input-field min-h-[100px] sm:min-h-[120px] resize-y mb-4 text-sm sm:text-base"
           />
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground mr-2">Rate experience:</span>
               {[
-                { icon: Frown, value: 1 },
-                { icon: Meh, value: 2 },
-                { icon: Smile, value: 3 },
-              ].map(({ icon: Icon, value }) => (
+                { icon: Frown, value: 1, label: "Bad" },
+                { icon: Meh, value: 2, label: "Okay" },
+                { icon: Smile, value: 3, label: "Great" },
+              ].map(({ icon: Icon, value, label }) => (
                 <motion.button
                   key={value}
                   onClick={() => setRating(value)}
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.95 }}
                   className={cn(
-                    "w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300",
+                    "w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center transition-all duration-300",
                     rating === value 
                       ? "border-accent text-accent bg-accent/10" 
                       : "border-border text-muted-foreground hover:border-accent/50"
                   )}
+                  title={label}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                 </motion.button>
               ))}
             </div>
 
             <motion.button 
-              className="btn-outline flex items-center gap-2 font-bold"
+              className="btn-primary flex items-center gap-2 text-sm font-bold w-full sm:w-auto justify-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -120,61 +159,65 @@ const Profile = () => {
           </div>
         </motion.div>
 
-        {/* Logout Account */}
-        <motion.div 
-          variants={itemVariants}
-          className="card-elevated p-6 border-l-4 border-l-warning"
-          whileHover={{ x: 4 }}
-          transition={{ duration: 0.2 }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-warning">Logout Account</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                This will logout your current account, no data will be deleted.
-              </p>
+        {/* Account Actions */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Logout Account */}
+          <motion.div 
+            variants={itemVariants}
+            className="card-elevated p-4 sm:p-6 border-l-4 border-l-warning"
+            whileHover={{ x: 4 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex items-start gap-3 mb-3">
+              <LogOut className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-warning">Logout Account</h2>
+                <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                  Logout from your current session safely.
+                </p>
+              </div>
             </div>
             <motion.button 
-              className="px-6 py-3 rounded-xl bg-accent/10 text-accent font-bold hover:bg-accent/20 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
+              className="w-full px-4 py-2.5 rounded-xl bg-warning/10 text-warning font-bold text-sm hover:bg-warning/20 transition-all duration-300"
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Click here
+              Logout
             </motion.button>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Delete Account */}
-        <motion.div 
-          variants={itemVariants}
-          className="card-elevated p-6 border-l-4 border-l-destructive"
-          whileHover={{ x: 4 }}
-          transition={{ duration: 0.2 }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-destructive">Delete Account</h2>
-              <p className="text-muted-foreground max-w-lg leading-relaxed">
-                Permanently remove your workspace and all generated assets. This action is 
-                irreversible and will immediately terminate your active subscription.
-              </p>
+          {/* Delete Account */}
+          <motion.div 
+            variants={itemVariants}
+            className="card-elevated p-4 sm:p-6 border-l-4 border-l-destructive"
+            whileHover={{ x: 4 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex items-start gap-3 mb-3">
+              <Trash2 className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-destructive">Delete Account</h2>
+                <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                  Permanently remove your account and all data.
+                </p>
+              </div>
             </div>
             <motion.button 
-              className="px-6 py-3 rounded-xl border border-destructive text-destructive font-bold hover:bg-destructive/10 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
+              className="w-full px-4 py-2.5 rounded-xl border border-destructive text-destructive font-bold text-sm hover:bg-destructive/10 transition-all duration-300"
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Deactivate Account
+              Delete Account
             </motion.button>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
 
         {/* Footer */}
         <motion.div 
           variants={itemVariants}
-          className="text-center text-xs text-muted-foreground py-6 font-medium"
+          className="text-center text-xs text-muted-foreground py-4 sm:py-6 font-medium"
         >
-          © 2024 SnapExx AI. All rights reserved. Professional Node ID: NEX-ERA-PROD-01
+          © 2024 SnapExx AI. All rights reserved.
         </motion.div>
       </motion.div>
     </DashboardLayout>
