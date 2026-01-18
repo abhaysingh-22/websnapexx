@@ -116,8 +116,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </Sheet>
       </header>
 
+      {/* Sidebar + Main Content Row */}
       <div className="flex flex-1">
-        {/* Desktop Sidebar - Static, not fixed */}
+        {/* Desktop Sidebar */}
         <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border shrink-0">
           <SidebarContent />
         </aside>
@@ -130,9 +131,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <div className="flex-1 p-4 md:p-8">
             {children}
           </div>
-          <Footer />
         </main>
       </div>
+
+      {/* Full-Width Footer */}
+      <Footer />
     </div>
   );
 };
