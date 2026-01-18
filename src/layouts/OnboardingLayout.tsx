@@ -16,7 +16,7 @@ const OnboardingLayout = ({
   return (
     <div className="min-h-screen bg-background flex">
       <OnboardingSidebar currentStep={currentStep} />
-      <main className="flex-1 lg:ml-0 flex flex-col">
+      <main className="flex-1 lg:ml-72 flex flex-col">
         <OnboardingHeader currentStep={currentStep} totalSteps={totalSteps} />
         <div className="flex-1 flex flex-col items-center justify-center px-4 pb-12">
           {children}
