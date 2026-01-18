@@ -18,6 +18,7 @@ import SignIn from "./pages/auth/SignIn";
 
 // Dashboard Pages
 import Home from "./pages/dashboard/Home";
+import Chat from "./pages/dashboard/Chat";
 import History from "./pages/dashboard/History";
 import Premium from "./pages/dashboard/Premium";
 import Profile from "./pages/dashboard/Profile";
@@ -46,6 +47,7 @@ const App = () => (
             
             {/* Dashboard */}
             <Route path="/home" element={<Home />} />
+            <Route path="/chat" element={<Chat />} />
             <Route path="/history" element={<History />} />
             <Route path="/premium" element={<Premium />} />
             <Route path="/profile" element={<Profile />} />
