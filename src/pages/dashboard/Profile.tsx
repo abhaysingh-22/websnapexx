@@ -4,27 +4,47 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
 const Profile = () => {
   const [rating, setRating] = useState<number | null>(null);
 
   return (
     <DashboardLayout>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
         className="max-w-4xl mx-auto space-y-6"
       >
         {/* Account Management */}
-        <div className="card-elevated p-6">
+        <motion.div variants={itemVariants} className="card-elevated p-6">
           <h2 className="text-xl font-bold mb-2">Account Management</h2>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-6 leading-relaxed">
             Manage your public presence and account credentials.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium mb-2">Display Name</label>
+              <label className="block text-sm font-semibold mb-2">Display Name</label>
               <input 
                 type="text"
                 defaultValue="NextEra Admin"
@@ -32,7 +52,7 @@ const Profile = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Email Address</label>
+              <label className="block text-sm font-semibold mb-2">Email Address</label>
               <input 
                 type="email"
                 defaultValue="nextera.admin@snapexx.ai"
@@ -40,17 +60,21 @@ const Profile = () => {
               />
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Feedback */}
-        <div className="card-elevated p-6">
+        <motion.div variants={itemVariants} className="card-elevated p-6">
           <div className="flex items-start gap-4 mb-4">
-            <div className="icon-box-blue">
+            <motion.div 
+              className="icon-box-blue"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ duration: 0.2 }}
+            >
               <MessageSquarePlus className="w-6 h-6" />
-            </div>
+            </motion.div>
             <div>
               <h2 className="text-xl font-bold">Feedback</h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground leading-relaxed">
                 How can we improve your AI generation experience?
               </p>
             </div>
@@ -68,63 +92,90 @@ const Profile = () => {
                 { icon: Meh, value: 2 },
                 { icon: Smile, value: 3 },
               ].map(({ icon: Icon, value }) => (
-                <button
+                <motion.button
                   key={value}
                   onClick={() => setRating(value)}
+                  whileHover={{ scale: 1.15 }}
+                  whileTap={{ scale: 0.95 }}
                   className={cn(
-                    "w-10 h-10 rounded-full border flex items-center justify-center transition-colors",
+                    "w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300",
                     rating === value 
                       ? "border-accent text-accent bg-accent/10" 
                       : "border-border text-muted-foreground hover:border-accent/50"
                   )}
                 >
                   <Icon className="w-5 h-5" />
-                </button>
+                </motion.button>
               ))}
             </div>
 
-            <button className="btn-outline flex items-center gap-2">
+            <motion.button 
+              className="btn-outline flex items-center gap-2 font-bold"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
               Send Feedback
               <Send className="w-4 h-4" />
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Logout Account */}
-        <div className="card-elevated p-6 border-l-4 border-l-warning">
+        <motion.div 
+          variants={itemVariants}
+          className="card-elevated p-6 border-l-4 border-l-warning"
+          whileHover={{ x: 4 }}
+          transition={{ duration: 0.2 }}
+        >
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-warning">Logout Account</h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground leading-relaxed">
                 This will logout your current account, no data will be deleted.
               </p>
             </div>
-            <button className="px-6 py-3 rounded-xl bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors">
+            <motion.button 
+              className="px-6 py-3 rounded-xl bg-accent/10 text-accent font-bold hover:bg-accent/20 transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
               Click here
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Delete Account */}
-        <div className="card-elevated p-6 border-l-4 border-l-destructive">
+        <motion.div 
+          variants={itemVariants}
+          className="card-elevated p-6 border-l-4 border-l-destructive"
+          whileHover={{ x: 4 }}
+          transition={{ duration: 0.2 }}
+        >
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-destructive">Delete Account</h2>
-              <p className="text-muted-foreground max-w-lg">
+              <p className="text-muted-foreground max-w-lg leading-relaxed">
                 Permanently remove your workspace and all generated assets. This action is 
                 irreversible and will immediately terminate your active subscription.
               </p>
             </div>
-            <button className="px-6 py-3 rounded-xl border border-destructive text-destructive font-medium hover:bg-destructive/10 transition-colors">
+            <motion.button 
+              className="px-6 py-3 rounded-xl border border-destructive text-destructive font-bold hover:bg-destructive/10 transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
               Deactivate Account
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Footer */}
-        <div className="text-center text-xs text-muted-foreground py-6">
+        <motion.div 
+          variants={itemVariants}
+          className="text-center text-xs text-muted-foreground py-6 font-medium"
+        >
           © 2024 SnapExx AI. All rights reserved. Professional Node ID: NEX-ERA-PROD-01
-        </div>
+        </motion.div>
       </motion.div>
     </DashboardLayout>
   );

@@ -39,44 +39,80 @@ const faqs = [
   }
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
 const FAQItem = ({ 
   question, 
   answer, 
   isOpen, 
-  onToggle 
+  onToggle,
+  index 
 }: { 
   question: string; 
   answer: string; 
   isOpen: boolean; 
-  onToggle: () => void; 
+  onToggle: () => void;
+  index: number;
 }) => {
   return (
-    <div className="border border-border rounded-xl overflow-hidden">
-      <button
+    <motion.div 
+      variants={itemVariants}
+      className="border border-border rounded-xl overflow-hidden"
+      whileHover={{ scale: 1.01 }}
+      transition={{ duration: 0.2 }}
+    >
+      <motion.button
         onClick={onToggle}
         className={cn(
-          "w-full flex items-center justify-between p-4 md:p-6 text-left transition-colors",
+          "w-full flex items-center justify-between p-4 md:p-6 text-left transition-all duration-300",
           isOpen ? "bg-secondary" : "hover:bg-secondary/50"
         )}
+        whileTap={{ scale: 0.99 }}
       >
-        <span className="font-medium text-sm md:text-base pr-4">{question}</span>
-        {isOpen ? (
-          <ChevronUp className="w-5 h-5 text-accent flex-shrink-0" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-        )}
-      </button>
+        <span className="font-semibold text-sm md:text-base pr-4">{question}</span>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {isOpen ? (
+            <ChevronUp className="w-5 h-5 text-accent flex-shrink-0" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+          )}
+        </motion.div>
+      </motion.button>
       <motion.div
         initial={false}
-        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
+        animate={{ 
+          height: isOpen ? "auto" : 0, 
+          opacity: isOpen ? 1 : 0 
+        }}
+        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="overflow-hidden"
       >
         <p className="p-4 md:p-6 pt-0 md:pt-0 text-muted-foreground text-sm md:text-base leading-relaxed">
           {answer}
         </p>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -86,28 +122,35 @@ const FAQs = () => {
   return (
     <DashboardLayout>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
         className="max-w-4xl mx-auto"
       >
         {/* Header */}
-        <div className="flex items-start gap-4 mb-8">
-          <div className="icon-box-blue">
+        <motion.div variants={itemVariants} className="flex items-start gap-4 mb-8">
+          <motion.div 
+            className="icon-box-blue"
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ duration: 0.2 }}
+          >
             <HelpCircle className="w-6 h-6" />
-          </div>
+          </motion.div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold italic mb-2">
+            <h1 className="text-2xl md:text-3xl font-extrabold mb-2">
               Frequently Asked Questions
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground leading-relaxed">
               Find answers to common questions about SnapExx AI
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* FAQ List */}
-        <div className="space-y-3">
+        <motion.div 
+          className="space-y-3"
+          variants={containerVariants}
+        >
           {faqs.map((faq, index) => (
             <FAQItem
               key={index}
@@ -115,18 +158,30 @@ const FAQs = () => {
               answer={faq.answer}
               isOpen={openIndex === index}
               onToggle={() => setOpenIndex(openIndex === index ? null : index)}
+              index={index}
             />
           ))}
-        </div>
+        </motion.div>
 
         {/* Contact Support */}
-        <div className="card-elevated p-6 mt-8 text-center">
-          <h3 className="font-semibold mb-2">Still have questions?</h3>
-          <p className="text-muted-foreground text-sm mb-4">
+        <motion.div 
+          variants={itemVariants}
+          className="card-elevated p-6 mt-8 text-center"
+          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.2 }}
+        >
+          <h3 className="font-bold text-lg mb-2">Still have questions?</h3>
+          <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
             Can't find the answer you're looking for? Reach out to our support team.
           </p>
-          <button className="btn-primary">Contact Support</button>
-        </div>
+          <motion.button 
+            className="btn-primary font-bold"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            Contact Support
+          </motion.button>
+        </motion.div>
       </motion.div>
     </DashboardLayout>
   );
