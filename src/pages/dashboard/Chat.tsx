@@ -37,27 +37,40 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const scrollAreaWrapRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const shouldAutoScrollRef = useRef(false);
 
   useEffect(() => {
-    // Convert selected files to preview URLs and hold them in input area
+    // Ensure the page starts at the top when navigating here (prevents "auto-scroll" feeling)
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+    // Also ensure the message list starts at the top
+    requestAnimationFrame(() => {
+      const viewport = scrollAreaWrapRef.current?.querySelector(
+        "[data-radix-scroll-area-viewport]"
+      ) as HTMLElement | null;
+      viewport?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
+  }, []);
+
+  useEffect(() => {
+    // Convert selected files to preview URLs and hold them in input area (don't auto-send)
     if (selectedImages && selectedImages.length > 0) {
       const urls = selectedImages.map((file: File) => URL.createObjectURL(file));
       setPreviewImages(urls);
     }
-    // Mark initial load complete after mount
-    setIsInitialLoad(false);
-  }, []);
+  }, [selectedImages]);
 
   useEffect(() => {
-    // Only scroll to bottom when new messages are added, not on initial load
-    if (!isInitialLoad && messages.length > 0) {
+    // Only auto-scroll when user actively sends a message
+    if (shouldAutoScrollRef.current) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      shouldAutoScrollRef.current = false;
     }
-  }, [messages, isInitialLoad]);
+  }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim() && previewImages.length === 0) return;
@@ -70,6 +83,7 @@ const Chat = () => {
       timestamp: new Date(),
     };
 
+    shouldAutoScrollRef.current = true;
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setPreviewImages([]);
@@ -91,6 +105,7 @@ const Chat = () => {
         content: responses[Math.floor(Math.random() * responses.length)] + "\n\nIs there anything else you'd like me to adjust or any other modifications you'd like to make?",
         timestamp: new Date(),
       };
+      shouldAutoScrollRef.current = true;
       setMessages(prev => [...prev, aiResponse]);
       setIsLoading(false);
     }, 1500);
@@ -151,93 +166,99 @@ const Chat = () => {
         </motion.div>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 pr-4">
-          <div className="space-y-4 pb-4">
-            <AnimatePresence>
-              {messages.length === 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center h-64 text-center"
-                >
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <Sparkles className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Start a conversation</h3>
-                  <p className="text-sm text-muted-foreground max-w-sm">
-                    Upload an image or type a message to get started with {featureTitle}
-                  </p>
-                </motion.div>
-              )}
-
-              {messages.map((message, index) => (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
-                >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                    message.role === "user" 
-                      ? "bg-primary text-primary-foreground" 
-                      : "bg-secondary text-secondary-foreground"
-                  }`}>
-                    {message.role === "user" ? (
-                      <User className="w-4 h-4" />
-                    ) : (
-                      <Bot className="w-4 h-4" />
-                    )}
-                  </div>
-                  <div className={`max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
-                    {message.images && message.images.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        {message.images.map((img, imgIndex) => (
-                          <img
-                            key={imgIndex}
-                            src={img}
-                            alt={`Uploaded ${imgIndex + 1}`}
-                            className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg border border-border"
-                          />
-                        ))}
-                      </div>
-                    )}
-                    <div className={`rounded-2xl px-4 py-3 ${
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-tr-sm"
-                        : "bg-muted rounded-tl-sm"
-                    }`}>
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+        <div ref={scrollAreaWrapRef} className="flex-1 pr-4">
+          <ScrollArea className="h-full">
+            <div className="space-y-4 pb-4">
+              <AnimatePresence>
+                {messages.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex flex-col items-center justify-center h-64 text-center"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                      <Sparkles className="w-8 h-8 text-primary" />
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-1 px-2">
-                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    <h3 className="font-semibold text-lg mb-2">Start a conversation</h3>
+                    <p className="text-sm text-muted-foreground max-w-sm">
+                      Upload an image or type a message to get started with {featureTitle}
                     </p>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                )}
 
-              {isLoading && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex gap-3"
-                >
-                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                    <Bot className="w-4 h-4" />
-                  </div>
-                  <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span className="text-sm text-muted-foreground">Thinking...</span>
+                {messages.map((message, index) => (
+                  <motion.div
+                    key={message.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
+                  >
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                        message.role === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-secondary text-secondary-foreground"
+                      }`}
+                    >
+                      {message.role === "user" ? (
+                        <User className="w-4 h-4" />
+                      ) : (
+                        <Bot className="w-4 h-4" />
+                      )}
                     </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <div ref={messagesEndRef} />
-          </div>
-        </ScrollArea>
+                    <div className={`max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
+                      {message.images && message.images.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {message.images.map((img, imgIndex) => (
+                            <img
+                              key={imgIndex}
+                              src={img}
+                              alt={`Uploaded ${imgIndex + 1}`}
+                              className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg border border-border"
+                            />
+                          ))}
+                        </div>
+                      )}
+                      <div
+                        className={`rounded-2xl px-4 py-3 ${
+                          message.role === "user"
+                            ? "bg-primary text-primary-foreground rounded-tr-sm"
+                            : "bg-muted rounded-tl-sm"
+                        }`}
+                      >
+                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-1 px-2">
+                        {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+
+                {isLoading && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex gap-3"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+                      <Bot className="w-4 h-4" />
+                    </div>
+                    <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="text-sm text-muted-foreground">Thinking...</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <div ref={messagesEndRef} />
+            </div>
+          </ScrollArea>
+        </div>
 
         {/* Image Preview */}
         <AnimatePresence>
