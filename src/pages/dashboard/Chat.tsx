@@ -40,38 +40,24 @@ const Chat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   useEffect(() => {
-    // Convert selected files to preview URLs
+    // Convert selected files to preview URLs and hold them in input area
     if (selectedImages && selectedImages.length > 0) {
       const urls = selectedImages.map((file: File) => URL.createObjectURL(file));
       setPreviewImages(urls);
-      
-      // Add initial message with images
-      const initialMessage: Message = {
-        id: Date.now().toString(),
-        role: "user",
-        content: `I'd like to use ${featureTitle} on these images.`,
-        images: urls,
-        timestamp: new Date(),
-      };
-      setMessages([initialMessage]);
-      
-      // Simulate AI response
-      setTimeout(() => {
-        const aiResponse: Message = {
-          id: (Date.now() + 1).toString(),
-          role: "assistant",
-          content: `Great! I've received your ${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''}. I'm ready to help you with ${featureTitle}. What would you like me to do with ${selectedImages.length > 1 ? 'these images' : 'this image'}? You can ask me to:\n\n• Enhance quality and resolution\n• Adjust colors and lighting\n• Apply artistic filters\n• Remove backgrounds\n• And much more!`,
-          timestamp: new Date(),
-        };
-        setMessages(prev => [...prev, aiResponse]);
-      }, 1000);
     }
+    // Mark initial load complete after mount
+    setIsInitialLoad(false);
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    // Only scroll to bottom when new messages are added, not on initial load
+    if (!isInitialLoad && messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isInitialLoad]);
 
   const handleSend = async () => {
     if (!input.trim() && previewImages.length === 0) return;
