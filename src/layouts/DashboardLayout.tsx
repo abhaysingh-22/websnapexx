@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import Footer from "@/components/ui/Footer";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -12,11 +13,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <DashboardSidebar />
-        <SidebarInset>
+        <SidebarInset className="flex flex-col">
           <DashboardHeader />
           <div className="flex-1 overflow-auto p-4 md:p-8">
             {children}
           </div>
+          <Footer />
         </SidebarInset>
       </div>
     </SidebarProvider>
