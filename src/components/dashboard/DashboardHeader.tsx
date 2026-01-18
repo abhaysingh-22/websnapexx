@@ -19,8 +19,8 @@ const DashboardHeader = () => {
   return (
     <header className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-border bg-card">
       <div className="flex items-center gap-4">
-        {/* Mobile Menu Trigger */}
-        <SidebarTrigger className="md:hidden">
+        {/* Mobile Menu Trigger - Always visible hamburger */}
+        <SidebarTrigger className="p-2 rounded-lg border border-border hover:bg-secondary transition-colors">
           <Menu className="w-5 h-5" />
         </SidebarTrigger>
         
