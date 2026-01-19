@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquarePlus, Frown, Meh, Smile, Send, User, Mail, Shield, LogOut, Trash2 } from "lucide-react";
+import { MessageSquarePlus, Frown, Meh, Smile, Send, User, Mail, Settings, LogOut, Trash2 } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -102,7 +102,7 @@ const Profile = () => {
         <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
           <div className="flex items-center gap-3 mb-4 sm:mb-6">
             <div className="icon-box-blue">
-              <Shield className="w-5 h-5 sm:w-6 sm:h-6" />
+              <Settings className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
               <h2 className="text-lg sm:text-xl font-bold">Account Management</h2>
