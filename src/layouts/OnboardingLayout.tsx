@@ -1,7 +1,9 @@
 import { ReactNode } from "react";
-import OnboardingSidebar from "@/components/onboarding/OnboardingSidebar";
-import OnboardingHeader from "@/components/onboarding/OnboardingHeader";
+import { Link, useNavigate } from "react-router-dom";
+import { Sparkles, CircleDot, Wand2 } from "lucide-react";
+import Logo from "@/components/ui/Logo";
 import Footer from "@/components/ui/Footer";
+import { cn } from "@/lib/utils";
 
 interface OnboardingLayoutProps {
   children: ReactNode;
@@ -9,25 +11,97 @@ interface OnboardingLayoutProps {
   totalSteps?: number;
 }
 
+const steps = [
+  { id: 1, label: "Restore & Compare", icon: Sparkles, path: "/onboarding/1" },
+  { id: 2, label: "AI Portraits", icon: CircleDot, path: "/onboarding/2" },
+  { id: 3, label: "Prompt Engineering", icon: Wand2, path: "/onboarding/3" },
+];
+
 const OnboardingLayout = ({ 
   children, 
   currentStep, 
   totalSteps = 3 
 }: OnboardingLayoutProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div className="flex flex-1">
-        <OnboardingSidebar currentStep={currentStep} />
-        <main className="flex-1 lg:ml-72 flex flex-col">
-          <OnboardingHeader currentStep={currentStep} totalSteps={totalSteps} />
-          <div className="flex-1 flex flex-col items-center justify-center px-4 pb-12">
-            {children}
+      {/* Top Navbar */}
+      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="h-16 md:h-[72px] flex items-center justify-between gap-4">
+            {/* Logo */}
+            <div className="flex items-center gap-4">
+              <Logo size="md" />
+              
+              {/* Vertical Separator */}
+              <div className="hidden md:block h-8 w-px bg-border" />
+              
+              {/* Progress Label */}
+              <p className="hidden md:block text-xs font-medium tracking-widest text-muted-foreground">
+                ONBOARDING
+              </p>
+            </div>
+
+            {/* Desktop Navigation - Step Indicators */}
+            <nav className="hidden md:flex items-center gap-1">
+              {steps.map((step) => {
+                const Icon = step.icon;
+                const isActive = currentStep === step.id;
+                const isCompleted = currentStep > step.id;
+                
+                return (
+                  <button
+                    key={step.id}
+                    onClick={() => navigate(step.path)}
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                      isActive 
+                        ? "bg-accent/10 text-accent" 
+                        : isCompleted
+                          ? "text-foreground hover:bg-secondary"
+                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    )}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{step.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Mobile Step Indicator */}
+            <div className="md:hidden flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Step</span>
+              <span className="text-sm font-semibold text-accent">{currentStep}/{totalSteps}</span>
+            </div>
+
+            {/* Skip Link */}
+            <Link 
+              to="/home"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Skip
+            </Link>
           </div>
-        </main>
-      </div>
-      <div className="lg:ml-72">
-        <Footer />
-      </div>
+        </div>
+        
+        {/* Mobile Step Progress Bar */}
+        <div className="md:hidden h-1 bg-border">
+          <div 
+            className="h-full bg-accent transition-all duration-300"
+            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+          />
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-8 md:py-12">
+        {children}
+      </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
