@@ -283,18 +283,18 @@ const Chat = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="flex gap-2 p-2 border-t border-border overflow-x-auto"
+              className="flex gap-3 p-3 border-t border-border overflow-x-auto"
             >
               {previewImages.map((img, index) => (
-                <div key={index} className="relative shrink-0">
+                <div key={index} className="relative shrink-0 group">
                   <img
                     src={img}
                     alt={`Preview ${index + 1}`}
-                    className="w-16 h-16 object-cover rounded-lg"
+                    className="w-20 h-20 object-cover rounded-xl border-2 border-border"
                   />
                   <button
                     onClick={() => removePreviewImage(index)}
-                    className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center"
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform"
                   >
                     <X className="w-3 h-3" />
                   </button>
