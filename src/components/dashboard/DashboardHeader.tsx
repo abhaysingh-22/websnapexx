@@ -140,8 +140,7 @@ const DashboardHeader = () => {
 
         <div className="flex items-center gap-2 md:gap-3 ml-2">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium">Alex Rivera</p>
-            <p className="text-xs text-muted-foreground">Creative Director</p>
+            <p className="text-sm font-medium">User</p>
           </div>
           <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-secondary flex items-center justify-center ring-2 ring-accent">
             <User className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />
