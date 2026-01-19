@@ -39,7 +39,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4">
+      <nav className="p-4">
         {/* Collapse Toggle Button - Above Navigation */}
         {showCollapseButton && (
           <div className={cn("mb-2", isCollapsed ? "flex justify-center" : "flex justify-end")}>
@@ -111,6 +111,24 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           })}
         </ul>
       </nav>
+
+      {/* Pro Tip Section - fills the gap */}
+      {!isCollapsed && (
+        <div className="flex-1 px-4 py-6 flex flex-col justify-end">
+          <div className="bg-gradient-to-br from-accent/5 to-accent/10 rounded-xl p-4 border border-accent/10">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center">
+                <span className="text-xs">💡</span>
+              </div>
+              <p className="text-xs font-semibold text-accent">PRO TIP</p>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Use AI-powered enhancements to transform your photos into stunning professional portraits in seconds.
+            </p>
+          </div>
+        </div>
+      )}
+      {isCollapsed && <div className="flex-1" />}
 
       {/* Bottom Section */}
       <div className={cn("p-4 space-y-4 border-t border-border", isCollapsed && "p-2")}>
