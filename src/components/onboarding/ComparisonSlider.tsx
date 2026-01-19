@@ -44,7 +44,7 @@ const ComparisonSlider = ({
   return (
     <motion.div 
       ref={containerRef}
-      className="relative w-full max-w-lg aspect-square rounded-2xl overflow-hidden shadow-elevated cursor-ew-resize"
+      className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg aspect-square rounded-xl sm:rounded-2xl overflow-hidden shadow-elevated cursor-ew-resize"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
@@ -74,8 +74,8 @@ const ComparisonSlider = ({
       </div>
 
       {/* After Label */}
-      <div className="absolute top-4 left-4">
-        <span className="px-3 py-1.5 bg-accent text-accent-foreground text-xs font-semibold rounded-lg">
+      <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+        <span className="px-2 py-1 sm:px-3 sm:py-1.5 bg-accent text-accent-foreground text-[10px] sm:text-xs font-semibold rounded-lg">
           {afterLabel}
         </span>
       </div>
@@ -93,18 +93,17 @@ const ComparisonSlider = ({
         onMouseDown={handleMouseDown}
         onTouchStart={handleMouseDown}
       >
-        <ChevronsLeftRight className="w-4 h-4 text-accent-foreground" />
+        <ChevronsLeftRight className="w-3 h-3 sm:w-4 sm:h-4 text-accent-foreground" />
       </div>
 
       {/* Slide to Reveal Hint */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-        <div className="flex items-center gap-2 px-4 py-2 bg-card/90 backdrop-blur-sm rounded-full text-sm">
-          <Hand className="w-4 h-4" />
+      <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2">
+        <div className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-card/90 backdrop-blur-sm rounded-full text-[10px] sm:text-sm">
+          <Hand className="w-3 h-3 sm:w-4 sm:h-4" />
           SLIDE TO REVEAL
         </div>
       </div>
     </motion.div>
   );
 };
-
 export default ComparisonSlider;

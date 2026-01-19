@@ -156,12 +156,12 @@ const Profile = () => {
             placeholder="Type your suggestions here..."
             value={feedback}
             onChange={setFeedback}
-            className="input-field min-h-[100px] sm:min-h-[120px] resize-y mb-4 text-sm sm:text-base w-full"
+            className="input-field min-h-[80px] sm:min-h-[100px] md:min-h-[120px] resize-y mb-3 sm:mb-4 text-sm sm:text-base w-full"
           />
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground mr-2">Rate experience:</span>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+            <div className="flex items-center justify-center sm:justify-start gap-2">
+              <span className="text-xs sm:text-sm text-muted-foreground mr-1 sm:mr-2">Rate:</span>
               {[
                 { icon: Frown, value: 1, label: "Bad" },
                 { icon: Meh, value: 2, label: "Okay" },
@@ -173,7 +173,7 @@ const Profile = () => {
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.95 }}
                   className={cn(
-                    "w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center transition-all duration-300",
+                    "w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full border flex items-center justify-center transition-all duration-300",
                     rating === value 
                       ? "border-accent text-accent bg-accent/10" 
                       : "border-border text-muted-foreground hover:border-accent/50"
