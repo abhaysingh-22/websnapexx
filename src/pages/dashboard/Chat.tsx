@@ -8,7 +8,8 @@ import {
   Loader2,
   User,
   Bot,
-  X
+  X,
+  Download
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ChatLayout from "@/layouts/ChatLayout";
@@ -127,6 +128,23 @@ const Chat = () => {
     setPreviewImages(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleDownloadImage = async (imageUrl: string, index: number) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `snapex-ai-image-${Date.now()}-${index + 1}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download image:", error);
+    }
+  };
+
   return (
     <ChatLayout>
       <div className="flex flex-col h-[calc(100vh-120px)] sm:h-[calc(100vh-140px)] max-w-4xl mx-auto">
@@ -202,12 +220,20 @@ const Chat = () => {
                       {message.images && message.images.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-2">
                           {message.images.map((img, imgIndex) => (
-                            <img
-                              key={imgIndex}
-                              src={img}
-                              alt={`Uploaded ${imgIndex + 1}`}
-                              className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg border border-border"
-                            />
+                            <div key={imgIndex} className="relative group">
+                              <img
+                                src={img}
+                                alt={`Uploaded ${imgIndex + 1}`}
+                                className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg border border-border"
+                              />
+                              <button
+                                onClick={() => handleDownloadImage(img, imgIndex)}
+                                className="absolute bottom-1 right-1 w-7 h-7 bg-background/90 backdrop-blur-sm text-foreground rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-background"
+                                title="Download image"
+                              >
+                                <Download className="w-4 h-4" />
+                              </button>
+                            </div>
                           ))}
                         </div>
                       )}
