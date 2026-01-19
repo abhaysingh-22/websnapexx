@@ -13,15 +13,15 @@ const Onboarding1 = () => {
   return (
     <OnboardingLayout currentStep={1}>
       <motion.div 
-        className="text-center mb-8"
+        className="text-center mb-6 sm:mb-8 px-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
           Restore & Compare
         </h1>
-        <p className="text-muted-foreground max-w-md mx-auto">
+        <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base">
           Edit, Enhance, and Compare pictures in high definition with our 
           state-of-the-art AI restoration engine.
         </p>

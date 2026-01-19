@@ -147,49 +147,49 @@ const Chat = () => {
 
   return (
     <ChatLayout>
-      <div className="flex flex-col h-[calc(100vh-32px)] sm:h-[calc(100vh-64px)] max-w-4xl mx-auto">
+      <div className="flex flex-col h-[calc(100vh-16px)] sm:h-[calc(100vh-32px)] md:h-[calc(100vh-64px)] max-w-4xl mx-auto px-2 sm:px-0">
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-3 pb-4 border-b border-border mb-4"
+          className="flex items-center gap-2 sm:gap-3 pb-3 sm:pb-4 border-b border-border mb-3 sm:mb-4"
         >
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/home")}
-            className="shrink-0"
+            className="shrink-0 w-8 h-8 sm:w-10 sm:h-10"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <div>
-              <h1 className="font-bold text-lg">{featureTitle}</h1>
-              <p className="text-xs text-muted-foreground">AI-powered assistance</p>
+            <div className="min-w-0">
+              <h1 className="font-bold text-sm sm:text-lg truncate">{featureTitle}</h1>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">AI-powered assistance</p>
             </div>
           </div>
         </motion.div>
 
         {/* Messages */}
-        <div ref={scrollAreaWrapRef} className="flex-1 min-h-0 pr-4 overflow-hidden">
+        <div ref={scrollAreaWrapRef} className="flex-1 min-h-0 pr-2 sm:pr-4 overflow-hidden">
           <ScrollArea className="h-full">
-            <div className="space-y-4 pb-4">
+            <div className="space-y-3 sm:space-y-4 pb-4">
               <AnimatePresence>
                 {messages.length === 0 && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="flex flex-col items-center justify-center h-64 text-center"
+                    className="flex flex-col items-center justify-center h-48 sm:h-64 text-center px-4"
                   >
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <Sparkles className="w-8 h-8 text-primary" />
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center mb-3 sm:mb-4">
+                      <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-lg mb-2">Start a conversation</h3>
-                    <p className="text-sm text-muted-foreground max-w-sm">
+                    <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Start a conversation</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground max-w-sm">
                       Upload an image or type a message to get started with {featureTitle}
                     </p>
                   </motion.div>
@@ -201,52 +201,52 @@ const Chat = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
+                    className={`flex gap-2 sm:gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
                   >
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                      className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${
                         message.role === "user"
                           ? "bg-primary text-primary-foreground"
                           : "bg-secondary text-secondary-foreground"
                       }`}
                     >
                       {message.role === "user" ? (
-                        <User className="w-4 h-4" />
+                        <User className="w-3 h-3 sm:w-4 sm:h-4" />
                       ) : (
-                        <Bot className="w-4 h-4" />
+                        <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
                       )}
                     </div>
-                    <div className={`max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
+                    <div className={`max-w-[85%] sm:max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
                       {message.images && message.images.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-2">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
                           {message.images.map((img, imgIndex) => (
                             <div key={imgIndex} className="relative group">
                               <img
                                 src={img}
                                 alt={`Uploaded ${imgIndex + 1}`}
-                                className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg border border-border"
+                                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-lg border border-border"
                               />
                               <button
                                 onClick={() => handleDownloadImage(img, imgIndex)}
-                                className="absolute bottom-1 right-1 w-7 h-7 bg-background/90 backdrop-blur-sm text-foreground rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-background"
+                                className="absolute bottom-1 right-1 w-6 h-6 sm:w-7 sm:h-7 bg-background/90 backdrop-blur-sm text-foreground rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-background"
                                 title="Download image"
                               >
-                                <Download className="w-4 h-4" />
+                                <Download className="w-3 h-3 sm:w-4 sm:h-4" />
                               </button>
                             </div>
                           ))}
                         </div>
                       )}
                       <div
-                        className={`rounded-2xl px-4 py-3 ${
+                        className={`rounded-2xl px-3 py-2 sm:px-4 sm:py-3 ${
                           message.role === "user"
                             ? "bg-primary text-primary-foreground rounded-tr-sm"
                             : "bg-muted rounded-tl-sm"
                         }`}
                       >
-                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                        <p className="text-xs sm:text-sm whitespace-pre-wrap">{message.content}</p>
                       </div>
-                      <p className="text-[10px] text-muted-foreground mt-1 px-2">
+                      <p className="text-[9px] sm:text-[10px] text-muted-foreground mt-1 px-2">
                         {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                       </p>
                     </div>
@@ -257,15 +257,15 @@ const Chat = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex gap-3"
+                    className="flex gap-2 sm:gap-3"
                   >
-                    <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                      <Bot className="w-4 h-4" />
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-secondary flex items-center justify-center">
+                      <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
                     </div>
-                    <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3">
+                    <div className="bg-muted rounded-2xl rounded-tl-sm px-3 py-2 sm:px-4 sm:py-3">
                       <div className="flex items-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="text-sm text-muted-foreground">Thinking...</span>
+                        <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
+                        <span className="text-xs sm:text-sm text-muted-foreground">Thinking...</span>
                       </div>
                     </div>
                   </motion.div>
@@ -283,20 +283,20 @@ const Chat = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="flex gap-3 p-3 border-t border-border overflow-x-auto"
+              className="flex gap-2 sm:gap-3 p-2 sm:p-3 border-t border-border overflow-x-auto"
             >
               {previewImages.map((img, index) => (
                 <div key={index} className="relative shrink-0 group">
                   <img
                     src={img}
                     alt={`Preview ${index + 1}`}
-                    className="w-20 h-20 object-cover rounded-xl border-2 border-border"
+                    className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg sm:rounded-xl border-2 border-border"
                   />
                   <button
                     onClick={() => removePreviewImage(index)}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+                    className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform"
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                   </button>
                 </div>
               ))}
@@ -308,16 +308,16 @@ const Chat = () => {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="border-t border-border pt-4"
+          className="border-t border-border pt-3 sm:pt-4"
         >
-          <div className="flex items-end gap-2">
+          <div className="flex items-end gap-1.5 sm:gap-2">
             <Button
               variant="outline"
               size="icon"
               onClick={handleAddImage}
-              className="shrink-0"
+              className="shrink-0 w-9 h-9 sm:w-10 sm:h-10"
             >
-              <ImageIcon className="w-5 h-5" />
+              <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
             <div className="flex-1 relative">
               <textarea
@@ -327,7 +327,7 @@ const Chat = () => {
                 onKeyDown={handleKeyDown}
                 placeholder="Type your message..."
                 rows={1}
-                className="w-full resize-none rounded-xl border border-border bg-background px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[48px] max-h-[120px]"
+                className="w-full resize-none rounded-lg sm:rounded-xl border border-border bg-background px-3 sm:px-4 py-2.5 sm:py-3 pr-10 sm:pr-12 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[40px] sm:min-h-[48px] max-h-[100px] sm:max-h-[120px]"
                 style={{ 
                   height: 'auto',
                   overflowY: input.split('\n').length > 3 ? 'auto' : 'hidden'
@@ -338,12 +338,12 @@ const Chat = () => {
               onClick={handleSend}
               disabled={!input.trim() && previewImages.length === 0}
               size="icon"
-              className="shrink-0"
+              className="shrink-0 w-9 h-9 sm:w-10 sm:h-10"
             >
-              <Send className="w-5 h-5" />
+              <Send className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
           </div>
-          <p className="text-[10px] text-muted-foreground text-center mt-2">
+          <p className="text-[9px] sm:text-[10px] text-muted-foreground text-center mt-1.5 sm:mt-2">
             AI responses are generated and may not always be accurate
           </p>
         </motion.div>

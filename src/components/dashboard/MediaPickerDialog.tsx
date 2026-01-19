@@ -103,42 +103,42 @@ const MediaPickerDialog = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
-            <p className="text-sm text-muted-foreground text-center mb-6">
+            <p className="text-xs sm:text-sm text-muted-foreground text-center mb-4 sm:mb-6">
               Choose how you'd like to add photos for <span className="font-semibold text-foreground">{featureTitle}</span>
             </p>
             
             <motion.button
               onClick={handleTakePhoto}
-              className="w-full p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-4 group"
+              className="w-full p-3 sm:p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-3 sm:gap-4 group"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <Camera className="w-6 h-6 text-primary" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
+                <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </div>
-              <div className="flex-1 text-left">
-                <h4 className="font-semibold">Take Photo</h4>
-                <p className="text-xs text-muted-foreground">Capture a new photo using your camera</p>
+              <div className="flex-1 text-left min-w-0">
+                <h4 className="font-semibold text-sm sm:text-base">Take Photo</h4>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Capture a new photo using your camera</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0" />
             </motion.button>
 
             <motion.button
               onClick={handleChooseGallery}
-              className="w-full p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-4 group"
+              className="w-full p-3 sm:p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-3 sm:gap-4 group"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="w-12 h-12 rounded-full bg-secondary/50 flex items-center justify-center group-hover:bg-secondary transition-colors">
-                <Images className="w-6 h-6 text-secondary-foreground" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-secondary/50 flex items-center justify-center group-hover:bg-secondary transition-colors flex-shrink-0">
+                <Images className="w-5 h-5 sm:w-6 sm:h-6 text-secondary-foreground" />
               </div>
-              <div className="flex-1 text-left">
-                <h4 className="font-semibold">Choose from Gallery</h4>
-                <p className="text-xs text-muted-foreground">Select photos from your device</p>
+              <div className="flex-1 text-left min-w-0">
+                <h4 className="font-semibold text-sm sm:text-base">Choose from Gallery</h4>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Select photos from your device</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0" />
             </motion.button>
           </motion.div>
         );
@@ -149,28 +149,28 @@ const MediaPickerDialog = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="text-center space-y-6"
+            className="text-center space-y-4 sm:space-y-6"
           >
-            <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-              <Camera className="w-10 h-10 text-primary" />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+              <Camera className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
             </div>
             <div>
-              <h4 className="font-semibold text-lg mb-2">Camera Access Required</h4>
-              <p className="text-sm text-muted-foreground">
+              <h4 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Camera Access Required</h4>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 We need permission to access your camera to take photos.
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               <Button 
                 variant="outline" 
                 onClick={() => setStep("choose")}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 Cancel
               </Button>
               <Button 
                 onClick={requestCameraPermission}
-                className="flex-1"
+                className="flex-1 text-sm"
               >
                 Allow Camera
               </Button>
@@ -184,52 +184,52 @@ const MediaPickerDialog = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
-            <div className="text-center mb-6">
-              <div className="w-20 h-20 mx-auto rounded-full bg-secondary/30 flex items-center justify-center mb-4">
-                <Images className="w-10 h-10 text-secondary-foreground" />
+            <div className="text-center mb-4 sm:mb-6">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-secondary/30 flex items-center justify-center mb-3 sm:mb-4">
+                <Images className="w-8 h-8 sm:w-10 sm:h-10 text-secondary-foreground" />
               </div>
-              <h4 className="font-semibold text-lg mb-2">Gallery Access</h4>
-              <p className="text-sm text-muted-foreground">
+              <h4 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Gallery Access</h4>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Choose how you'd like to share your photos
               </p>
             </div>
 
             <motion.button
               onClick={() => handleGalleryAccessChoice("selected")}
-              className="w-full p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-4 group"
+              className="w-full p-3 sm:p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-3 sm:gap-4 group"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <Check className="w-5 h-5 text-primary" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
-              <div className="flex-1 text-left">
-                <h4 className="font-semibold text-sm">Select Photos</h4>
-                <p className="text-xs text-muted-foreground">Choose specific photos to use</p>
+              <div className="flex-1 text-left min-w-0">
+                <h4 className="font-semibold text-xs sm:text-sm">Select Photos</h4>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Choose specific photos to use</p>
               </div>
             </motion.button>
 
             <motion.button
               onClick={() => handleGalleryAccessChoice("all")}
-              className="w-full p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-4 group"
+              className="w-full p-3 sm:p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-3 sm:gap-4 group"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="w-10 h-10 rounded-full bg-secondary/30 flex items-center justify-center">
-                <Images className="w-5 h-5 text-secondary-foreground" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-secondary/30 flex items-center justify-center flex-shrink-0">
+                <Images className="w-4 h-4 sm:w-5 sm:h-5 text-secondary-foreground" />
               </div>
-              <div className="flex-1 text-left">
-                <h4 className="font-semibold text-sm">Select Multiple Photos</h4>
-                <p className="text-xs text-muted-foreground">Choose multiple photos at once</p>
+              <div className="flex-1 text-left min-w-0">
+                <h4 className="font-semibold text-xs sm:text-sm">Select Multiple Photos</h4>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Choose multiple photos at once</p>
               </div>
             </motion.button>
 
             <Button 
               variant="ghost" 
               onClick={() => setStep("choose")}
-              className="w-full mt-2"
+              className="w-full mt-2 text-sm"
             >
               Back
             </Button>
