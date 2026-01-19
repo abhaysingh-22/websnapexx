@@ -33,20 +33,14 @@ const Home = () => {
   const [mediaDialogOpen, setMediaDialogOpen] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState("");
 
-  // For featured cards - go directly to chat without media picker
+  // For featured cards - redirect to register (no backend yet)
   const handleFeaturedClick = (featureTitle: string) => {
-    navigate("/chat", { 
-      state: { 
-        featureTitle: featureTitle,
-        selectedImages: [] 
-      } 
-    });
+    navigate("/register");
   };
 
-  // For Creative Tool Suite - show media picker dialog
+  // For Creative Tool Suite - redirect to register (no backend yet)
   const handleToolClick = (featureTitle: string) => {
-    setSelectedFeature(featureTitle);
-    setMediaDialogOpen(true);
+    navigate("/register");
   };
 
   const handleMediaSelected = (files: File[]) => {
@@ -69,7 +63,7 @@ const Home = () => {
         {/* Welcome Section */}
         <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-1 sm:mb-2">
-            Welcome back, <span className="gradient-text">Alex</span>.
+            Welcome back, <span className="gradient-text">User</span>.
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base lg:text-lg">What will you create with AI today?</p>
         </motion.div>
