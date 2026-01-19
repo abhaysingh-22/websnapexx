@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Clock, Diamond, User, HelpCircle, ArrowUp, Menu, Moon, Sun } from "lucide-react";
+import { Home, Clock, Crown, User, HelpCircle, Menu, Moon, Sun } from "lucide-react";
 import { useState } from "react";
 import Logo from "@/components/ui/Logo";
 import Footer from "@/components/ui/Footer";
@@ -16,7 +16,7 @@ interface DashboardLayoutProps {
 const navItems = [
   { path: "/home", label: "Home", icon: Home },
   { path: "/history", label: "History", icon: Clock },
-  { path: "/premium", label: "Premium", icon: Diamond, badge: "PRO" },
+  { path: "/premium", label: "Premium", icon: Crown },
   { path: "/profile", label: "Profile", icon: User },
 ];
 
@@ -33,6 +33,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <div className="h-16 md:h-[72px] flex items-center justify-between gap-4">
             {/* Logo */}
             <Logo size="md" />
+            
+            {/* Vertical Separator */}
+            <div className="hidden md:block h-8 w-px bg-border mx-2" />
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1">
@@ -53,9 +56,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                   >
                     <Icon className="w-4 h-4" />
                     <span>{item.label}</span>
-                    {item.badge && (
-                      <span className="badge-pro text-[10px] px-1.5 py-0.5">{item.badge}</span>
-                    )}
                   </Link>
                 );
               })}
@@ -77,8 +77,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 to="/premium" 
                 className="hidden md:flex btn-primary items-center gap-2 text-sm px-4 py-2"
               >
-                <ArrowUp className="w-4 h-4" />
-                <span className="hidden lg:inline">Upgrade</span>
+                <span>Upgrade</span>
               </Link>
 
               {/* Theme Toggle */}
@@ -140,9 +139,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                               >
                                 <Icon className="w-5 h-5" />
                                 <span className="flex-1">{item.label}</span>
-                                {item.badge && (
-                                  <span className="badge-pro">{item.badge}</span>
-                                )}
                               </Link>
                             </li>
                           );
@@ -168,7 +164,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                         onClick={() => setMobileOpen(false)}
                         className="w-full btn-primary flex items-center justify-center gap-2"
                       >
-                        <ArrowUp className="w-4 h-4" />
                         Upgrade to Pro
                       </Link>
 
