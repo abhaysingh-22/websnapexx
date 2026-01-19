@@ -147,7 +147,7 @@ const Chat = () => {
 
   return (
     <ChatLayout>
-      <div className="flex flex-col h-[calc(100vh-120px)] sm:h-[calc(100vh-140px)] max-w-4xl mx-auto">
+      <div className="flex flex-col h-[calc(100vh-32px)] sm:h-[calc(100vh-64px)] max-w-4xl mx-auto">
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -174,7 +174,7 @@ const Chat = () => {
         </motion.div>
 
         {/* Messages */}
-        <div ref={scrollAreaWrapRef} className="flex-1 pr-4">
+        <div ref={scrollAreaWrapRef} className="flex-1 min-h-0 pr-4 overflow-hidden">
           <ScrollArea className="h-full">
             <div className="space-y-4 pb-4">
               <AnimatePresence>
