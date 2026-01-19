@@ -72,14 +72,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <span className="hidden lg:inline">Help</span>
               </Link>
 
-              {/* Upgrade Button - Desktop */}
-              <Link 
-                to="/premium" 
-                className="hidden md:flex btn-primary items-center gap-2 text-sm px-4 py-2"
-              >
-                <span>Upgrade</span>
-              </Link>
-
               {/* Theme Toggle */}
               <button 
                 onClick={toggleTheme}
@@ -158,14 +150,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                         <p className="text-xs text-muted-foreground">670/1000 credits remaining</p>
                       </div>
 
-                      {/* Upgrade Button */}
-                      <Link 
-                        to="/premium" 
-                        onClick={() => setMobileOpen(false)}
-                        className="w-full btn-primary flex items-center justify-center gap-2"
-                      >
-                        Upgrade to Pro
-                      </Link>
 
                       {/* Help */}
                       <Link 
