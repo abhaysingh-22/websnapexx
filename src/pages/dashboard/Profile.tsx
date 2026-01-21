@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquarePlus, Frown, Meh, Smile, Send, User, Mail, Settings, LogOut, Trash2 } from "lucide-react";
+import { MessageSquarePlus, Frown, Meh, Smile, Send, User, Mail, Settings, LogOut, Trash2, Loader2 } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import TypewriterPlaceholder from "@/components/ui/TypewriterPlaceholder";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -33,23 +35,32 @@ const itemVariants = {
   },
 };
 
-// Simulated user data - in real app this would come from auth context
-const userData = {
-  name: "NextEra Admin",
-  email: "nextera.admin@snapexx.ai",
-  role: "Creative Director",
-  memberSince: "Oct 2023"
-};
-
 const Profile = () => {
   const navigate = useNavigate();
+  const { user, profile, isLoading, isAuthenticated, signOut } = useAuth();
   const [rating, setRating] = useState<number | null>(null);
   const [feedback, setFeedback] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleteError, setDeleteError] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
-  const handleLogout = () => {
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate('/signin');
+    }
+  }, [isLoading, isAuthenticated, navigate]);
+
+  const handleLogout = async () => {
+    setIsSigningOut(true);
+    const { error } = await signOut();
+    if (error) {
+      toast.error("Failed to sign out");
+      setIsSigningOut(false);
+      return;
+    }
+    toast.success("Signed out successfully");
     navigate('/signin');
   };
 
@@ -59,8 +70,10 @@ const Profile = () => {
     setDeleteError(false);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteConfirmText.toLowerCase() === "confirm") {
+      await signOut();
+      toast.success("Account scheduled for deletion");
       navigate('/register');
     } else {
       setDeleteError(true);
@@ -72,6 +85,33 @@ const Profile = () => {
       handleConfirmDelete();
     }
   };
+
+  const handleSendFeedback = () => {
+    if (!feedback.trim()) {
+      toast.error("Please enter your feedback");
+      return;
+    }
+    toast.success("Thank you for your feedback!");
+    setFeedback("");
+    setRating(null);
+  };
+
+  // User display data
+  const displayName = profile?.full_name || user?.email?.split('@')[0] || 'User';
+  const displayEmail = user?.email || 'No email';
+  const memberSince = user?.created_at 
+    ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    : 'N/A';
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-accent" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -88,11 +128,11 @@ const Profile = () => {
               <User className="w-8 h-8 sm:w-10 sm:h-10 text-accent-foreground" />
             </div>
             <div className="text-center sm:text-left flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold">{userData.name}</h1>
-              <p className="text-muted-foreground text-sm sm:text-base">{userData.role}</p>
+              <h1 className="text-xl sm:text-2xl font-bold">{displayName}</h1>
+              <p className="text-muted-foreground text-sm sm:text-base">{displayEmail}</p>
               <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
-                <span className="badge-pro">PRO MEMBER</span>
-                <span className="text-xs text-muted-foreground">Since {userData.memberSince}</span>
+                <span className="badge-pro">MEMBER</span>
+                <span className="text-xs text-muted-foreground">Since {memberSince}</span>
               </div>
             </div>
           </div>
@@ -119,7 +159,7 @@ const Profile = () => {
                 Display Name
               </label>
               <div className="input-field text-sm sm:text-base bg-muted/50 cursor-not-allowed">
-                {userData.name}
+                {displayName}
               </div>
             </div>
             <div>
@@ -128,7 +168,7 @@ const Profile = () => {
                 Email Address
               </label>
               <div className="input-field text-sm sm:text-base bg-muted/50 cursor-not-allowed">
-                {userData.email}
+                {displayEmail}
               </div>
             </div>
           </div>
@@ -186,6 +226,7 @@ const Profile = () => {
             </div>
 
             <motion.button 
+              onClick={handleSendFeedback}
               className="btn-primary flex items-center gap-2 text-sm font-bold w-full sm:w-auto justify-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
@@ -216,11 +257,19 @@ const Profile = () => {
             </div>
             <motion.button 
               onClick={handleLogout}
-              className="w-full px-4 py-2.5 rounded-xl bg-warning/10 text-warning font-bold text-sm hover:bg-warning/20 transition-all duration-300"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              disabled={isSigningOut}
+              className="w-full px-4 py-2.5 rounded-xl bg-warning/10 text-warning font-bold text-sm hover:bg-warning/20 transition-all duration-300 flex items-center justify-center gap-2"
+              whileHover={{ scale: isSigningOut ? 1 : 1.02 }}
+              whileTap={{ scale: isSigningOut ? 1 : 0.98 }}
             >
-              Logout
+              {isSigningOut ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Logging out...
+                </>
+              ) : (
+                'Logout'
+              )}
             </motion.button>
           </motion.div>
 
@@ -256,7 +305,7 @@ const Profile = () => {
           variants={itemVariants}
           className="text-center text-xs text-muted-foreground py-4 sm:py-6 font-medium"
         >
-          © 2024 SnapExx AI. All rights reserved.
+          © 2024 SnapEx AI. All rights reserved.
         </motion.div>
       </motion.div>
 

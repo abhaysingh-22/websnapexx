@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Pencil, Wand2, GitCompare, Sparkles, Video } from "lucide-react";
+import { Pencil, Wand2, GitCompare, Sparkles, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import FeaturedCard from "@/components/dashboard/FeaturedCard";
 import ToolCard from "@/components/dashboard/ToolCard";
 import MediaPickerDialog from "@/components/dashboard/MediaPickerDialog";
+import { useAuth } from "@/hooks/useAuth";
 import aiPortraitHero from "@/assets/ai-portrait-hero.jpg";
 
 const containerVariants = {
@@ -30,17 +31,35 @@ const itemVariants = {
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user, profile, isLoading, isAuthenticated } = useAuth();
   const [mediaDialogOpen, setMediaDialogOpen] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState("");
 
-  // For featured cards - redirect to register (no backend yet)
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate('/signin');
+    }
+  }, [isLoading, isAuthenticated, navigate]);
+
+  // For featured cards - open media picker for authenticated users
   const handleFeaturedClick = (featureTitle: string) => {
-    navigate("/register");
+    if (!isAuthenticated) {
+      navigate("/register");
+      return;
+    }
+    setSelectedFeature(featureTitle);
+    setMediaDialogOpen(true);
   };
 
-  // For Creative Tool Suite - redirect to register (no backend yet)
+  // For Creative Tool Suite - open media picker for authenticated users
   const handleToolClick = (featureTitle: string) => {
-    navigate("/register");
+    if (!isAuthenticated) {
+      navigate("/register");
+      return;
+    }
+    setSelectedFeature(featureTitle);
+    setMediaDialogOpen(true);
   };
 
   const handleMediaSelected = (files: File[]) => {
@@ -51,6 +70,19 @@ const Home = () => {
       } 
     });
   };
+
+  // Get display name
+  const displayName = profile?.full_name || user?.email?.split('@')[0] || 'User';
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-accent" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -63,7 +95,7 @@ const Home = () => {
         {/* Welcome Section */}
         <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-1 sm:mb-2">
-            Welcome back, <span className="gradient-text">User</span>.
+            Welcome back, <span className="gradient-text">{displayName}</span>.
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base lg:text-lg">What will you create with AI today?</p>
         </motion.div>
