@@ -1,18 +1,43 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { User, Mail, Lock, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import AuthLayout from "@/layouts/AuthLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { signUp } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    setIsLoading(true);
+    
+    const { error } = await signUp(email, password, name);
+    
+    if (error) {
+      if (error.message.includes('already registered')) {
+        toast.error("This email is already registered. Please sign in.");
+      } else {
+        toast.error(error.message || "Failed to create account");
+      }
+      setIsLoading(false);
+      return;
+    }
+
+    toast.success("Account created successfully!");
     navigate('/home');
   };
 
@@ -28,7 +53,7 @@ const Register = () => {
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-2xl sm:text-3xl font-bold">Create Account</CardTitle>
             <CardDescription className="text-muted-foreground">
-              Start your professional journey with NextEra AI
+              Start your professional journey with SnapEx AI
             </CardDescription>
           </CardHeader>
           
@@ -45,6 +70,7 @@ const Register = () => {
                     onChange={(e) => setName(e.target.value)}
                     className="input-field pl-12"
                     required
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -60,6 +86,7 @@ const Register = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     className="input-field pl-12"
                     required
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -75,6 +102,8 @@ const Register = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     className="input-field pl-12"
                     required
+                    disabled={isLoading}
+                    minLength={6}
                   />
                 </div>
               </div>
@@ -82,11 +111,21 @@ const Register = () => {
               <motion.button 
                 type="submit"
                 className="w-full btn-primary flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: isLoading ? 1 : 1.02 }}
+                whileTap={{ scale: isLoading ? 1 : 0.98 }}
+                disabled={isLoading}
               >
-                Get Started
-                <ArrowRight className="w-4 h-4" />
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    Get Started
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </motion.button>
             </form>
 
@@ -96,7 +135,10 @@ const Register = () => {
               <div className="flex-1 border-t border-border" />
             </div>
 
-            <button className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl border border-border hover:bg-secondary transition-colors">
+            <button 
+              className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl border border-border hover:bg-secondary transition-colors"
+              disabled={isLoading}
+            >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
