@@ -99,8 +99,8 @@ const Profile = () => {
   // User display data
   const displayName = profile?.full_name || user?.email?.split('@')[0] || 'User';
   const displayEmail = user?.email || 'No email';
-  const memberSince = user?.created_at 
-    ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+  const memberSince = profile?.created_at 
+    ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     : 'N/A';
 
   if (isLoading) {

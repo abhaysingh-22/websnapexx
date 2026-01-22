@@ -1,58 +1,28 @@
-import { supabase } from "@/integrations/supabase/client";
-
-const BUCKET_NAME = 'user-uploads';
+// Stub storage service - uses local URLs only (no backend)
 
 export const storageService = {
   async uploadFile(userId: string, file: File, folder: string = 'images'): Promise<string> {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-    const filePath = `${userId}/${folder}/${fileName}`;
-
-    const { error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(filePath, file);
-
-    if (error) throw error;
-
-    const { data: urlData } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(filePath);
-
-    return urlData.publicUrl;
+    // Create a local object URL for the file
+    return URL.createObjectURL(file);
   },
 
   async uploadMultipleFiles(userId: string, files: File[], folder: string = 'images'): Promise<string[]> {
-    const uploadPromises = files.map(file => this.uploadFile(userId, file, folder));
-    return Promise.all(uploadPromises);
+    return files.map(file => URL.createObjectURL(file));
   },
 
   async deleteFile(filePath: string): Promise<void> {
-    const { error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .remove([filePath]);
-
-    if (error) throw error;
+    // Revoke object URL if it's a blob URL
+    if (filePath.startsWith('blob:')) {
+      URL.revokeObjectURL(filePath);
+    }
   },
 
   async listFiles(userId: string, folder: string = 'images'): Promise<string[]> {
-    const { data, error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .list(`${userId}/${folder}`);
-
-    if (error) throw error;
-
-    return data.map(file => {
-      const { data: urlData } = supabase.storage
-        .from(BUCKET_NAME)
-        .getPublicUrl(`${userId}/${folder}/${file.name}`);
-      return urlData.publicUrl;
-    });
+    // No persistent storage - return empty
+    return [];
   },
 
   getPublicUrl(filePath: string): string {
-    const { data } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(filePath);
-    return data.publicUrl;
+    return filePath;
   },
 };

@@ -1,8 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
 import { authService } from '@/services/auth.service';
 import type { Profile } from '@/types/user.type';
+
+interface User {
+  id: string;
+  email: string;
+  user_metadata: { full_name?: string };
+}
+
+interface Session {
+  user: User;
+  access_token: string;
+}
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -20,43 +29,31 @@ export const useAuth = () => {
   }, []);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Defer profile fetch with setTimeout to avoid deadlock
-        if (session?.user) {
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-          }, 0);
-        } else {
-          setProfile(null);
+    // Check for existing session on mount
+    const initAuth = async () => {
+      try {
+        const existingSession = await authService.getSession();
+        if (existingSession) {
+          setSession(existingSession);
+          setUser(existingSession.user);
+          await fetchProfile(existingSession.user.id);
         }
-        
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+      } finally {
         setIsLoading(false);
       }
-    );
+    };
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-      
-      setIsLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    initAuth();
   }, [fetchProfile]);
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
       const data = await authService.signUp(email, password, fullName);
+      setSession(data.session as Session);
+      setUser(data.user as User);
+      await fetchProfile(data.user.id);
       return { data, error: null };
     } catch (error) {
       return { data: null, error: error as Error };
@@ -66,6 +63,9 @@ export const useAuth = () => {
   const signIn = async (email: string, password: string) => {
     try {
       const data = await authService.signIn(email, password);
+      setSession(data.session as Session);
+      setUser(data.user as User);
+      await fetchProfile(data.user.id);
       return { data, error: null };
     } catch (error) {
       return { data: null, error: error as Error };
@@ -75,6 +75,13 @@ export const useAuth = () => {
   const signInWithGoogle = async () => {
     try {
       const data = await authService.signInWithGoogle();
+      // After mock Google sign-in, fetch the session
+      const newSession = await authService.getSession();
+      if (newSession) {
+        setSession(newSession);
+        setUser(newSession.user);
+        await fetchProfile(newSession.user.id);
+      }
       return { data, error: null };
     } catch (error) {
       return { data: null, error: error as Error };
