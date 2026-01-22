@@ -1,11 +1,11 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import type { Profile } from "@/types/user.type";
-import type { LocalSession, LocalUser } from "@/services/auth.service";
+import type { Session, User } from "@supabase/supabase-js";
 
 interface AuthContextType {
-  user: LocalUser | null;
-  session: LocalSession | null;
+  user: User | null;
+  session: Session | null;
   profile: Profile | null;
   isLoading: boolean;
   isAuthenticated: boolean;
