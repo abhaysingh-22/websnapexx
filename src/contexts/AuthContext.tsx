@@ -1,11 +1,12 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import type { Session, User } from "@supabase/supabase-js";
+import type { Profile } from "@/types/user.type";
+import type { LocalSession, LocalUser } from "@/services/auth.service";
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  profile: null;
+  user: LocalUser | null;
+  session: LocalSession | null;
+  profile: Profile | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<{ data: unknown; error: Error | null }>;

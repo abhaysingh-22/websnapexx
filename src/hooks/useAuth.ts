@@ -1,32 +1,41 @@
 import { useEffect, useState } from "react";
-import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
-import { authService } from "@/services/auth.service";
+import type { Profile } from "@/types/user.type";
+import { authService, type LocalSession, type LocalUser } from "@/services/auth.service";
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<LocalUser | null>(null);
+  const [session, setSession] = useState<LocalSession | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Listener FIRST
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_, newSession) => {
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
-    });
+    const sync = async () => {
+      const s = await authService.getSession();
+      setSession(s);
+      setUser(s?.user ?? null);
 
-    // THEN initial session fetch
-    supabase.auth
-      .getSession()
-      .then(({ data }) => {
-        setSession(data.session);
-        setUser(data.session?.user ?? null);
-      })
-      .finally(() => setIsLoading(false));
+      // Lightweight local "profile" derived from user metadata.
+      setProfile(
+        s?.user
+          ? {
+              id: s.user.id,
+              user_id: s.user.id,
+              full_name: s.user.user_metadata?.full_name ?? null,
+              avatar_url: null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            }
+          : null
+      );
+    };
 
-    return () => subscription.unsubscribe();
+    // Initial load
+    sync().finally(() => setIsLoading(false));
+
+    // Listen for local auth changes
+    const handler = () => sync();
+    window.addEventListener(authService.authEventName, handler);
+    return () => window.removeEventListener(authService.authEventName, handler);
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
@@ -52,7 +61,7 @@ export const useAuth = () => {
   return {
     user,
     session,
-    profile: null,
+    profile,
     isLoading,
     isAuthenticated: !!session,
     signUp,
