@@ -300,6 +300,36 @@ const Profile = () => {
           </motion.div>
         </div>
 
+        {/* Quick Logout */}
+        <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
+          <div className="flex items-start gap-3 mb-3">
+            <LogOut className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+            <div>
+              <h2 className="text-base sm:text-lg font-bold">Logout</h2>
+              <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                You’ll be redirected to the sign in page.
+              </p>
+            </div>
+          </div>
+
+          <motion.button
+            onClick={handleLogout}
+            disabled={isSigningOut}
+            className="btn-primary w-full flex items-center justify-center gap-2"
+            whileHover={{ scale: isSigningOut ? 1 : 1.02 }}
+            whileTap={{ scale: isSigningOut ? 1 : 0.98 }}
+          >
+            {isSigningOut ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Logging out...
+              </>
+            ) : (
+              "Logout"
+            )}
+          </motion.button>
+        </motion.div>
+
         {/* Footer */}
         <motion.div 
           variants={itemVariants}
