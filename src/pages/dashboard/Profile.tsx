@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import TypewriterPlaceholder from "@/components/ui/TypewriterPlaceholder";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { externalSupabase } from "@/integrations/externalSupabase/client";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -37,7 +38,7 @@ const itemVariants = {
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, profile, isLoading, isAuthenticated, signOut } = useAuth();
+  const { user, profile, session, isLoading, isAuthenticated, signOut } = useAuth();
   const [rating, setRating] = useState<number | null>(null);
   const [feedback, setFeedback] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -77,12 +78,24 @@ const Profile = () => {
       return;
     }
 
-    // IMPORTANT:
-    // Client-side apps cannot securely delete an auth user from Supabase.
-    // That requires a server-side operation using a service role key.
-    // Here we do the safe client-side part: sign out + clear local cached data.
     setIsDeletingAccount(true);
     try {
+      if (!session) {
+        toast.error("You must be signed in to delete your account.");
+        return;
+      }
+
+      // Delete the auth user via YOUR Supabase Edge Function `delete-account`.
+      // This must be deployed in your Supabase project (uses service role key server-side).
+      const { error: deleteError } = await externalSupabase.functions.invoke("delete-account");
+      if (deleteError) {
+        toast.error(
+          deleteError.message ||
+            "Delete Account function not found. Please deploy `delete-account` in your Supabase project."
+        );
+        return;
+      }
+
       // Clear any local demo/cache data we manage in the browser
       localStorage.removeItem("app_conversations");
       localStorage.removeItem("app_messages");
@@ -95,9 +108,7 @@ const Profile = () => {
       }
 
       setShowDeleteDialog(false);
-      toast.error(
-        "Account deletion requires a server-side function in your Supabase project (service role). This app has signed you out and cleared local data."
-      );
+      toast.success("Account deleted successfully.");
       navigate("/register");
     } finally {
       setIsDeletingAccount(false);
