@@ -23,6 +23,16 @@ export const authService = {
   async signInWithGoogle() {
     // Redirect back into the app after OAuth completes
     const redirectTo = `${window.location.origin}/home`;
+
+    // Debug-only: helps confirm which backend project the browser is calling.
+    // Do not log secrets.
+    try {
+      const host = new URL(String(import.meta.env.VITE_SUPABASE_URL)).host;
+      console.log('[auth] starting Google OAuth', { host, redirectTo });
+    } catch {
+      console.log('[auth] starting Google OAuth', { redirectTo });
+    }
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -30,7 +40,14 @@ export const authService = {
       },
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error('[auth] Google OAuth error', {
+        message: error.message,
+        status: (error as unknown as { status?: number }).status,
+        name: (error as unknown as { name?: string }).name,
+      });
+      throw error;
+    }
     return data;
   },
 
