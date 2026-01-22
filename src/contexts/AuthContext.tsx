@@ -1,28 +1,17 @@
-import React, { createContext, useContext, ReactNode } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import type { Profile } from '@/types/user.type';
-
-interface User {
-  id: string;
-  email: string;
-  user_metadata: { full_name?: string };
-}
-
-interface Session {
-  user: User;
-  access_token: string;
-}
+import React, { createContext, useContext, ReactNode } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import type { Session, User } from "@supabase/supabase-js";
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  profile: Profile | null;
+  profile: null;
   isLoading: boolean;
   isAuthenticated: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<{ data: unknown; error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ data: unknown; error: Error | null }>;
   signOut: () => Promise<{ error: Error | null }>;
-  updateProfile: (updates: Partial<Pick<Profile, 'full_name' | 'avatar_url'>>) => Promise<{ data: Profile | null; error: Error | null }>;
+  updateProfile: (updates: unknown) => Promise<{ data: null; error: Error | null }>;
   refreshProfile: () => void;
 }
 
