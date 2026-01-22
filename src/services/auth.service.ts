@@ -20,6 +20,20 @@ export const authService = {
     return data;
   },
 
+  async signInWithGoogle() {
+    // Redirect back into the app after OAuth completes
+    const redirectTo = `${window.location.origin}/home`;
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo,
+      },
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
   async signIn(email: string, password: string) {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,

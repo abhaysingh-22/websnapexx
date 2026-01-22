@@ -72,6 +72,15 @@ export const useAuth = () => {
     }
   };
 
+  const signInWithGoogle = async () => {
+    try {
+      const data = await authService.signInWithGoogle();
+      return { data, error: null };
+    } catch (error) {
+      return { data: null, error: error as Error };
+    }
+  };
+
   const signOut = async () => {
     try {
       await authService.signOut();
@@ -104,6 +113,7 @@ export const useAuth = () => {
     isAuthenticated: !!session,
     signUp,
     signIn,
+    signInWithGoogle,
     signOut,
     updateProfile,
     refreshProfile: () => user && fetchProfile(user.id),
