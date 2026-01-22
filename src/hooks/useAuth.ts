@@ -1,60 +1,70 @@
 import { useEffect, useState } from "react";
+import type { Session, User } from "@supabase/supabase-js";
 import type { Profile } from "@/types/user.type";
-import { authService, type LocalSession, type LocalUser } from "@/services/auth.service";
+import { externalSupabase } from "@/integrations/externalSupabase/client";
 
 export const useAuth = () => {
-  const [user, setUser] = useState<LocalUser | null>(null);
-  const [session, setSession] = useState<LocalSession | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const sync = async () => {
-      const s = await authService.getSession();
-      setSession(s);
-      setUser(s?.user ?? null);
+    // 1) Subscribe first (prevents missing events)
+    const {
+      data: { subscription },
+    } = externalSupabase.auth.onAuthStateChange((_, nextSession) => {
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+      // Profile loading (DB) is not enabled in this slice.
+      setProfile(null);
+    });
 
-      // Lightweight local "profile" derived from user metadata.
-      setProfile(
-        s?.user
-          ? {
-              id: s.user.id,
-              user_id: s.user.id,
-              full_name: s.user.user_metadata?.full_name ?? null,
-              avatar_url: null,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            }
-          : null
-      );
-    };
+    // 2) Then load current session
+    externalSupabase.auth
+      .getSession()
+      .then(({ data }) => {
+        setSession(data.session);
+        setUser(data.session?.user ?? null);
+        setProfile(null);
+      })
+      .finally(() => setIsLoading(false));
 
-    // Initial load
-    sync().finally(() => setIsLoading(false));
-
-    // Listen for local auth changes
-    const handler = () => sync();
-    window.addEventListener(authService.authEventName, handler);
-    return () => window.removeEventListener(authService.authEventName, handler);
+    return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { data, error } = await authService.signUp(email, password, fullName);
-    return { data, error: (error as unknown as Error) ?? null };
+    const emailRedirectTo = `${window.location.origin}/signin`;
+    const { data, error } = await externalSupabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo,
+      },
+    });
+    return { data, error };
   };
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await authService.signIn(email, password);
-    return { data, error: (error as unknown as Error) ?? null };
+    const { data, error } = await externalSupabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    return { data, error };
   };
 
   const signInWithGoogle = async () => {
-    const { data, error } = await authService.signInWithGoogle();
-    return { data, error: (error as unknown as Error) ?? null };
+    const redirectTo = `${window.location.origin}/home`;
+    const { data, error } = await externalSupabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo },
+    });
+    return { data, error };
   };
 
   const signOut = async () => {
-    const { error } = await authService.signOut();
+    const { error } = await externalSupabase.auth.signOut();
     return { error };
   };
 
@@ -72,3 +82,4 @@ export const useAuth = () => {
     refreshProfile: () => undefined,
   };
 };
+
