@@ -87,12 +87,21 @@ const Profile = () => {
 
       // Delete the auth user via YOUR Supabase Edge Function `delete-account`.
       // This must be deployed in your Supabase project (uses service role key server-side).
-      const { error: deleteError } = await externalSupabase.functions.invoke("delete-account");
+      const { error: deleteError } = await externalSupabase.functions.invoke("delete-account", {
+        body: {},
+      });
       if (deleteError) {
-        toast.error(
-          deleteError.message ||
-            "Delete Account function not found. Please deploy `delete-account` in your Supabase project."
-        );
+        const msg = deleteError.message || "Delete failed";
+
+        // "Failed to fetch" from browsers usually means CORS preflight blocked OR
+        // the function gateway rejected the request before your function ran.
+        if (msg.toLowerCase().includes("failed to fetch")) {
+          toast.error(
+            "Delete failed (network/CORS). In your Supabase function settings: disable Verify JWT, add an OPTIONS handler, and return CORS headers on every response (including errors)."
+          );
+        } else {
+          toast.error(msg);
+        }
         return;
       }
 
