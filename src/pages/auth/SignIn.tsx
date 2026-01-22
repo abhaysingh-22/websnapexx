@@ -43,8 +43,7 @@ const SignIn = () => {
       return;
     }
 
-    // For OAuth, the browser will typically redirect away.
-    // If it doesn't (e.g. popup flow), onAuthStateChange will update session.
+    // Google sign-in is disabled in frontend-only demo mode.
   };
 
   return (
