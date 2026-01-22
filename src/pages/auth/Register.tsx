@@ -37,7 +37,7 @@ const Register = () => {
       return;
     }
 
-    // If email confirmation is enabled, Supabase returns no session until the user confirms.
+    // In some setups, sign-up may not create a session immediately.
     if (!data?.session) {
       toast.success("Account created — please verify your email, then sign in.");
       setIsLoading(false);
