@@ -25,6 +25,9 @@ import Premium from "./pages/dashboard/Premium";
 import Profile from "./pages/dashboard/Profile";
 import FAQs from "./pages/dashboard/FAQs";
 
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { PublicOnlyRoute } from "@/components/auth/PublicOnlyRoute";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -44,16 +47,30 @@ const App = () => (
               <Route path="/onboarding/3" element={<Onboarding3 />} />
               
               {/* Auth */}
-              <Route path="/register" element={<Register />} />
-              <Route path="/signin" element={<SignIn />} />
+              <Route
+                path="/register"
+                element={
+                  <PublicOnlyRoute>
+                    <Register />
+                  </PublicOnlyRoute>
+                }
+              />
+              <Route
+                path="/signin"
+                element={
+                  <PublicOnlyRoute>
+                    <SignIn />
+                  </PublicOnlyRoute>
+                }
+              />
               
               {/* Dashboard */}
-              <Route path="/home" element={<Home />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/history" element={<History />} />
-              <Route path="/premium" element={<Premium />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/faqs" element={<FAQs />} />
+              <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+              <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+              <Route path="/premium" element={<ProtectedRoute><Premium /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/faqs" element={<ProtectedRoute><FAQs /></ProtectedRoute>} />
               
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
