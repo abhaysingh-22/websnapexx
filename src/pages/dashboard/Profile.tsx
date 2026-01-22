@@ -44,6 +44,7 @@ const Profile = () => {
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleteError, setDeleteError] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -71,12 +72,35 @@ const Profile = () => {
   };
 
   const handleConfirmDelete = async () => {
-    if (deleteConfirmText.toLowerCase() === "confirm") {
-      await signOut();
-      toast.success("Account scheduled for deletion");
-      navigate('/register');
-    } else {
+    if (deleteConfirmText.trim().toLowerCase() !== "confirm") {
       setDeleteError(true);
+      return;
+    }
+
+    // IMPORTANT:
+    // Client-side apps cannot securely delete an auth user from Supabase.
+    // That requires a server-side operation using a service role key.
+    // Here we do the safe client-side part: sign out + clear local cached data.
+    setIsDeletingAccount(true);
+    try {
+      // Clear any local demo/cache data we manage in the browser
+      localStorage.removeItem("app_conversations");
+      localStorage.removeItem("app_messages");
+      localStorage.removeItem("auth-storage");
+
+      const { error } = await signOut();
+      if (error) {
+        toast.error("Failed to sign out before deletion");
+        return;
+      }
+
+      setShowDeleteDialog(false);
+      toast.error(
+        "Account deletion requires a server-side function in your Supabase project (service role). This app has signed you out and cleared local data."
+      );
+      navigate("/register");
+    } finally {
+      setIsDeletingAccount(false);
     }
   };
 
@@ -385,9 +409,17 @@ const Profile = () => {
             </button>
             <button
               onClick={handleConfirmDelete}
+              disabled={isDeletingAccount}
               className="flex-1 px-4 py-2.5 rounded-xl bg-destructive text-destructive-foreground font-bold text-sm hover:bg-destructive/90 transition-colors"
             >
-              Delete Account
+              {isDeletingAccount ? (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Deleting...
+                </span>
+              ) : (
+                "Delete Account"
+              )}
             </button>
           </div>
         </AlertDialogContent>
