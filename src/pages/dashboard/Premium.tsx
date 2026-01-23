@@ -28,50 +28,53 @@ const plans: PricingPlan[] = [
     buttonLabel: "Get Started",
     icon: Zap,
     features: [
-      { text: "Standard AI Models", included: true },
-      { text: "Standard Resolution", included: true },
-      { text: "Watermarked Exports", included: true },
-      { text: "No Commercial License", included: false },
+      { text: "1 Prompt-to-Image generation", included: true },
+      { text: "2 Photo Enhancements", included: true },
+      { text: "1 Compare Pictures session", included: true },
+      { text: "1 Professional Portrait", included: true },
+      { text: "AI video generation", included: false },
     ],
   },
   {
     tier: "FLEX",
-    name: "Pro Weekly",
-    price: "$19",
+    name: "Weekly Member",
+    price: "$4",
     period: "/week",
     buttonLabel: "Choose Pro",
     icon: Shield,
     features: [
-      { text: "Advanced AI Access", included: true },
-      { text: "4K Ultra HD Exports", included: true },
-      { text: "Priority Processing", included: true },
-      { text: "Commercial Usage", included: true },
+      { text: "5 Prompt-to-Image generation", included: true },
+      { text: "3 Photo Enhancements", included: true },
+      { text: "5 Compare Pictures sessions", included: true },
+      { text: "1 Professional Portrait per day", included: true },
+      { text: "AI video generation (2 times)", included: true },
     ],
   },
   {
     tier: "POWER",
-    name: "Pro Monthly",
-    price: "$49",
+    name: "Monthly Member",
+    price: "$11",
     period: "/mo",
     buttonLabel: "Upgrade Now",
     featured: true,
     icon: Crown,
     features: [
-      { text: "Unlimited Generations", included: true },
-      { text: "Enterprise Grade Models", included: true },
-      { text: "Batch Processing (Unlimited)", included: true },
-      { text: "24/7 Priority Support", included: true },
+      { text: "Unlimited Prompt-to-Image generation", included: true },
+      { text: "Unlimited Photo Enhancements", included: true },
+      { text: "Unlimited Compare Pictures sessions", included: true },
+      { text: "Unlimited Professional Portraits", included: true },
+      { text: "AI video generation (2 times/day)", included: true },
     ],
   },
 ];
 
 const comparisonData = [
-  { feature: "AI Model Access", free: "Standard v1", pro: "Advanced v4.2", power: "Enterprise RAW" },
-  { feature: "Export Quality", free: "720p", pro: "4K HD", power: "8K RAW" },
-  { feature: "Batch Processing", free: "N/A", pro: "10/session", power: "Unlimited" },
-  { feature: "Cloud Storage", free: "1GB", pro: "50GB", power: "500GB" },
-  { feature: "Commercial Rights", free: false, pro: true, power: true },
-  { feature: "Priority Support", free: "Community", pro: "Email 24h", power: "Dedicated" },
+  { feature: "Prompt-to-Image generation", free: "Standard v1", pro: "Advanced v4.2", power: "Enterprise RAW" },
+  { feature: "Photo Enhancements", free: "720p", pro: "4K HD", power: "8K RAW" },
+  { feature: "Compare Pictures sessions", free: "N/A", pro: "10/session", power: "Unlimited" },
+  { feature: "Professional Portraits", free: "1GB", pro: "50GB", power: "500GB" },
+  { feature: "AI video generation", free: false, pro: true, power: true },
+  { feature: "Priority Support", free: "Community", pro: "Email 24*7", power: "Dedicated" },
 ];
 
 const containerVariants = {
@@ -143,7 +146,7 @@ const Premium = () => {
                 className={cn(
                   "rounded-2xl p-5 sm:p-6 relative",
                   plan.featured 
-                    ? "bg-primary text-primary-foreground shadow-xl ring-2 ring-accent" 
+                    ? "bg-blue-50 text-blue-900 shadow-lg ring-1 ring-blue-200 dark:bg-blue-900/20 dark:text-blue-100 dark:ring-blue-700/40" 
                     : "bg-card border border-border"
                 )}
               >
@@ -162,17 +165,17 @@ const Premium = () => {
 
                 <div className={cn(
                   "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4",
-                  plan.featured ? "bg-accent/20" : "bg-secondary"
+                  plan.featured ? "bg-blue-100 dark:bg-blue-800/30" : "bg-secondary"
                 )}>
                   <Icon className={cn(
                     "w-5 h-5 sm:w-6 sm:h-6",
-                    plan.featured ? "text-accent" : "text-accent"
+                    plan.featured ? "text-blue-600 dark:text-blue-200" : "text-accent"
                   )} />
                 </div>
 
                 <p className={cn(
                   "text-xs font-bold tracking-widest mb-1 uppercase",
-                  plan.featured ? "text-primary-foreground/70" : "text-accent"
+                  plan.featured ? "text-blue-700 dark:text-blue-200/80" : "text-accent"
                 )}>
                   {plan.tier}
                 </p>
@@ -182,7 +185,7 @@ const Premium = () => {
                   <span className="text-3xl sm:text-4xl font-extrabold">{plan.price}</span>
                   <span className={cn(
                     "text-sm font-medium",
-                    plan.featured ? "text-primary-foreground/70" : "text-muted-foreground"
+                    plan.featured ? "text-blue-700/80 dark:text-blue-200/70" : "text-muted-foreground"
                   )}>
                     {plan.period}
                   </span>
@@ -192,7 +195,7 @@ const Premium = () => {
                   className={cn(
                     "w-full py-2.5 sm:py-3 rounded-xl font-bold mb-4 sm:mb-6 text-sm sm:text-base transition-all duration-300",
                     plan.featured 
-                      ? "bg-accent text-accent-foreground hover:bg-accent/90" 
+                      ? "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400" 
                       : "bg-secondary text-foreground hover:bg-secondary/80"
                   )}
                   whileHover={{ scale: 1.02 }}
@@ -211,11 +214,11 @@ const Premium = () => {
                       transition={{ delay: 0.3 + idx * 0.1 }}
                     >
                       {feature.included ? (
-                        <Check className="w-4 h-4 text-accent flex-shrink-0" />
+                        <Check className={cn("w-4 h-4 flex-shrink-0", plan.featured ? "text-blue-600 dark:text-blue-200" : "text-accent")} />
                       ) : (
                         <X className={cn(
                           "w-4 h-4 flex-shrink-0",
-                          plan.featured ? "text-primary-foreground/50" : "text-muted-foreground"
+                          plan.featured ? "text-blue-200/70 dark:text-blue-200/40" : "text-muted-foreground"
                         )} />
                       )}
                       <span className={cn(
@@ -245,7 +248,7 @@ const Premium = () => {
                     <p className="text-muted-foreground mb-1">Free</p>
                     <p className="font-medium">
                       {typeof row.free === 'boolean' 
-                        ? (row.free ? <Check className="w-4 h-4 text-accent" /> : "—")
+                        ? (row.free ? <Check className="w-4 h-4 text-accent" /> : <X className="w-4 h-4 text-muted-foreground" />)
                         : row.free
                       }
                     </p>
@@ -254,16 +257,16 @@ const Premium = () => {
                     <p className="text-muted-foreground mb-1">Pro</p>
                     <p className="font-medium">
                       {typeof row.pro === 'boolean' 
-                        ? (row.pro ? <Check className="w-4 h-4 text-accent" /> : "—")
+                        ? (row.pro ? <Check className="w-4 h-4 text-accent" /> : <X className="w-4 h-4 text-muted-foreground" />)
                         : row.pro
                       }
                     </p>
                   </div>
-                  <div className="text-accent">
-                    <p className="text-accent/70 mb-1">Power</p>
+                  <div className="text-blue-700 dark:text-blue-200">
+                    <p className="text-blue-700/70 dark:text-blue-200/70 mb-1">Power</p>
                     <p className="font-bold">
                       {typeof row.power === 'boolean' 
-                        ? (row.power ? <Check className="w-4 h-4 text-accent" /> : "—")
+                        ? (row.power ? <Check className="w-4 h-4 text-blue-600 dark:text-blue-200" /> : <X className="w-4 h-4 text-blue-200/70 dark:text-blue-200/40" />)
                         : row.power
                       }
                     </p>
@@ -281,7 +284,7 @@ const Premium = () => {
                   <th className="text-left p-3 sm:p-4 font-bold text-xs sm:text-sm">FEATURE</th>
                   <th className="text-left p-3 sm:p-4 font-bold text-xs sm:text-sm">FREE</th>
                   <th className="text-left p-3 sm:p-4 font-bold text-xs sm:text-sm">PRO</th>
-                  <th className="text-left p-3 sm:p-4 bg-accent/10 font-bold text-xs sm:text-sm">POWER</th>
+                  <th className="text-left p-3 sm:p-4 font-bold text-xs sm:text-sm bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-200">POWER</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -297,17 +300,17 @@ const Premium = () => {
                     <td className="p-3 sm:p-4 font-semibold text-xs sm:text-sm">{row.feature}</td>
                     <td className="p-3 sm:p-4 text-muted-foreground font-medium text-xs sm:text-sm">
                       {typeof row.free === 'boolean' ? (
-                        row.free ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent" /> : <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-muted block" />
+                        row.free ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent" /> : <X className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                       ) : row.free}
                     </td>
                     <td className="p-3 sm:p-4 font-medium text-xs sm:text-sm">
                       {typeof row.pro === 'boolean' ? (
-                        row.pro ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent" /> : <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-muted block" />
+                        row.pro ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent" /> : <X className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                       ) : row.pro}
                     </td>
-                    <td className="p-3 sm:p-4 bg-accent/5 text-accent font-bold text-xs sm:text-sm">
+                    <td className="p-3 sm:p-4 bg-blue-50 text-blue-700 font-bold text-xs sm:text-sm dark:bg-blue-900/20 dark:text-blue-200">
                       {typeof row.power === 'boolean' ? (
-                        row.power ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent" /> : <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-muted block" />
+                        row.power ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-200" /> : <X className="w-4 h-4 sm:w-5 sm:h-5 text-blue-200/70 dark:text-blue-200/40" />
                       ) : row.power}
                     </td>
                   </motion.tr>
