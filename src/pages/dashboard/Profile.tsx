@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { MessageSquarePlus, Frown, Meh, Smile, Send, User, Mail, Settings, LogOut, Trash2, Loader2 } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useState, useEffect } from "react";
@@ -39,7 +39,7 @@ const itemVariants = {
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, profile, session, isLoading, isAuthenticated, signOut } = useAuth();
+  const { user, profile, isLoading, isAuthenticated, signOut } = useAuth();
   const [rating, setRating] = useState<number | null>(null);
   const [feedback, setFeedback] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -58,14 +58,18 @@ const Profile = () => {
 
   const handleLogout = async () => {
     setIsSigningOut(true);
-    const { error } = await signOut();
-    if (error) {
-      toast.error("Failed to sign out");
+    try {
+      const { error } = await signOut();
+      if (error) {
+        // Even if the backend cannot revoke the session, we still attempt local sign-out.
+        toast.error(error.message || "Failed to sign out");
+      } else {
+        toast.success("Signed out successfully");
+      }
+    } finally {
       setIsSigningOut(false);
-      return;
+      navigate("/signin");
     }
-    toast.success("Signed out successfully");
-    navigate('/signin');
   };
 
   const handleDeleteAccount = () => {
@@ -82,14 +86,29 @@ const Profile = () => {
 
     setIsDeletingAccount(true);
     try {
-      if (!session) {
+      // Always read a fresh session from the auth client (the hook state can lag).
+      const { data: sessionData } = await externalSupabase.auth.getSession();
+      if (!sessionData.session) {
         toast.error("You must be signed in to delete your account.");
         return;
       }
 
-      const { data, error: deleteError } = await externalSupabase.functions.invoke("delete-account", {
-        body: {},
-      });
+      const invokeDelete = async () =>
+        externalSupabase.functions.invoke("delete-account", {
+          body: {},
+        });
+
+      let { error: deleteError } = await invokeDelete();
+
+      // If token expired/invalid, refresh once and retry.
+      if (deleteError?.message?.toLowerCase().includes("invalid or expired token")) {
+        const { error: refreshError } = await externalSupabase.auth.refreshSession();
+        if (refreshError) {
+          toast.error("Your session is no longer valid. Please sign in again and retry.");
+          return;
+        }
+        ({ error: deleteError } = await invokeDelete());
+      }
 
       if (deleteError) {
         const msg = deleteError.message || "Delete failed";
@@ -101,6 +120,8 @@ const Profile = () => {
           );
         } else if (msg.toLowerCase().includes("function not found")) {
           toast.error("The delete-account Edge Function is not deployed. Please deploy it first.");
+        } else if (msg.toLowerCase().includes("invalid or expired token")) {
+          toast.error("Your session is invalid. Please sign out, sign in again, and retry.");
         } else {
           toast.error(msg);
         }

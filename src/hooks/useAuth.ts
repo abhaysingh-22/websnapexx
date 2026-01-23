@@ -64,8 +64,17 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
-    const { error } = await externalSupabase.auth.signOut();
-    return { error };
+    // Some projects return 403 session_not_found for global sign-out.
+    // For UX we still want logout to succeed locally.
+    const global = await externalSupabase.auth.signOut({ scope: "global" });
+    const local = await externalSupabase.auth.signOut({ scope: "local" });
+
+    // If local sign-out worked, consider it a success even if global failed.
+    if (!local.error) return { error: null };
+    // If local failed but global worked, still consider it success.
+    if (!global.error) return { error: null };
+    // Both failed: surface the local error (more relevant to the app state).
+    return { error: local.error ?? global.error };
   };
 
   return {
