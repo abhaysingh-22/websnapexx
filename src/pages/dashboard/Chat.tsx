@@ -11,43 +11,85 @@ import {
   X,
   Download
 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import ChatLayout from "@/layouts/ChatLayout";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useChatStorage, ChatMessage } from "@/hooks/use-chat-storage";
+import { useConversations, Message } from "@/hooks/useConversations";
+import { useMessages } from "@/hooks/useMessages";
+import { generateConversationTitle } from "@/services/chatService";
+import { externalSupabase } from "@/integrations/externalSupabase/client";
+import { useAuthContext } from "@/contexts/AuthContext";
+
+interface DisplayMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  images?: string[];
+  timestamp: Date;
+}
 
 const Chat = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { featureTitle, selectedImages, conversationId } = location.state || { 
-    featureTitle: "AI Assistant", 
-    selectedImages: [],
-    conversationId: undefined
-  };
+  const [searchParams] = useSearchParams();
+  const { session } = useAuthContext();
   
-  const { messages, addMessage, completeConversation, isLoaded } = useChatStorage(conversationId, featureTitle);
+  // Get conversationId from URL params or location state
+  const urlConversationId = searchParams.get("conversation");
+  const { featureTitle = "AI Assistant", selectedImages = [] } = location.state || {};
+  
+  const { createConversation, updateConversationTitle } = useConversations();
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(urlConversationId);
+  const { messages: dbMessages, fetchMessages, setMessages, loading: messagesLoading } = useMessages(currentConversationId);
+  
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
   const scrollAreaWrapRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
   const shouldAutoScrollRef = useRef(false);
+  const isFirstMessage = useRef(true);
+
+  // Convert DB messages to display format
+  const messages: DisplayMessage[] = dbMessages.map((msg: Message) => ({
+    id: msg.id,
+    role: msg.role,
+    content: msg.content,
+    images: msg.image_url ? [msg.image_url] : undefined,
+    timestamp: new Date(msg.created_at),
+  }));
+
+  // Initialize - load existing conversation or prepare for new one
+  useEffect(() => {
+    if (urlConversationId) {
+      setCurrentConversationId(urlConversationId);
+      fetchMessages();
+      isFirstMessage.current = false;
+    }
+    setIsInitialized(true);
+  }, [urlConversationId]);
+
+  // Fetch messages when conversation changes
+  useEffect(() => {
+    if (currentConversationId && isInitialized) {
+      fetchMessages();
+    }
+  }, [currentConversationId, isInitialized]);
 
   // Scroll to bottom when viewing existing conversation with messages
   useEffect(() => {
-    if (isLoaded && messages.length > 0 && conversationId) {
-      // Viewing existing chat - scroll to bottom to show latest messages
+    if (isInitialized && messages.length > 0 && urlConversationId) {
       requestAnimationFrame(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
       });
     }
-  }, [isLoaded, conversationId]);
+  }, [isInitialized, urlConversationId, messages.length]);
 
   useEffect(() => {
-    // Convert selected files to preview URLs and hold them in input area (don't auto-send)
+    // Convert selected files to preview URLs
     if (selectedImages && selectedImages.length > 0) {
       const urls = selectedImages.map((file: File) => URL.createObjectURL(file));
       setPreviewImages(urls);
@@ -62,44 +104,105 @@ const Chat = () => {
     }
   }, [messages]);
 
+  // Direct database insert for messages (avoids race condition with hook state)
+  const insertMessage = async (
+    convId: string,
+    role: "user" | "assistant",
+    content: string,
+    imageUrl?: string
+  ): Promise<Message | null> => {
+    if (!session?.user?.id) return null;
+
+    try {
+      const { data, error } = await externalSupabase
+        .from("messages")
+        .insert({
+          conversation_id: convId,
+          user_id: session.user.id,
+          role,
+          content,
+          image_url: imageUrl,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Update local state immediately
+      setMessages((prev) => [...prev, data]);
+
+      // Update conversation's updated_at
+      await externalSupabase
+        .from("conversations")
+        .update({ updated_at: new Date().toISOString() })
+        .eq("id", convId);
+
+      return data;
+    } catch (err) {
+      console.error("Insert message error:", err);
+      return null;
+    }
+  };
+
   const handleSend = async () => {
     if (!input.trim() && previewImages.length === 0) return;
 
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      role: "user",
-      content: input,
-      images: previewImages.length > 0 ? [...previewImages] : undefined,
-      timestamp: new Date(),
-    };
-
-    shouldAutoScrollRef.current = true;
-    addMessage(userMessage);
+    const userContent = input;
+    const userImages = [...previewImages];
+    
     setInput("");
     setPreviewImages([]);
     setIsLoading(true);
+    shouldAutoScrollRef.current = true;
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "I understand what you're looking for. Let me process that for you...",
-        "That's a great idea! I'll help you achieve that effect.",
-        "I'm analyzing the image and applying the requested changes...",
-        "Here's what I suggest based on your request...",
-        "I've processed your request. The enhanced version is ready!",
-      ];
+    try {
+      let convId = currentConversationId;
+
+      // Create conversation if it doesn't exist
+      if (!convId) {
+        const newConversation = await createConversation(featureTitle || "New Conversation");
+        if (!newConversation) {
+          console.error("Failed to create conversation");
+          setIsLoading(false);
+          return;
+        }
+        convId = newConversation.id;
+        setCurrentConversationId(convId);
+        isFirstMessage.current = true;
+      }
+
+      // Add user message to database using direct insert
+      await insertMessage(convId, "user", userContent, userImages[0]);
+
+      // Generate title from first message
+      if (isFirstMessage.current && userContent.trim()) {
+        await generateConversationTitle(convId, userContent);
+        await updateConversationTitle(convId, userContent.length > 50 ? userContent.substring(0, 47) + "..." : userContent);
+        isFirstMessage.current = false;
+      }
+
+      // Simulate AI response (replace with actual AI call)
+      setTimeout(async () => {
+        const responses = [
+          "I understand what you're looking for. Let me process that for you...",
+          "That's a great idea! I'll help you achieve that effect.",
+          "I'm analyzing the image and applying the requested changes...",
+          "Here's what I suggest based on your request...",
+          "I've processed your request. The enhanced version is ready!",
+        ];
+        
+        const aiResponse = responses[Math.floor(Math.random() * responses.length)] + 
+          "\n\nIs there anything else you'd like me to adjust or any other modifications you'd like to make?";
+        
+        await insertMessage(convId!, "assistant", aiResponse);
+        shouldAutoScrollRef.current = true;
+        setIsLoading(false);
+      }, 1500);
       
-      const aiResponse: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: responses[Math.floor(Math.random() * responses.length)] + "\n\nIs there anything else you'd like me to adjust or any other modifications you'd like to make?",
-        timestamp: new Date(),
-      };
-      shouldAutoScrollRef.current = true;
-      addMessage(aiResponse);
-      completeConversation();
+    } catch (error) {
+      console.error("Error sending message:", error);
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

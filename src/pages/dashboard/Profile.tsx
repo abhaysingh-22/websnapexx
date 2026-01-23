@@ -8,6 +8,7 @@ import TypewriterPlaceholder from "@/components/ui/TypewriterPlaceholder";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { externalSupabase } from "@/integrations/externalSupabase/client";
+import { feedbackService } from "@/services/feedbackService";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -46,6 +47,7 @@ const Profile = () => {
   const [deleteError, setDeleteError] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -85,40 +87,38 @@ const Profile = () => {
         return;
       }
 
-      // Delete the auth user via YOUR Supabase Edge Function `delete-account`.
-      // This must be deployed in your Supabase project (uses service role key server-side).
-      const { error: deleteError } = await externalSupabase.functions.invoke("delete-account", {
+      const { data, error: deleteError } = await externalSupabase.functions.invoke("delete-account", {
         body: {},
       });
+
       if (deleteError) {
         const msg = deleteError.message || "Delete failed";
-
-        // "Failed to fetch" from browsers usually means CORS preflight blocked OR
-        // the function gateway rejected the request before your function ran.
-        if (msg.toLowerCase().includes("failed to fetch")) {
+        console.error("Delete account error:", deleteError);
+        
+        if (msg.toLowerCase().includes("failed to fetch") || msg.toLowerCase().includes("networkerror")) {
           toast.error(
-            "Delete failed (network/CORS). In your Supabase function settings: disable Verify JWT, add an OPTIONS handler, and return CORS headers on every response (including errors)."
+            "Edge Function not reachable. Please deploy the delete-account function to your Supabase project."
           );
+        } else if (msg.toLowerCase().includes("function not found")) {
+          toast.error("The delete-account Edge Function is not deployed. Please deploy it first.");
         } else {
           toast.error(msg);
         }
         return;
       }
 
-      // Clear any local demo/cache data we manage in the browser
+      // Clear local storage
       localStorage.removeItem("app_conversations");
       localStorage.removeItem("app_messages");
       localStorage.removeItem("auth-storage");
 
-      const { error } = await signOut();
-      if (error) {
-        toast.error("Failed to sign out before deletion");
-        return;
-      }
-
+      await signOut();
       setShowDeleteDialog(false);
       toast.success("Account deleted successfully.");
       navigate("/register");
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsDeletingAccount(false);
     }
@@ -130,14 +130,38 @@ const Profile = () => {
     }
   };
 
-  const handleSendFeedback = () => {
+  const handleSendFeedback = async () => {
     if (!feedback.trim()) {
       toast.error("Please enter your feedback");
       return;
     }
-    toast.success("Thank you for your feedback!");
-    setFeedback("");
-    setRating(null);
+
+    if (!user?.id) {
+      toast.error("You must be logged in to submit feedback");
+      return;
+    }
+
+    setIsSubmittingFeedback(true);
+
+    try {
+      const result = await feedbackService.submitFeedback({
+        userId: user.id,
+        rating: rating,
+        message: feedback.trim(),
+      });
+
+      if (result.success) {
+        toast.success("Thank you for your feedback!");
+        setFeedback("");
+        setRating(null);
+      } else {
+        toast.error(result.error || "Failed to submit feedback");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsSubmittingFeedback(false);
+    }
   };
 
   // User display data
@@ -271,12 +295,22 @@ const Profile = () => {
 
             <motion.button 
               onClick={handleSendFeedback}
+              disabled={isSubmittingFeedback}
               className="btn-primary flex items-center gap-2 text-sm font-bold w-full sm:w-auto justify-center"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: isSubmittingFeedback ? 1 : 1.05 }}
+              whileTap={{ scale: isSubmittingFeedback ? 1 : 0.98 }}
             >
-              Send Feedback
-              <Send className="w-4 h-4" />
+              {isSubmittingFeedback ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  Send Feedback
+                  <Send className="w-4 h-4" />
+                </>
+              )}
             </motion.button>
           </div>
         </motion.div>

@@ -1,11 +1,21 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, Download, ChevronLeft, ChevronRight, Calendar, Clock, Trash2, MessageSquare } from "lucide-react";
+import { Calendar, Clock, Trash2, MessageSquare, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useConversations } from "@/hooks/useConversations";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { useConversationHistory } from "@/hooks/use-chat-storage";
-import aiPortraitHero from "@/assets/ai-portrait-hero.jpg";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -29,9 +39,37 @@ const itemVariants = {
 
 const History = () => {
   const navigate = useNavigate();
-  const { conversations, deleteConversation } = useConversationHistory();
+  const { conversations, loading, deleteConversation } = useConversations();
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const hasData = conversations.length > 0;
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    
+    await deleteConversation(deleteId);
+    toast.success("Conversation deleted");
+    setDeleteId(null);
+  };
+
+  const handleOpenConversation = (conversationId: string) => {
+    navigate(`/chat?conversation=${conversationId}`);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
     <DashboardLayout>
@@ -48,7 +86,11 @@ const History = () => {
           Activity Feed
         </motion.h1>
 
-        {!hasData && (
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : conversations.length === 0 ? (
           <motion.div
             variants={itemVariants}
             className="card-elevated p-8 text-center"
@@ -64,61 +106,43 @@ const History = () => {
               Go to Home
             </Button>
           </motion.div>
-        )}
-
-        {hasData && (
+        ) : (
           <>
             {/* Mobile Cards View */}
             <div className="block lg:hidden space-y-4">
-              {conversations.map((item, index) => (
+              {conversations.map((item) => (
                 <motion.div
                   key={item.id}
                   variants={itemVariants}
                   className="card-elevated p-4 hover:shadow-lg transition-all duration-300"
                 >
                   <div className="flex gap-4">
-                    <img 
-                      src={item.previewImage || aiPortraitHero} 
-                      alt={item.featureTitle}
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover flex-shrink-0"
-                    />
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <MessageSquare className="w-8 h-8 text-primary" />
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm sm:text-base truncate">{item.featureTitle}</p>
-                      <p className="text-xs sm:text-sm text-accent font-medium truncate">
-                        {item.messages.length} messages
-                      </p>
+                      <p className="font-semibold text-sm sm:text-base truncate">{item.title}</p>
                       <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          {format(item.updatedAt, "MMM dd, yyyy")}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {format(item.updatedAt, "HH:mm")}
+                          {formatDate(item.updated_at)}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-                    <span className={`text-xs font-semibold px-2 py-1 rounded ${
-                      item.status === "COMPLETED" 
-                        ? "bg-green-500/20 text-green-600" 
-                        : "bg-yellow-500/20 text-yellow-600"
-                    }`}>
-                      {item.status}
-                    </span>
+                  <div className="flex items-center justify-end mt-3 pt-3 border-t border-border">
                     <div className="flex gap-2">
                       <motion.button 
                         className="p-2 rounded-lg hover:bg-secondary transition-all duration-300 text-accent"
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => navigate("/chat", { state: { conversationId: item.id, featureTitle: item.featureTitle } })}
+                        onClick={() => handleOpenConversation(item.id)}
                       >
                         <Eye className="w-4 h-4" />
                       </motion.button>
                       <motion.button 
                         className="p-2 rounded-lg hover:bg-destructive/10 transition-all duration-300 text-destructive"
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => deleteConversation(item.id)}
+                        onClick={() => setDeleteId(item.id)}
                       >
                         <Trash2 className="w-4 h-4" />
                       </motion.button>
@@ -132,10 +156,9 @@ const History = () => {
             <motion.div variants={itemVariants} className="hidden lg:block card-elevated overflow-hidden">
               {/* Table Header */}
               <div className="table-header grid grid-cols-12 gap-4 p-4">
-                <div className="col-span-2 font-bold">PREVIEW</div>
-                <div className="col-span-3 font-bold">FEATURE</div>
-                <div className="col-span-3 font-bold">DATE & TIME</div>
-                <div className="col-span-2 font-bold">STATUS</div>
+                <div className="col-span-1 font-bold"></div>
+                <div className="col-span-5 font-bold">TITLE</div>
+                <div className="col-span-4 font-bold">DATE & TIME</div>
                 <div className="col-span-2 text-right font-bold">ACTIONS</div>
               </div>
 
@@ -144,45 +167,31 @@ const History = () => {
                 className="divide-y divide-border"
                 variants={containerVariants}
               >
-                {conversations.map((item, index) => (
+                {conversations.map((item) => (
                   <motion.div 
                     key={item.id}
                     variants={itemVariants}
                     className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-secondary/50 transition-all duration-300"
                     whileHover={{ x: 4 }}
                   >
-                    <div className="col-span-2">
-                      <motion.img 
-                        src={item.previewImage || aiPortraitHero} 
-                        alt={item.featureTitle}
-                        className="w-16 h-16 rounded-lg object-cover shadow-sm"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.2 }}
-                      />
+                    <div className="col-span-1">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <MessageSquare className="w-5 h-5 text-primary" />
+                      </div>
                     </div>
-                    <div className="col-span-3">
-                      <p className="font-semibold">{item.featureTitle}</p>
-                      <p className="text-sm text-accent font-medium">{item.messages.length} messages</p>
+                    <div className="col-span-5">
+                      <p className="font-semibold truncate">{item.title}</p>
                     </div>
-                    <div className="col-span-3">
-                      <p className="font-semibold">{format(item.updatedAt, "MMM dd, yyyy")}</p>
-                      <p className="text-sm text-muted-foreground">{format(item.updatedAt, "HH:mm")}</p>
-                    </div>
-                    <div className="col-span-2">
-                      <span className={`text-xs font-semibold px-2 py-1 rounded ${
-                        item.status === "COMPLETED" 
-                          ? "bg-green-500/20 text-green-600" 
-                          : "bg-yellow-500/20 text-yellow-600"
-                      }`}>
-                        {item.status}
-                      </span>
+                    <div className="col-span-4">
+                      <p className="font-semibold">{formatDate(item.updated_at)}</p>
+                      <p className="text-sm text-muted-foreground">{formatTime(item.updated_at)}</p>
                     </div>
                     <div className="col-span-2 flex justify-end gap-2">
                       <motion.button 
                         className="p-2 rounded-lg hover:bg-secondary transition-all duration-300 text-accent"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => navigate("/chat", { state: { conversationId: item.id, featureTitle: item.featureTitle } })}
+                        onClick={() => handleOpenConversation(item.id)}
                       >
                         <Eye className="w-5 h-5" />
                       </motion.button>
@@ -190,7 +199,7 @@ const History = () => {
                         className="p-2 rounded-lg hover:bg-destructive/10 transition-all duration-300 text-destructive"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => deleteConversation(item.id)}
+                        onClick={() => setDeleteId(item.id)}
                       >
                         <Trash2 className="w-5 h-5" />
                       </motion.button>
@@ -202,6 +211,24 @@ const History = () => {
           </>
         )}
       </motion.div>
+
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Conversation</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete this conversation and all its messages.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 };
