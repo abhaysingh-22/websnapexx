@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, CircleDot, Wand2 } from "lucide-react";
 import Logo from "@/components/ui/Logo";
-import Footer from "@/components/ui/Footer";
 import { cn } from "@/lib/utils";
 
 interface OnboardingLayoutProps {
@@ -25,11 +24,11 @@ const OnboardingLayout = ({
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
+      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="h-16 md:h-[72px] flex items-center justify-between gap-4">
+          <div className="h-14 md:h-16 flex items-center justify-between gap-4">
             {/* Logo */}
             <div className="flex items-center gap-4">
               <Logo size="md" />
@@ -78,7 +77,7 @@ const OnboardingLayout = ({
 
             {/* Skip Link */}
             <Link 
-              to="/home"
+              to="/register"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Skip
@@ -95,13 +94,10 @@ const OnboardingLayout = ({
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-8 md:py-12">
+      {/* Main Content - fills remaining space */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-4 md:py-6 overflow-auto">
         {children}
       </main>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

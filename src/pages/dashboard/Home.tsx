@@ -71,8 +71,8 @@ const Home = () => {
     });
   };
 
-  // Get display name
-  const displayName = profile?.full_name || user?.email?.split('@')[0] || 'User';
+  // Get display name - prioritize full_name from user_metadata (set during registration)
+  const displayName = user?.user_metadata?.full_name || profile?.full_name || 'User';
 
   if (isLoading) {
     return (
