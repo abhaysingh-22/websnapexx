@@ -13,17 +13,16 @@ const Onboarding1 = () => {
   return (
     <OnboardingLayout currentStep={1}>
       <motion.div 
-        className="text-center mb-4 sm:mb-6 px-4"
+        className="text-center mb-2 px-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3">
+        <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-1">
           Restore & Compare
         </h1>
-        <p className="text-muted-foreground max-w-md mx-auto text-xs sm:text-sm">
-          Edit, Enhance, and Compare pictures in high definition with our 
-          state-of-the-art AI restoration engine.
+        <p className="text-muted-foreground max-w-md mx-auto text-[11px] sm:text-xs">
+          Edit, Enhance, and Compare pictures in high definition with our AI restoration engine.
         </p>
       </motion.div>
 
@@ -35,7 +34,7 @@ const Onboarding1 = () => {
       <StepIndicator currentStep={1} totalSteps={3} />
 
       <motion.div 
-        className="mt-4 sm:mt-6"
+        className="mt-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
