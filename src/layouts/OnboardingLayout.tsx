@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, CircleDot, Wand2 } from "lucide-react";
 import Logo from "@/components/ui/Logo";
+import Footer from "@/components/ui/Footer";
 import { cn } from "@/lib/utils";
 
 interface OnboardingLayoutProps {
@@ -24,7 +25,7 @@ const OnboardingLayout = ({
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen bg-background flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Top Navbar */}
       <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -94,10 +95,13 @@ const OnboardingLayout = ({
         </div>
       </header>
 
-      {/* Main Content - fills remaining space */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 py-4 md:py-6 overflow-auto">
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-4 md:py-6">
         {children}
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
