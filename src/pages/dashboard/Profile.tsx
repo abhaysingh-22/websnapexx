@@ -164,11 +164,11 @@ const Profile = () => {
     }
   };
 
-  // User display data
-  const displayName = profile?.full_name || user?.email?.split('@')[0] || 'User';
+  // User display data - use full_name from user metadata (set during registration)
+  const displayName = user?.user_metadata?.full_name || profile?.full_name || 'User';
   const displayEmail = user?.email || 'No email';
-  const memberSince = profile?.created_at 
-    ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+  const memberSince = user?.created_at 
+    ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     : 'N/A';
 
   if (isLoading) {
@@ -192,7 +192,7 @@ const Profile = () => {
         {/* Profile Header Card */}
         <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-accent to-cyan-400 flex items-center justify-center ring-4 ring-accent/20">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center ring-4 ring-accent/20">
               <User className="w-8 h-8 sm:w-10 sm:h-10 text-accent-foreground" />
             </div>
             <div className="text-center sm:text-left flex-1">
@@ -317,26 +317,22 @@ const Profile = () => {
 
         {/* Account Actions */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Logout Account */}
-          <motion.div 
-            variants={itemVariants}
-            className="card-elevated p-4 sm:p-6 border-l-4 border-l-warning"
-            whileHover={{ x: 4 }}
-            transition={{ duration: 0.2 }}
-          >
+          {/* Logout */}
+          <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
             <div className="flex items-start gap-3 mb-3">
-              <LogOut className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
+              <LogOut className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-warning">Logout Account</h2>
+                <h2 className="text-base sm:text-lg font-bold">Logout</h2>
                 <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                  Logout from your current session safely.
+                  You'll be redirected to the sign in page.
                 </p>
               </div>
             </div>
-            <motion.button 
+
+            <motion.button
               onClick={handleLogout}
               disabled={isSigningOut}
-              className="w-full px-4 py-2.5 rounded-xl bg-warning/10 text-warning font-bold text-sm hover:bg-warning/20 transition-all duration-300 flex items-center justify-center gap-2"
+              className="btn-primary w-full flex items-center justify-center gap-2"
               whileHover={{ scale: isSigningOut ? 1 : 1.02 }}
               whileTap={{ scale: isSigningOut ? 1 : 0.98 }}
             >
@@ -346,22 +342,17 @@ const Profile = () => {
                   Logging out...
                 </>
               ) : (
-                'Logout'
+                "Logout"
               )}
             </motion.button>
           </motion.div>
 
           {/* Delete Account */}
-          <motion.div 
-            variants={itemVariants}
-            className="card-elevated p-4 sm:p-6 border-l-4 border-l-destructive"
-            whileHover={{ x: 4 }}
-            transition={{ duration: 0.2 }}
-          >
+          <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
             <div className="flex items-start gap-3 mb-3">
               <Trash2 className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-destructive">Delete Account</h2>
+                <h2 className="text-base sm:text-lg font-bold">Delete Account</h2>
                 <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
                   Permanently remove your account and all data.
                 </p>
@@ -369,7 +360,7 @@ const Profile = () => {
             </div>
             <motion.button 
               onClick={handleDeleteAccount}
-              className="w-full px-4 py-2.5 rounded-xl border border-destructive text-destructive font-bold text-sm hover:bg-destructive/10 transition-all duration-300"
+              className="btn-primary w-full flex items-center justify-center gap-2 bg-destructive hover:bg-destructive/90"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -377,36 +368,6 @@ const Profile = () => {
             </motion.button>
           </motion.div>
         </div>
-
-        {/* Quick Logout */}
-        <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
-          <div className="flex items-start gap-3 mb-3">
-            <LogOut className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-            <div>
-              <h2 className="text-base sm:text-lg font-bold">Logout</h2>
-              <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                You’ll be redirected to the sign in page.
-              </p>
-            </div>
-          </div>
-
-          <motion.button
-            onClick={handleLogout}
-            disabled={isSigningOut}
-            className="btn-primary w-full flex items-center justify-center gap-2"
-            whileHover={{ scale: isSigningOut ? 1 : 1.02 }}
-            whileTap={{ scale: isSigningOut ? 1 : 0.98 }}
-          >
-            {isSigningOut ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Logging out...
-              </>
-            ) : (
-              "Logout"
-            )}
-          </motion.button>
-        </motion.div>
 
         {/* Footer */}
         <motion.div 
