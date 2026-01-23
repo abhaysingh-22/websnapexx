@@ -1,14 +1,13 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, Clock, Crown, User, HelpCircle, Menu, Moon, Sun } from "lucide-react";
-import { useState } from "react";
 import Logo from "@/components/ui/Logo";
 import Footer from "@/components/ui/Footer";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "@/hooks/use-theme";
-
+import { useAuth } from "@/hooks/useAuth";
 interface DashboardLayoutProps {
   children: ReactNode;
 }
@@ -24,7 +23,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-
+  const { user } = useAuth();
+  
+  // Get user's full name from metadata (set during registration)
+  const displayName = user?.user_metadata?.full_name || 'User';
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Top Navbar */}
@@ -88,8 +90,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               {/* User Avatar */}
               <div className="flex items-center gap-2 md:gap-3">
                 <div className="text-right hidden sm:block">
-                  <p className="text-sm font-medium">Alex Rivera</p>
-                  <p className="text-xs text-muted-foreground">Creative Director</p>
+                  <p className="text-sm font-medium">{displayName}</p>
                 </div>
                 <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-secondary flex items-center justify-center ring-2 ring-accent">
                   <User className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />
