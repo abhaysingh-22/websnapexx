@@ -116,13 +116,13 @@ const Premium = () => {
         {/* Header */}
         <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
           <p className="text-xs font-bold tracking-widest text-accent uppercase mb-2">
-            NEXTERA ECOSYSTEM
+            SNAPEXX ECOSYSTEM
           </p>
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2">
             Premium Subscription Plans
           </h1>
           <p className="text-muted-foreground max-w-lg text-sm sm:text-base leading-relaxed">
-            Elevate your professional workflow with NextEra's futuristic AI tools. 
+            Elevate your professional workflow with SnapExx's AI tools. 
             Choose the plan that scales with your creativity.
           </p>
         </motion.div>
@@ -317,11 +317,11 @@ const Premium = () => {
           </div>
 
           <div className="p-3 sm:p-4 text-center text-xs text-muted-foreground border-t border-border font-medium">
-            <span className="block sm:inline">* All prices in USD</span>
+            <span className="block sm:inline">Unlock Premium</span>
             <span className="hidden sm:inline mx-2">•</span>
-            <span className="block sm:inline">Cancel anytime</span>
+            <span className="block sm:inline">Pro</span>
             <span className="hidden sm:inline mx-2">•</span>
-            <span className="block sm:inline">Commercial license: Pro tiers only</span>
+            <span className="block sm:inline">Power</span>
           </div>
         </motion.div>
       </motion.div>

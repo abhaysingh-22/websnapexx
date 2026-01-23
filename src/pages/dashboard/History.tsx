@@ -83,7 +83,7 @@ const History = () => {
           variants={itemVariants}
           className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-6 sm:mb-8"
         >
-          Activity Feed
+          Your Activity
         </motion.h1>
 
         {loading ? (

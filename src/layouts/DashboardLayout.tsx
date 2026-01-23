@@ -74,7 +74,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 className="hidden md:flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <HelpCircle className="w-4 h-4" />
-                <span className="hidden lg:inline">Help</span>
+                <span className="hidden lg:inline">FAQs</span>
               </Link>
 
               {/* Theme Toggle */}

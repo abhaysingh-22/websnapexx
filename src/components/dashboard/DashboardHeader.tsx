@@ -71,24 +71,24 @@ const DashboardHeader = () => {
       {/* Bottom Section */}
       <div className="p-4 space-y-4 border-t border-border">
         {/* Plan Card */}
-        <div className="bg-secondary rounded-xl p-4">
+        {/* <div className="bg-secondary rounded-xl p-4">
           <p className="text-xs font-semibold text-accent mb-1">CURRENT PLAN</p>
           <p className="font-semibold mb-3">Free Trial</p>
           <div className="w-full bg-border rounded-full h-1.5 mb-2">
             <div className="bg-accent h-1.5 rounded-full" style={{ width: '67%' }} />
           </div>
           <p className="text-xs text-muted-foreground">670/1000 credits remaining</p>
-        </div>
+        </div> */}
 
         {/* Upgrade Button */}
-        <Link 
+        {/* <Link 
           to="/premium" 
           onClick={() => setMobileOpen(false)}
           className="w-full btn-primary flex items-center justify-center gap-2"
         >
           <ArrowUp className="w-4 h-4" />
           Upgrade to Pro
-        </Link>
+        </Link> */}
 
         {/* Help */}
         <Link 

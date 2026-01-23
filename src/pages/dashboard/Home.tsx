@@ -95,7 +95,7 @@ const Home = () => {
         {/* Welcome Section */}
         <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-1 sm:mb-2">
-            Welcome back, <span className="gradient-text">{displayName}</span>.
+            Welcome, <span className="gradient-text">{displayName}</span>.
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base lg:text-lg">What will you create with AI today?</p>
         </motion.div>

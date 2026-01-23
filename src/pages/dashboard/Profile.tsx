@@ -220,21 +220,21 @@ const Profile = () => {
               <h1 className="text-xl sm:text-2xl font-bold">{displayName}</h1>
               <p className="text-muted-foreground text-sm sm:text-base">{displayEmail}</p>
               <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
-                <span className="badge-pro">MEMBER</span>
+                <span className="badge-pro">Creative Director</span>
                 <span className="text-xs text-muted-foreground">Since {memberSince}</span>
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Account Management */}
+        {/* Account Details */}
         <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
           <div className="flex items-center gap-3 mb-4 sm:mb-6">
             <div className="icon-box-blue">
               <Settings className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold">Account Management</h2>
+              <h2 className="text-lg sm:text-xl font-bold">Account Details</h2>
               <p className="text-muted-foreground text-xs sm:text-sm">
                 Your account credentials
               </p>
@@ -276,7 +276,7 @@ const Profile = () => {
             <div>
               <h2 className="text-lg sm:text-xl font-bold">Feedback</h2>
               <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                How can we improve your AI generation experience?
+                Help us to improve by sharing your thoughts and suggestions.
               </p>
             </div>
           </div>
@@ -345,7 +345,7 @@ const Profile = () => {
               <div>
                 <h2 className="text-base sm:text-lg font-bold">Logout</h2>
                 <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                  You'll be redirected to the sign in page.
+                  Logging out will end your current session.
                 </p>
               </div>
             </div>
