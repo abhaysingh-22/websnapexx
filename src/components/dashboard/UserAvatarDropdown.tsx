@@ -124,7 +124,10 @@ const UserAvatarDropdown = ({ displayName, email }: UserAvatarDropdownProps) => 
   };
 
   const handleContactUs = () => {
-    window.location.href = "mailto:nextera.inbox@gmail.com";
+    const footer = document.querySelector('footer');
+    if (footer) {
+      footer.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const handleFeedback = () => {
