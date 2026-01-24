@@ -63,17 +63,17 @@ const plans: PricingPlan[] = [
       { text: "Unlimited Photo Enhancements", included: true },
       { text: "Unlimited Compare Pictures sessions", included: true },
       { text: "Unlimited Professional Portraits", included: true },
-      { text: "AI video generation (2 times/day)", included: true },
+      { text: "AI video generation (2/day)", included: true },
     ],
   },
 ];
 
 const comparisonData = [
-  { feature: "Prompt-to-Image generation", free: "Standard v1", pro: "Advanced v4.2", power: "Enterprise RAW" },
-  { feature: "Photo Enhancements", free: "720p", pro: "4K HD", power: "8K RAW" },
-  { feature: "Compare Pictures sessions", free: "N/A", pro: "10/session", power: "Unlimited" },
-  { feature: "Professional Portraits", free: "1GB", pro: "50GB", power: "500GB" },
-  { feature: "AI video generation", free: false, pro: true, power: true },
+  { feature: "Prompt-to-Image generation", free: "1 use", pro: "5/ Week", power: "Unlimited" },
+  { feature: "Photo Enhancements", free: "2 uses ", pro: "3/ Week", power: "Unlimited" },
+  { feature: "Compare Pictures sessions", free: "1 use", pro: "5/ Week", power: "Unlimited" },
+  { feature: "Professional Portraits", free: "1 use", pro: "1/ Day", power: "Unlimited" },
+  { feature: "AI video generation", free: false, pro: "2/ Week", power: "2/ Day" },
   { feature: "Priority Support", free: "Community", pro: "Email 24*7", power: "Dedicated" },
 ];
 
