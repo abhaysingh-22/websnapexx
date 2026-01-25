@@ -46,7 +46,7 @@ const Register = () => {
     }
 
     toast.success("Account created successfully!");
-    navigate('/home');
+    navigate('/onboarding/1');
   };
 
   const handleGoogle = async () => {

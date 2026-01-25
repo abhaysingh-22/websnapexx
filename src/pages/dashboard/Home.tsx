@@ -42,12 +42,27 @@ const Home = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  // For featured cards - open media picker for authenticated users
+  // Features that don't require image upload (prompt-based or video generation)
+  const noImageRequiredFeatures = ["AI Ad Video Generation", "Prompt to Picture"];
+
+  // For featured cards - open media picker for authenticated users (skip for certain features)
   const handleFeaturedClick = (featureTitle: string) => {
     if (!isAuthenticated) {
       navigate("/register");
       return;
     }
+    
+    // Skip media picker for features that don't require image upload
+    if (noImageRequiredFeatures.includes(featureTitle)) {
+      navigate("/chat", { 
+        state: { 
+          featureTitle,
+          selectedImages: [] 
+        } 
+      });
+      return;
+    }
+    
     setSelectedFeature(featureTitle);
     setMediaDialogOpen(true);
   };

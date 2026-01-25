@@ -34,7 +34,7 @@ export const useAuth = () => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const emailRedirectTo = `${window.location.origin}/signin`;
+    const emailRedirectTo = `${window.location.origin}/onboarding/1`;
     const { data, error } = await externalSupabase.auth.signUp({
       email,
       password,
@@ -55,7 +55,7 @@ export const useAuth = () => {
   };
 
   const signInWithGoogle = async () => {
-    const redirectTo = `${window.location.origin}/home`;
+    const redirectTo = `${window.location.origin}/onboarding/1`;
     const { data, error } = await externalSupabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo },
