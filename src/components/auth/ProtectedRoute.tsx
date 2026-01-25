@@ -8,8 +8,9 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
 
   if (isLoading) return null;
 
+  // Redirect to onboarding when not authenticated (session expired or not logged in)
   if (!isAuthenticated) {
-    return <Navigate to="/signin" replace state={{ from: location.pathname }} />;
+    return <Navigate to="/onboarding/1" replace state={{ from: location.pathname }} />;
   }
 
   return <>{children}</>;
