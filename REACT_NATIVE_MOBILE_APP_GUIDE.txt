@@ -386,10 +386,21 @@ import 'react-native-url-polyfill/auto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+// ============================================================================
+// CRITICAL: YOUR EXTERNAL SUPABASE CREDENTIALS
+// ============================================================================
+// These are HARDCODED to match your web app's externalSupabase/client.ts
+// This ensures ALL requests go to YOUR backend, not Lovable Cloud
+// ============================================================================
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+const EXTERNAL_SUPABASE_URL = 'https://lhqovttrqyfjwbojnopl.supabase.co';
+const EXTERNAL_SUPABASE_ANON_KEY = 'sb_publishable_oAHwrdZEBuzjyRnjX0ISUw_V6ikF-0S';
+
+// You can also use environment variables as fallback:
+// const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || EXTERNAL_SUPABASE_URL;
+// const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || EXTERNAL_SUPABASE_ANON_KEY;
+
+export const supabase = createClient(EXTERNAL_SUPABASE_URL, EXTERNAL_SUPABASE_ANON_KEY, {
   auth: {
     storage: AsyncStorage,
     autoRefreshToken: true,
@@ -2642,18 +2653,51 @@ Before deploying, test these flows against YOUR external Supabase:
 [ ] Image Upload - works with user-uploads bucket
 
 ================================================================================
-VERIFICATION SUMMARY
+FINAL VERIFICATION AUDIT (2025-01-27) - ALL REQUESTS GO TO YOUR BACKEND
 ================================================================================
 
-✅ Supabase credentials: External instance (lhqovttrqyfjwbojnopl.supabase.co)
-✅ conversations.title: Matches useConversations.ts (NOT feature_title)
-✅ messages.image_url: Matches useMessages.ts (NOT images array)
-✅ Auth methods: All 4 methods match useAuth.ts exactly
-✅ Session handling: AsyncStorage configured for mobile persistence
-✅ Navigation: 3-step onboarding + auth + main tabs (matches web flow)
-✅ Theme: Dark mode colors match web app's index.css
+SUPABASE CLIENT AUDIT:
+✅ src/lib/supabase.ts - HARDCODED external credentials (not env vars)
+   URL: https://lhqovttrqyfjwbojnopl.supabase.co
+   Key: sb_publishable_oAHwrdZEBuzjyRnjX0ISUw_V6ikF-0S
 
-This guide is 100% ready. Copy the files, install dependencies, and run.
+SERVICE IMPORT AUDIT (all import from @/lib/supabase):
+✅ src/contexts/AuthContext.tsx - line 432
+✅ src/services/auth.service.ts - line 2292
+✅ src/services/chat.service.ts - line 2341
+✅ src/services/history.service.ts - line 2465
+
+DATABASE QUERY AUDIT:
+✅ chatService.createConversation() → .from('conversations').insert({ title: ... })
+✅ chatService.getConversations() → .from('conversations').select('*')
+✅ chatService.updateConversationTitle() → .from('conversations').update({ title })
+✅ chatService.deleteConversation() → .from('conversations').delete()
+✅ chatService.addMessage() → .from('messages').insert({ image_url: ... })
+✅ chatService.getMessages() → .from('messages').select('*')
+
+COLUMN NAME VERIFICATION:
+✅ conversations.title (NOT feature_title) - matches useConversations.ts
+✅ messages.image_url (NOT images array) - matches useMessages.ts
+✅ profiles.full_name, avatar_url - matches Profile type
+
+AUTH METHOD AUDIT:
+✅ signUp: supabase.auth.signUp({ data: { full_name } })
+✅ signIn: supabase.auth.signInWithPassword()
+✅ signInWithGoogle: supabase.auth.signInWithOAuth({ provider: 'google' })
+✅ signOut: supabase.auth.signOut()
+✅ getSession: supabase.auth.getSession()
+✅ onAuthStateChange: supabase.auth.onAuthStateChange()
+
+NO LOVABLE CLOUD REFERENCES:
+✅ No imports from @/integrations/supabase/client
+✅ No references to uukuqppqotproqkdvngy (Lovable Cloud project ID)
+✅ All requests go to lhqovttrqyfjwbojnopl (YOUR external Supabase)
+
+================================================================================
+100% CONFIRMED: ALL REQUESTS GO TO YOUR EXTERNAL SUPABASE BACKEND
+================================================================================
+
+This guide is ready. Copy the files, install dependencies, and run.
 
 ================================================================================
 END OF GUIDE
