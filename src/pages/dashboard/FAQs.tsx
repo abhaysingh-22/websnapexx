@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { supportService } from "@/services/supportService";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 const faqs = [
   {
@@ -127,20 +129,35 @@ const FAQs = () => {
   const [contactSubject, setContactSubject] = useState("");
   const [contactMessage, setContactMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const { session } = useAuthContext();
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!contactSubject.trim() || !contactMessage.trim()) {
       toast.error("Please fill in both subject and message");
       return;
     }
+
+    if (!session?.user?.id) {
+      toast.error("You must be signed in to contact support");
+      return;
+    }
+
     setSending(true);
-    setTimeout(() => {
+    const result = await supportService.createTicket({
+      userId: session.user.id,
+      subject: contactSubject.trim(),
+      message: contactMessage.trim(),
+    });
+
+    if (result.success) {
       toast.success("Message sent! We'll get back to you soon.");
       setContactSubject("");
       setContactMessage("");
       setContactOpen(false);
-      setSending(false);
-    }, 1000);
+    } else {
+      toast.error(result.error || "Failed to send message. Please try again.");
+    }
+    setSending(false);
   };
 
   const filteredFaqs = faqs.filter(
