@@ -1,8 +1,13 @@
 import { motion } from "framer-motion";
-import { HelpCircle, ChevronDown, ChevronUp, MessageCircle, Search } from "lucide-react";
+import { HelpCircle, ChevronDown, ChevronUp, MessageCircle, Search, Send, X } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const faqs = [
   {
@@ -118,6 +123,25 @@ const FAQItem = ({
 const FAQs = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [contactOpen, setContactOpen] = useState(false);
+  const [contactSubject, setContactSubject] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const handleSendMessage = () => {
+    if (!contactSubject.trim() || !contactMessage.trim()) {
+      toast.error("Please fill in both subject and message");
+      return;
+    }
+    setSending(true);
+    setTimeout(() => {
+      toast.success("Message sent! We'll get back to you soon.");
+      setContactSubject("");
+      setContactMessage("");
+      setContactOpen(false);
+      setSending(false);
+    }, 1000);
+  };
 
   const filteredFaqs = faqs.filter(
     faq => 
@@ -209,11 +233,51 @@ const FAQs = () => {
             className="btn-primary font-bold text-sm sm:text-base"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
+            onClick={() => setContactOpen(true)}
           >
             Contact Support
           </motion.button>
         </motion.div>
       </motion.div>
+
+      {/* Contact Support Dialog */}
+      <Dialog open={contactOpen} onOpenChange={setContactOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5 text-accent" />
+              Contact Support
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Subject</label>
+              <Input
+                placeholder="What's your question about?"
+                value={contactSubject}
+                onChange={(e) => setContactSubject(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Message</label>
+              <Textarea
+                placeholder="Describe your issue or question..."
+                value={contactMessage}
+                onChange={(e) => setContactMessage(e.target.value)}
+                rows={4}
+              />
+            </div>
+            <Button 
+              className="w-full gap-2" 
+              onClick={handleSendMessage}
+              disabled={sending}
+            >
+              <Send className="w-4 h-4" />
+              {sending ? "Sending..." : "Send Message"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 };

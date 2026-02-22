@@ -37,7 +37,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="h-16 md:h-[72px] flex items-center justify-between gap-4">
             {/* Logo */}
-            <Logo size="md" />
+            <Link to="/home" className="flex items-center">
+              <Logo size="md" />
+            </Link>
             
             {/* Vertical Separator */}
             <div className="hidden md:block h-8 w-px bg-border mx-2" />
