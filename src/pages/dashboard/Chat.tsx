@@ -1,4 +1,6 @@
 import { useRef, useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Send, 
@@ -20,6 +22,7 @@ import { useMessages } from "@/hooks/useMessages";
 import { generateConversationTitle } from "@/services/chatService";
 import { externalSupabase } from "@/integrations/externalSupabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { aiService, getStarterPrompts, isFeatureMode } from "@/services/aiService";
 
 interface DisplayMessage {
   id: string;
@@ -181,23 +184,32 @@ const Chat = () => {
         isFirstMessage.current = false;
       }
 
-      // Simulate AI response (replace with actual AI call)
-      setTimeout(async () => {
-        const responses = [
-          "I understand what you're looking for. Let me process that for you...",
-          "That's a great idea! I'll help you achieve that effect.",
-          "I'm analyzing the image and applying the requested changes...",
-          "Here's what I suggest based on your request...",
-          "I've processed your request. The enhanced version is ready!",
-        ];
-        
-        const aiResponse = responses[Math.floor(Math.random() * responses.length)] + 
-          "\n\nIs there anything else you'd like me to adjust or any other modifications you'd like to make?";
-        
-        await insertMessage(convId!, "assistant", aiResponse);
-        shouldAutoScrollRef.current = true;
-        setIsLoading(false);
-      }, 1500);
+      // Build conversation history for context (last 10 messages)
+      const conversationHistory = messages.slice(-10).map((m) => ({
+        role: m.role as "user" | "assistant",
+        content: m.content,
+      }));
+
+      // Call real AI via Supabase Edge Function
+      const aiResult = await aiService.sendMessage({
+        message: userContent,
+        imageUrl: userImages[0],
+        featureType: featureTitle || "Edit/Enhance Photo",
+        conversationHistory,
+      });
+
+      if (aiResult.success && aiResult.message) {
+        // Pass generated imageUrl (Vertex AI Imagen) if present
+        await insertMessage(convId!, "assistant", aiResult.message, aiResult.imageUrl);
+      } else {
+        await insertMessage(
+          convId!,
+          "assistant",
+          `Sorry, I encountered an error: ${aiResult.error || "Unknown error"}. Please try again.`
+        );
+      }
+      shouldAutoScrollRef.current = true;
+      setIsLoading(false);
       
     } catch (error) {
       console.error("Error sending message:", error);
@@ -271,7 +283,9 @@ const Chat = () => {
             </div>
             <div className="min-w-0">
               <h1 className="font-bold text-sm sm:text-lg truncate">{featureTitle}</h1>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">AI-powered assistance</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">
+                {isFeatureMode(featureTitle || "") ? "Vertex AI" : "Gemini AI"}
+            </p>
             </div>
           </div>
         </motion.div>
@@ -292,9 +306,21 @@ const Chat = () => {
                       <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                     </div>
                     <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Start a conversation</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground max-w-sm">
+                    <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mb-4">
                       Upload an image or type a message to get started with {featureTitle}
                     </p>
+                    {/* Starter prompt chips */}
+                    <div className="flex flex-col gap-2 w-full max-w-sm">
+                      {getStarterPrompts(featureTitle || "").map((prompt, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setInput(prompt)}
+                          className="text-xs text-left px-3 py-2 rounded-xl border border-border hover:bg-muted transition-colors truncate"
+                        >
+                          {prompt}
+                        </button>
+                      ))}
+                    </div>
                   </motion.div>
                 )}
 
@@ -347,7 +373,15 @@ const Chat = () => {
                             : "bg-muted rounded-tl-sm"
                         }`}
                       >
-                        <p className="text-xs sm:text-sm whitespace-pre-wrap">{message.content}</p>
+                        {message.role === "user" ? (
+                          <p className="text-xs sm:text-sm whitespace-pre-wrap">{message.content}</p>
+                        ) : (
+                          <div className="text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:bg-background/60 prose-pre:text-xs prose-code:text-xs prose-code:bg-background/60 prose-code:px-1 prose-code:rounded prose-table:text-xs">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              {message.content}
+                            </ReactMarkdown>
+                          </div>
+                        )}
                       </div>
                       <p className="text-[9px] sm:text-[10px] text-muted-foreground mt-1 px-2">
                         {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
