@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Images, X, Check, ChevronRight } from "lucide-react";
+import { Camera, Images, ChevronRight, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ interface MediaPickerDialogProps {
   featureTitle: string;
 }
 
-type Step = "choose" | "gallery-permission" | "gallery-select" | "camera-permission";
+type Step = "choose" | "camera-live" | "gallery-permission";
 
 const MediaPickerDialog = ({ 
   open, 
@@ -26,72 +26,98 @@ const MediaPickerDialog = ({
   featureTitle 
 }: MediaPickerDialogProps) => {
   const [step, setStep] = useState<Step>("choose");
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [galleryAccess, setGalleryAccess] = useState<"selected" | "all" | null>(null);
   const { toast } = useToast();
 
+  // Camera refs
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  // Clean up camera stream
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+  }, []);
+
+  // Stop camera on unmount or dialog close
+  useEffect(() => {
+    if (!open) {
+      stopCamera();
+      setStep("choose");
+    }
+    return () => stopCamera();
+  }, [open, stopCamera]);
+
   const handleTakePhoto = async () => {
-    setStep("camera-permission");
-  };
-
-  const handleChooseGallery = () => {
-    setStep("gallery-permission");
-  };
-
-  const requestCameraPermission = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      stream.getTracks().forEach(track => track.stop());
-      
-      // Create file input for camera capture
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
-      input.capture = "environment";
-      input.onchange = (e) => {
-        const files = (e.target as HTMLInputElement).files;
-        if (files && files.length > 0) {
-          onMediaSelected(Array.from(files));
-          resetAndClose();
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } } 
+      });
+      streamRef.current = stream;
+      setStep("camera-live");
+
+      // Wait for DOM update then attach stream to video
+      requestAnimationFrame(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play().catch(() => {});
         }
-      };
-      input.click();
+      });
     } catch (error) {
       toast({
         title: "Camera Access Denied",
         description: "Please enable camera access in your browser settings.",
         variant: "destructive",
       });
-      setStep("choose");
     }
   };
 
-  const handleGalleryAccessChoice = (access: "selected" | "all") => {
-    setGalleryAccess(access);
-    setStep("gallery-select");
-    
-    // Open file picker
+  const capturePhoto = () => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.drawImage(video, 0, 0);
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], `camera-capture-${Date.now()}.jpg`, { type: "image/jpeg" });
+        onMediaSelected([file]);
+        resetAndClose();
+      }
+    }, "image/jpeg", 0.9);
+  };
+
+  const handleChooseGallery = () => {
+    setStep("gallery-permission");
+  };
+
+  const requestGalleryAccess = () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
-    input.multiple = access === "all";
+    input.multiple = true;
     input.onchange = (e) => {
       const files = (e.target as HTMLInputElement).files;
       if (files && files.length > 0) {
-        setSelectedFiles(Array.from(files));
         onMediaSelected(Array.from(files));
         resetAndClose();
       } else {
         setStep("choose");
       }
     };
-    input.click();
+    setTimeout(() => input.click(), 100);
   };
 
   const resetAndClose = () => {
+    stopCamera();
     setStep("choose");
-    setSelectedFiles([]);
-    setGalleryAccess(null);
     onOpenChange(false);
   };
 
@@ -143,36 +169,52 @@ const MediaPickerDialog = ({
           </motion.div>
         );
 
-      case "camera-permission":
+      case "camera-live":
         return (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="text-center space-y-4 sm:space-y-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="space-y-4"
           >
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-              <Camera className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+            {/* Live camera viewfinder */}
+            <div className="relative rounded-xl overflow-hidden bg-black aspect-[4/3]">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+              />
+              {/* Viewfinder corners */}
+              <div className="absolute inset-4 pointer-events-none">
+                <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-white/70 rounded-tl" />
+                <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-white/70 rounded-tr" />
+                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-white/70 rounded-bl" />
+                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-white/70 rounded-br" />
+              </div>
             </div>
-            <div>
-              <h4 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Camera Access Required</h4>
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                We need permission to access your camera to take photos.
-              </p>
-            </div>
-            <div className="flex gap-2 sm:gap-3">
-              <Button 
-                variant="outline" 
-                onClick={() => setStep("choose")}
+
+            {/* Hidden canvas for capture */}
+            <canvas ref={canvasRef} className="hidden" />
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  stopCamera();
+                  setStep("choose");
+                }}
                 className="flex-1 text-sm"
               >
                 Cancel
               </Button>
-              <Button 
-                onClick={requestCameraPermission}
-                className="flex-1 text-sm"
+              <Button
+                onClick={capturePhoto}
+                className="flex-1 text-sm gap-2"
               >
-                Allow Camera
+                <Camera className="w-4 h-4" />
+                Capture
               </Button>
             </div>
           </motion.div>
@@ -184,55 +226,32 @@ const MediaPickerDialog = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="space-y-3 sm:space-y-4"
+            className="text-center space-y-4 sm:space-y-6"
           >
-            <div className="text-center mb-4 sm:mb-6">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-secondary/30 flex items-center justify-center mb-3 sm:mb-4">
-                <Images className="w-8 h-8 sm:w-10 sm:h-10 text-secondary-foreground" />
-              </div>
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-secondary/30 flex items-center justify-center">
+              <Images className="w-8 h-8 sm:w-10 sm:h-10 text-secondary-foreground" />
+            </div>
+            <div>
               <h4 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">Gallery Access</h4>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Choose how you'd like to share your photos
+                Allow access to your photos to select images for <span className="font-medium text-foreground">{featureTitle}</span>
               </p>
             </div>
-
-            <motion.button
-              onClick={() => handleGalleryAccessChoice("selected")}
-              className="w-full p-3 sm:p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-3 sm:gap-4 group"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              </div>
-              <div className="flex-1 text-left min-w-0">
-                <h4 className="font-semibold text-xs sm:text-sm">Select Photos</h4>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">Choose specific photos to use</p>
-              </div>
-            </motion.button>
-
-            <motion.button
-              onClick={() => handleGalleryAccessChoice("all")}
-              className="w-full p-3 sm:p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-3 sm:gap-4 group"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-secondary/30 flex items-center justify-center flex-shrink-0">
-                <Images className="w-4 h-4 sm:w-5 sm:h-5 text-secondary-foreground" />
-              </div>
-              <div className="flex-1 text-left min-w-0">
-                <h4 className="font-semibold text-xs sm:text-sm">Select Multiple Photos</h4>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">Choose multiple photos at once</p>
-              </div>
-            </motion.button>
-
-            <Button 
-              variant="ghost" 
-              onClick={() => setStep("choose")}
-              className="w-full mt-2 text-sm"
-            >
-              Back
-            </Button>
+            <div className="flex gap-2 sm:gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => setStep("choose")}
+                className="flex-1 text-sm"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={requestGalleryAccess}
+                className="flex-1 text-sm"
+              >
+                Allow Access
+              </Button>
+            </div>
           </motion.div>
         );
 
@@ -245,7 +264,9 @@ const MediaPickerDialog = ({
     <Dialog open={open} onOpenChange={resetAndClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">Add Photos</DialogTitle>
+          <DialogTitle className="text-center">
+            {step === "camera-live" ? "Take Photo" : "Add Photos"}
+          </DialogTitle>
         </DialogHeader>
         <AnimatePresence mode="wait">
           {renderStep()}
