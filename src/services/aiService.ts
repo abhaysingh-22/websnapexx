@@ -1,21 +1,3 @@
-/**
- * aiService — AI routing layer for SnapExx
- *
- * Two separate AI providers are used:
- *
- * 1. GEMINI (Google AI Studio) — called DIRECTLY from the frontend
- *    Used for: general chat / "AI Assistant" conversations
- *    Key:      VITE_GEMINI_API_KEY  (in .env)
- *
- * 2. GEMINI via Supabase Edge Function "ai-chat" (server-side)
- *    Used for: all 4 features — text guidance/analysis
- *    Secret:   GEMINI_API_KEY  (set in Supabase: supabase secrets set GEMINI_API_KEY=...)
- *
- * 3. VERTEX AI Imagen — called via existing `generate-image` edge function
- *    Used for: "Prompt to Picture" → generate_image action
- *    Secrets:  GCP_SERVICE_ACCOUNT_KEY + GCP_PROJECT_ID  (already set in generate-image fn)
- */
-
 import { externalSupabase } from "@/integrations/externalSupabase/client";
 
 // ─── Shared types ──────────────────────────────────────────────────────────────
@@ -52,7 +34,7 @@ export function isFeatureMode(featureType: string): featureType is VertexAIFeatu
 // ─── 1. Gemini (Google AI Studio) — direct frontend call ──────────────────────
 // Used for general chat / "AI Assistant" mode
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string;
-const GEMINI_MODEL = "gemini-2.5-flash"; // fast, cost-effective for chat
+const GEMINI_MODEL = "gemini-2.0-flash";
 
 async function geminiChat(params: AIRequestParams): Promise<AIServiceResponse> {
   if (!GEMINI_API_KEY) {
@@ -93,8 +75,30 @@ async function geminiChat(params: AIRequestParams): Promise<AIServiceResponse> {
     const systemInstruction = {
       parts: [
         {
-          text: `You are a helpful AI creative assistant for SnapExx AI, a professional AI-powered photo editing platform.
-Help users with their image editing, generation, and creative questions in a professional, friendly manner.`,
+          text: `You are a helpful AI assistant for SnapExx AI. You are currently in **General Chat** mode — NO feature tool is selected.
+
+IMPORTANT RULES:
+1. You can have friendly conversations, answer general questions, explain things, and help with anything non-feature-specific.
+2. You CANNOT perform any of the following feature actions in general chat mode. If the user tries any of these, you MUST politely decline and tell them to select the correct tool using the 🔧 Tools button at the bottom of the chat:
+
+   • **Image generation / creation** (generating images, creating pictures, making artwork)
+     → Suggest: "Please select the **Prompt to Picture** tool from the 🔧 Tools menu."
+
+   • **Photo comparison / analysis** (comparing two photos, which is better, visual differences)
+     → Suggest: "Please select the **Compare Pictures** tool from the 🔧 Tools menu."
+
+   • **Photo editing / enhancement** (enhance sharpness, reduce noise, fix colors, remove background, upscale)
+     → Suggest: "Please select the **Edit/Enhance Photo** tool from the 🔧 Tools menu."
+
+   • **Professional editing guidance** (studio settings, color grading presets, batch editing, retouching)
+     → Suggest: "Please select the **Professional Mode** tool from the 🔧 Tools menu."
+
+   • **Ad video generation** (create video ads, product showcase videos, social media video content)
+     → Suggest: "Please select the **AI Ad Video Generation** tool from the 🔧 Tools menu."
+
+3. You CAN answer general questions ABOUT these features (e.g., "What does Professional Mode do?" — explain what it offers).
+4. Be warm, helpful and concise. Don't be overly verbose.
+5. Never hallucinate features or capabilities. If unsure, say so.`,
         },
       ],
     };
@@ -127,32 +131,41 @@ Help users with their image editing, generation, and creative questions in a pro
 }
 
 // ─── 2. Vertex AI — via Supabase Edge Function ────────────────────────────────
-// Used for all 4 feature modes
+// Uses direct fetch to bypass Supabase client SDK auth issues
+import { EXTERNAL_SUPABASE_URL, EXTERNAL_SUPABASE_ANON_KEY } from "@/integrations/externalSupabase/client";
+
 async function vertexAIFeature(params: AIRequestParams): Promise<AIServiceResponse> {
   try {
-    const { data, error } = await externalSupabase.functions.invoke("ai-chat", {
-      body: {
+    const url = `${EXTERNAL_SUPABASE_URL}/functions/v1/ai-chat`;
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": EXTERNAL_SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${EXTERNAL_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
         message: params.message,
         imageUrl: params.imageUrl,
         featureType: params.featureType,
         action: params.action ?? "chat",
         conversationHistory: params.conversationHistory ?? [],
-      },
+      }),
     });
 
-    if (error) {
-      console.error("[vertexAIFeature] Edge function error:", error);
-      return { success: false, error: error.message };
-    }
+    const data = await res.json();
 
-    if (!data?.success) {
-      return { success: false, error: data?.error ?? "Unknown error from Vertex AI" };
+    if (!res.ok || !data?.success) {
+      const errMsg = data?.error ?? `Edge function returned ${res.status}`;
+      console.error("[vertexAIFeature] Edge function error:", errMsg, data);
+      return { success: false, error: errMsg };
     }
 
     return {
       success: true,
       message: data.message,
-      imageUrl: data.imageUrl, // present only for generate_image action
+      imageUrl: data.imageUrl,
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Vertex AI call failed";
