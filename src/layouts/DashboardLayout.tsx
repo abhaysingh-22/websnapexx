@@ -158,14 +158,20 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-8">
-          {children}
-        </div>
+      <main className="flex-1 flex flex-col">
+        {location.pathname === "/home" ? (
+          <div className="flex-1 flex flex-col">
+            {children}
+          </div>
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-8 w-full">
+            {children}
+          </div>
+        )}
       </main>
 
-      {/* Footer */}
-      <Footer />
+      {/* Footer - hidden on Home/Chat tab */}
+      {location.pathname !== "/home" && <Footer />}
     </div>
   );
 };
