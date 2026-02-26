@@ -329,4 +329,25 @@
   .reveal.active {
     @apply opacity-100 translate-y-0;
   }
+
+  /* Chat scrollbar — clean in both light and dark */
+  .chat-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .chat-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .chat-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 9999px;
+  }
+  .chat-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.4);
+  }
+  .dark .chat-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(215 35% 25%);
+  }
+  .dark .chat-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(215 35% 35%);
+  }
 }
