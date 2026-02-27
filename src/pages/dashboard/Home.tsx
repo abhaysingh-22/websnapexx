@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/popover";
 import { useConversations, Message } from "@/hooks/useConversations";
 import { useMessages } from "@/hooks/useMessages";
-import { generateConversationTitle } from "@/services/chatService";
+
 import { externalSupabase } from "@/integrations/externalSupabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { aiService, getStarterPrompts, isFeatureMode } from "@/services/aiService";
@@ -81,6 +81,31 @@ const FEATURES: FeatureDef[] = [
     requiresImage: true,
   },
 ];
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/** Convert a File to a base64 data URI so the backend can read it */
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/** Generate a short title from the first message and save it */
+async function generateTitle(convId: string, firstMessage: string) {
+  const title =
+    firstMessage.length > 50
+      ? firstMessage.substring(0, 47) + "..."
+      : firstMessage;
+
+  await externalSupabase
+    .from("conversations")
+    .update({ title })
+    .eq("id", convId);
+}
 
 // ─── Display message type ────────────────────────────────────────────────────
 interface DisplayMessage {
@@ -153,7 +178,7 @@ const Home = () => {
   const displayName = user?.user_metadata?.full_name || "there";
 
   // Current active feature title for AI routing
-  const activeFeatureType = selectedFeature || "AI Assistant";
+  const activeFeatureType = selectedFeature || "General Chat";
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
@@ -169,11 +194,11 @@ const Home = () => {
     }
   };
 
-  const handleMediaSelected = (files: File[]) => {
+  const handleMediaSelected = async (files: File[]) => {
     setSelectedFeature(pendingFeature);
-    // Convert files to preview URLs
-    const urls = files.map((file) => URL.createObjectURL(file));
-    setPreviewImages((prev) => [...prev, ...urls]);
+    // Convert files to base64 data URIs (works for both preview AND backend)
+    const base64Urls = await Promise.all(files.map(fileToBase64));
+    setPreviewImages((prev) => [...prev, ...base64Urls]);
   };
 
   const handleDeselectFeature = () => {
@@ -250,11 +275,9 @@ const Home = () => {
 
       // Generate title from first message
       if (isFirstMessage.current && userContent.trim()) {
-        await generateConversationTitle(convId, userContent);
-        await updateConversationTitle(
-          convId,
-          userContent.length > 50 ? userContent.substring(0, 47) + "..." : userContent
-        );
+        const title = userContent.length > 50 ? userContent.substring(0, 47) + "..." : userContent;
+        await generateTitle(convId, userContent);
+        await updateConversationTitle(convId, title);
         isFirstMessage.current = false;
       }
 
@@ -301,9 +324,9 @@ const Home = () => {
     setGalleryDialogOpen(true);
   };
 
-  const handleGalleryMediaSelected = (files: File[]) => {
-    const urls = files.map((file) => URL.createObjectURL(file));
-    setPreviewImages((prev) => [...prev, ...urls]);
+  const handleGalleryMediaSelected = async (files: File[]) => {
+    const base64Urls = await Promise.all(files.map(fileToBase64));
+    setPreviewImages((prev) => [...prev, ...base64Urls]);
   };
 
   const removePreviewImage = (index: number) => {
@@ -581,6 +604,11 @@ const Home = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
+                onInput={(e) => {
+                  const el = e.currentTarget;
+                  el.style.height = "auto";
+                  el.style.height = Math.min(el.scrollHeight, 120) + "px";
+                }}
                 placeholder={
                   selectedFeature
                     ? `Message ${selectedFeature}...`
@@ -589,7 +617,6 @@ const Home = () => {
                 rows={1}
                 className="w-full resize-none rounded-xl border border-border/60 bg-background/60 dark:bg-background/40 px-4 py-2.5 sm:py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent/30 min-h-[44px] max-h-[120px] placeholder:text-muted-foreground/50 transition-all duration-200"
                 style={{
-                  height: "auto",
                   overflowY: input.split("\n").length > 3 ? "auto" : "hidden",
                 }}
               />
