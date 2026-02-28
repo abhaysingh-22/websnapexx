@@ -290,9 +290,11 @@ const Home = () => {
       // Call AI
       const aiResult = await aiService.sendMessage({
         message: userContent,
-        imageUrl: userImages[0],
+        imageUrl: userImages[0],          // primary image (single-image features)
+        imageUrls: userImages.length > 1 ? userImages : undefined, // multi-image (Compare Pictures)
         featureType: activeFeatureType,
         conversationHistory,
+        userId: session?.user?.id,
       });
 
       if (aiResult.success && aiResult.message) {
