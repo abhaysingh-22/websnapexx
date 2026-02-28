@@ -193,6 +193,10 @@
     @apply w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-300 font-medium;
   }
 
+  .dark .input-field {
+    @apply border-white/20 bg-white/5 text-foreground placeholder:text-muted-foreground;
+  }
+
   .onboarding-sidebar {
     @apply fixed left-0 top-0 h-full w-72 bg-gradient-to-b from-secondary to-card border-r border-border p-8;
   }
@@ -226,7 +230,22 @@
   }
 
   .auth-hero-overlay {
-    @apply absolute inset-0 bg-gradient-to-r from-primary/95 to-primary/70;
+    /* Light mode: dark navy gradient so white text is always readable */
+    @apply absolute inset-0;
+    background: linear-gradient(
+      to right,
+      hsl(215 45% 12% / 0.88) 0%,
+      hsl(215 45% 18% / 0.55) 100%
+    );
+  }
+
+  .dark .auth-hero-overlay {
+    /* Dark mode: lighter navy tint so image is clearly visible */
+    background: linear-gradient(
+      to right,
+      hsl(215 45% 8% / 0.72) 0%,
+      hsl(215 45% 14% / 0.45) 100%
+    );
   }
 
   .icon-box {
@@ -270,9 +289,12 @@
   }
 
   @keyframes pulse-subtle {
-    0%, 100% {
+
+    0%,
+    100% {
       opacity: 1;
     }
+
     50% {
       opacity: 0.8;
     }
@@ -284,9 +306,12 @@
   }
 
   @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
       transform: translateY(0);
     }
+
     50% {
       transform: translateY(-10px);
     }
@@ -301,6 +326,7 @@
     0% {
       transform: translateX(-100%);
     }
+
     100% {
       transform: translateX(100%);
     }
@@ -334,19 +360,24 @@
   .chat-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
+
   .chat-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
+
   .chat-scrollbar::-webkit-scrollbar-thumb {
     background: hsl(var(--border));
     border-radius: 9999px;
   }
+
   .chat-scrollbar::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.4);
   }
+
   .dark .chat-scrollbar::-webkit-scrollbar-thumb {
     background: hsl(215 35% 25%);
   }
+
   .dark .chat-scrollbar::-webkit-scrollbar-thumb:hover {
     background: hsl(215 35% 35%);
   }
