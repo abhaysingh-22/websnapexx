@@ -222,6 +222,7 @@ const Chat = () => {
         imageUrl: userImages[0],
         featureType: featureTitle || "Edit/Enhance Photo",
         conversationHistory,
+        userId: session?.user?.id,
       });
 
       if (aiResult.success && aiResult.message) {
