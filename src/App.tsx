@@ -16,6 +16,12 @@ import Onboarding3 from "./pages/onboarding/Onboarding3";
 // Auth Pages
 import Register from "./pages/auth/Register";
 import SignIn from "./pages/auth/SignIn";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+
+// Legal Pages
+import TermsOfService from "./pages/legal/TermsOfService";
+import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
+import CookiePolicy from "./pages/legal/CookiePolicy";
 
 // Dashboard Pages
 import Home from "./pages/dashboard/Home";
@@ -63,6 +69,14 @@ const App = () => (
                   </PublicOnlyRoute>
                 }
               />
+              <Route
+                path="/forgot-password"
+                element={
+                  <PublicOnlyRoute>
+                    <ForgotPassword />
+                  </PublicOnlyRoute>
+                }
+              />
               
               {/* Dashboard */}
               <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
@@ -72,6 +86,11 @@ const App = () => (
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/faqs" element={<ProtectedRoute><FAQs /></ProtectedRoute>} />
               
+              {/* Legal */}
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/cookies" element={<CookiePolicy />} />
+
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
             </Routes>
