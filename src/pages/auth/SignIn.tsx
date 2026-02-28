@@ -12,13 +12,14 @@ const SignIn = () => {
   const { signIn, signInWithGoogle } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await signIn(email, password);
+    const { error } = await signIn(email, password, rememberMe);
     
     if (error) {
       if (error.message.includes('Invalid login credentials')) {
@@ -98,10 +99,15 @@ const SignIn = () => {
 
               <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" className="rounded border-border" />
+                  <input
+                    type="checkbox"
+                    className="rounded border-border"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
                   <span className="text-muted-foreground">Remember me</span>
                 </label>
-                <Link to="#" className="text-accent hover:underline font-medium">
+                <Link to="/forgot-password" className="text-accent hover:underline font-medium">
                   Forgot password?
                 </Link>
               </div>
@@ -153,6 +159,15 @@ const SignIn = () => {
               <Link to="/register" className="text-accent font-medium hover:underline">
                 Create Account
               </Link>
+            </p>
+
+            <p className="text-center text-xs text-muted-foreground">
+              By signing in, you agree to our{" "}
+              <Link to="/terms" target="_blank" className="text-accent hover:underline">Terms of Service</Link>
+              ,{" "}
+              <Link to="/privacy" target="_blank" className="text-accent hover:underline">Privacy Policy</Link>
+              , and{" "}
+              <Link to="/cookies" target="_blank" className="text-accent hover:underline">Cookie Policy</Link>
             </p>
           </CardContent>
         </Card>
