@@ -19,10 +19,34 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useConversations, Message } from "@/hooks/useConversations";
 import { useMessages } from "@/hooks/useMessages";
-import { generateConversationTitle } from "@/services/chatService";
 import { externalSupabase } from "@/integrations/externalSupabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { aiService, getStarterPrompts, isFeatureMode } from "@/services/aiService";
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/** Convert a File to a base64 data URI so the backend can read it */
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/** Generate a short title from the first message and save it */
+async function generateTitle(convId: string, firstMessage: string) {
+  const title =
+    firstMessage.length > 50
+      ? firstMessage.substring(0, 47) + "..."
+      : firstMessage;
+
+  await externalSupabase
+    .from("conversations")
+    .update({ title })
+    .eq("id", convId);
+}
 
 interface DisplayMessage {
   id: string;
@@ -92,10 +116,11 @@ const Chat = () => {
   }, [isInitialized, urlConversationId, messages.length]);
 
   useEffect(() => {
-    // Convert selected files to preview URLs
+    // Convert selected files to base64 data URIs
     if (selectedImages && selectedImages.length > 0) {
-      const urls = selectedImages.map((file: File) => URL.createObjectURL(file));
-      setPreviewImages(urls);
+      Promise.all(selectedImages.map((file: File) => fileToBase64(file))).then(
+        (urls) => setPreviewImages(urls)
+      );
     }
   }, [selectedImages]);
 
@@ -179,8 +204,9 @@ const Chat = () => {
 
       // Generate title from first message
       if (isFirstMessage.current && userContent.trim()) {
-        await generateConversationTitle(convId, userContent);
-        await updateConversationTitle(convId, userContent.length > 50 ? userContent.substring(0, 47) + "..." : userContent);
+        const title = userContent.length > 50 ? userContent.substring(0, 47) + "..." : userContent;
+        await generateTitle(convId, userContent);
+        await updateConversationTitle(convId, title);
         isFirstMessage.current = false;
       }
 
@@ -229,11 +255,11 @@ const Chat = () => {
     input.type = "file";
     input.accept = "image/*";
     input.multiple = true;
-    input.onchange = (e) => {
+    input.onchange = async (e) => {
       const files = (e.target as HTMLInputElement).files;
       if (files) {
-        const urls = Array.from(files).map(file => URL.createObjectURL(file));
-        setPreviewImages(prev => [...prev, ...urls]);
+        const base64Urls = await Promise.all(Array.from(files).map(fileToBase64));
+        setPreviewImages(prev => [...prev, ...base64Urls]);
       }
     };
     input.click();
@@ -462,11 +488,15 @@ const Chat = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
+                onInput={(e) => {
+                  const el = e.currentTarget;
+                  el.style.height = "auto";
+                  el.style.height = Math.min(el.scrollHeight, 120) + "px";
+                }}
                 placeholder="Type your message..."
                 rows={1}
                 className="w-full resize-none rounded-lg sm:rounded-xl border border-border bg-background px-3 sm:px-4 py-2.5 sm:py-3 pr-10 sm:pr-12 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[40px] sm:min-h-[48px] max-h-[100px] sm:max-h-[120px]"
                 style={{ 
-                  height: 'auto',
                   overflowY: input.split('\n').length > 3 ? 'auto' : 'hidden'
                 }}
               />

@@ -1,4 +1,12 @@
-import { externalSupabase } from "@/integrations/externalSupabase/client";
+/**
+ * aiService — AI routing layer for SnapExx
+ *
+ * ALL chat now routes through the Supabase Edge Function "ai-chat",
+ * which uses Vertex AI Gemini (GCP credentials). No direct Google AI
+ * Studio calls from the frontend anymore.
+ */
+
+import { EXTERNAL_SUPABASE_URL, EXTERNAL_SUPABASE_ANON_KEY } from "@/integrations/externalSupabase/client";
 
 // ─── Shared types ──────────────────────────────────────────────────────────────
 export interface AIRequestParams {
@@ -12,11 +20,11 @@ export interface AIRequestParams {
 export interface AIServiceResponse {
   success: boolean;
   message?: string;
-  imageUrl?: string;   // populated when action === "generate_image"
+  imageUrl?: string;
   error?: string;
 }
 
-// The 4 feature modes that route to Vertex AI via the edge function
+// The 5 feature modes
 export const VERTEX_AI_FEATURES = [
   "AI Ad Video Generation",
   "Prompt to Picture",
@@ -31,110 +39,8 @@ export function isFeatureMode(featureType: string): featureType is VertexAIFeatu
   return VERTEX_AI_FEATURES.includes(featureType as VertexAIFeature);
 }
 
-// ─── 1. Gemini (Google AI Studio) — direct frontend call ──────────────────────
-// Used for general chat / "AI Assistant" mode
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string;
-const GEMINI_MODEL = "gemini-2.0-flash";
-
-async function geminiChat(params: AIRequestParams): Promise<AIServiceResponse> {
-  if (!GEMINI_API_KEY) {
-    return {
-      success: false,
-      error: "Gemini API key is not configured. Add VITE_GEMINI_API_KEY to your .env file.",
-    };
-  }
-
-  try {
-    const endpoint =
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
-
-    // Build conversation history as Gemini contents array
-    const contents: unknown[] = (params.conversationHistory ?? [])
-      .slice(-10)
-      .map((m) => ({
-        role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
-      }));
-
-    // User turn — include image if present
-    const userParts: unknown[] = [];
-    if (params.message) userParts.push({ text: params.message });
-    if (params.imageUrl) {
-      if (params.imageUrl.startsWith("data:")) {
-        const withoutPrefix = params.imageUrl.replace("data:", "");
-        const [mimeType, data] = withoutPrefix.split(";base64,");
-        userParts.push({ inlineData: { mimeType, data } });
-      } else {
-        userParts.push({
-          fileData: { mimeType: "image/jpeg", fileUri: params.imageUrl },
-        });
-      }
-    }
-    contents.push({ role: "user", parts: userParts });
-
-    const systemInstruction = {
-      parts: [
-        {
-          text: `You are a helpful AI assistant for SnapExx AI. You are currently in **General Chat** mode — NO feature tool is selected.
-
-IMPORTANT RULES:
-1. You can have friendly conversations, answer general questions, explain things, and help with anything non-feature-specific.
-2. You CANNOT perform any of the following feature actions in general chat mode. If the user tries any of these, you MUST politely decline and tell them to select the correct tool using the 🔧 Tools button at the bottom of the chat:
-
-   • **Image generation / creation** (generating images, creating pictures, making artwork)
-     → Suggest: "Please select the **Prompt to Picture** tool from the 🔧 Tools menu."
-
-   • **Photo comparison / analysis** (comparing two photos, which is better, visual differences)
-     → Suggest: "Please select the **Compare Pictures** tool from the 🔧 Tools menu."
-
-   • **Photo editing / enhancement** (enhance sharpness, reduce noise, fix colors, remove background, upscale)
-     → Suggest: "Please select the **Edit/Enhance Photo** tool from the 🔧 Tools menu."
-
-   • **Professional editing guidance** (studio settings, color grading presets, batch editing, retouching)
-     → Suggest: "Please select the **Professional Mode** tool from the 🔧 Tools menu."
-
-   • **Ad video generation** (create video ads, product showcase videos, social media video content)
-     → Suggest: "Please select the **AI Ad Video Generation** tool from the 🔧 Tools menu."
-
-3. You CAN answer general questions ABOUT these features (e.g., "What does Professional Mode do?" — explain what it offers).
-4. Be warm, helpful and concise. Don't be overly verbose.
-5. Never hallucinate features or capabilities. If unsure, say so.`,
-        },
-      ],
-    };
-
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction,
-        contents,
-        generationConfig: { temperature: 0.7, maxOutputTokens: 1024, topP: 0.95 },
-      }),
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`Gemini API error ${res.status}: ${errText}`);
-    }
-
-    const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) throw new Error("Empty response from Gemini");
-
-    return { success: true, message: text };
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : "Gemini call failed";
-    console.error("[geminiChat] Error:", err);
-    return { success: false, error: msg };
-  }
-}
-
-// ─── 2. Vertex AI — via Supabase Edge Function ────────────────────────────────
-// Uses direct fetch to bypass Supabase client SDK auth issues
-import { EXTERNAL_SUPABASE_URL, EXTERNAL_SUPABASE_ANON_KEY } from "@/integrations/externalSupabase/client";
-
-async function vertexAIFeature(params: AIRequestParams): Promise<AIServiceResponse> {
+// ─── Single unified AI call — everything goes through edge function ───────────
+async function callEdgeFunction(params: AIRequestParams): Promise<AIServiceResponse> {
   try {
     const url = `${EXTERNAL_SUPABASE_URL}/functions/v1/ai-chat`;
 
@@ -158,7 +64,7 @@ async function vertexAIFeature(params: AIRequestParams): Promise<AIServiceRespon
 
     if (!res.ok || !data?.success) {
       const errMsg = data?.error ?? `Edge function returned ${res.status}`;
-      console.error("[vertexAIFeature] Edge function error:", errMsg, data);
+      console.error("[aiService] Edge function error:", errMsg, data);
       return { success: false, error: errMsg };
     }
 
@@ -168,8 +74,8 @@ async function vertexAIFeature(params: AIRequestParams): Promise<AIServiceRespon
       imageUrl: data.imageUrl,
     };
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Vertex AI call failed";
-    console.error("[vertexAIFeature] Exception:", err);
+    const msg = err instanceof Error ? err.message : "AI service call failed";
+    console.error("[aiService] Exception:", err);
     return { success: false, error: msg };
   }
 }
@@ -177,23 +83,16 @@ async function vertexAIFeature(params: AIRequestParams): Promise<AIServiceRespon
 // ─── Public API ───────────────────────────────────────────────────────────────
 export const aiService = {
   /**
-   * Main entry point — automatically routes to the correct AI provider:
-   * - Feature mode (4 features) → Vertex AI via edge function
-   * - Chat mode (all others)    → Gemini API directly from frontend
+   * Main entry point — ALL requests go through the edge function.
+   * The edge function uses Vertex AI Gemini (GCP credentials).
    */
   async sendMessage(params: AIRequestParams): Promise<AIServiceResponse> {
-    if (isFeatureMode(params.featureType)) {
-      // All 4 feature modes route to the Edge Function.
-      // The Edge Function handles smart intent detection
-      // (e.g. auto-generating images when the user asks for one in "Prompt to Picture").
-      return vertexAIFeature(params);
-    }
-    return geminiChat(params);
+    return callEdgeFunction(params);
   },
 
-  /** Explicitly trigger Vertex AI Imagen image generation for "Prompt to Picture" */
+  /** Explicitly trigger image generation for "Prompt to Picture" */
   async generateImage(prompt: string): Promise<AIServiceResponse> {
-    return vertexAIFeature({
+    return callEdgeFunction({
       message: prompt,
       featureType: "Prompt to Picture",
       action: "generate_image",
