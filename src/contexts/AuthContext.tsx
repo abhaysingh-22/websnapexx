@@ -10,8 +10,11 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<{ data: unknown; error: Error | null }>;
-  signIn: (email: string, password: string) => Promise<{ data: unknown; error: Error | null }>;
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ data: unknown; error: Error | null }>;
   signOut: () => Promise<{ error: Error | null }>;
+  sendOtp: (email: string) => Promise<{ data: unknown; error: Error | null }>;
+  verifyOtp: (email: string, token: string) => Promise<{ data: unknown; error: Error | null }>;
+  updatePassword: (newPassword: string) => Promise<{ data: unknown; error: Error | null }>;
   updateProfile: (updates: unknown) => Promise<{ data: null; error: Error | null }>;
   refreshProfile: () => void;
 }
