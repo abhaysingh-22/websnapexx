@@ -13,6 +13,7 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,6 +21,11 @@ const Register = () => {
     
     if (password.length < 6) {
       toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    if (!agreedToTerms) {
+      toast.error("Please agree to the Terms of Service, Privacy Policy, and Cookie Policy");
       return;
     }
 
@@ -126,12 +132,30 @@ const Register = () => {
                 </div>
               </div>
 
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 rounded border-border accent-accent"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  disabled={isLoading}
+                />
+                <span className="text-xs text-muted-foreground leading-relaxed">
+                  I agree to the{" "}
+                  <Link to="/terms" target="_blank" className="text-accent hover:underline font-medium">Terms of Service</Link>
+                  ,{" "}
+                  <Link to="/privacy" target="_blank" className="text-accent hover:underline font-medium">Privacy Policy</Link>
+                  , and{" "}
+                  <Link to="/cookies" target="_blank" className="text-accent hover:underline font-medium">Cookie Policy</Link>
+                </span>
+              </label>
+
               <motion.button 
                 type="submit"
                 className="w-full btn-primary flex items-center justify-center gap-2"
                 whileHover={{ scale: isLoading ? 1 : 1.02 }}
                 whileTap={{ scale: isLoading ? 1 : 0.98 }}
-                disabled={isLoading}
+                disabled={isLoading || !agreedToTerms}
               >
                 {isLoading ? (
                   <>
@@ -175,12 +199,7 @@ const Register = () => {
               </Link>
             </p>
 
-            <p className="text-center text-xs text-muted-foreground">
-              By signing up, you agree to our{" "}
-              <Link to="#" className="hover:underline">Terms of Service</Link>
-              {" "}and{" "}
-              <Link to="#" className="hover:underline">Privacy Policy</Link>
-            </p>
+
           </CardContent>
         </Card>
       </motion.div>
