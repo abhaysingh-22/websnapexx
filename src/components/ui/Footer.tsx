@@ -135,15 +135,15 @@ const Footer = () => {
             </span>
           </div>
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-            <button className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-all duration-300 font-medium">
+            <Link to="/terms" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-all duration-300 font-medium">
               Terms of Service
-            </button>
-            <button className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-all duration-300 font-medium">
+            </Link>
+            <Link to="/privacy" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-all duration-300 font-medium">
               Privacy Policy
-            </button>
-            <button className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-all duration-300 font-medium">
+            </Link>
+            <Link to="/cookies" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-all duration-300 font-medium">
               Cookie Policy
-            </button>
+            </Link>
           </div>
         </motion.div>
       </motion.div>
