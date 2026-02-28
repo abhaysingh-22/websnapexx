@@ -17,8 +17,9 @@ import {
   Pencil,
   Camera,
   GitCompare,
+  Plus,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -116,14 +117,19 @@ interface DisplayMessage {
   timestamp: Date;
 }
 
+const CONV_STORAGE_KEY = "snapexx_active_conversation";
+
 const Home = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   const { session } = useAuthContext();
 
-  // Chat state
+  // Chat state — seed from URL → sessionStorage so refresh & tab-switching both restore the conversation
   const { createConversation, updateConversationTitle } = useConversations();
-  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(
+    searchParams.get("conversation") || sessionStorage.getItem(CONV_STORAGE_KEY)
+  );
   const { messages: dbMessages, fetchMessages, setMessages } = useMessages(currentConversationId);
 
   const [input, setInput] = useState("");
@@ -133,7 +139,10 @@ const Home = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const shouldAutoScrollRef = useRef(false);
-  const isFirstMessage = useRef(true);
+  // Only treat as a first message when there is genuinely no prior conversation
+  const isFirstMessage = useRef(
+    !searchParams.get("conversation") && !sessionStorage.getItem(CONV_STORAGE_KEY)
+  );
 
   // Feature / tool selection
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
@@ -141,6 +150,17 @@ const Home = () => {
   const [mediaDialogOpen, setMediaDialogOpen] = useState(false);
   const [galleryDialogOpen, setGalleryDialogOpen] = useState(false);
   const [pendingFeature, setPendingFeature] = useState<string>("");
+
+  // Keep URL + sessionStorage in sync whenever the active conversation changes
+  useEffect(() => {
+    if (currentConversationId) {
+      sessionStorage.setItem(CONV_STORAGE_KEY, currentConversationId);
+      setSearchParams({ conversation: currentConversationId }, { replace: true });
+    } else {
+      sessionStorage.removeItem(CONV_STORAGE_KEY);
+      setSearchParams({}, { replace: true });
+    }
+  }, [currentConversationId]);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -150,13 +170,24 @@ const Home = () => {
   }, [authLoading, isAuthenticated, navigate]);
 
   // Convert DB messages to display format
-  const messages: DisplayMessage[] = dbMessages.map((msg: Message) => ({
-    id: msg.id,
-    role: msg.role,
-    content: msg.content,
-    images: msg.image_url ? [msg.image_url] : undefined,
-    timestamp: new Date(msg.created_at),
-  }));
+  const messages: DisplayMessage[] = dbMessages.map((msg: Message) => {
+    let images: string[] | undefined;
+    if (msg.image_url) {
+      try {
+        const parsed = JSON.parse(msg.image_url);
+        images = Array.isArray(parsed) ? parsed : [msg.image_url];
+      } catch {
+        images = [msg.image_url];
+      }
+    }
+    return {
+      id: msg.id,
+      role: msg.role,
+      content: msg.content,
+      images,
+      timestamp: new Date(msg.created_at),
+    };
+  });
 
   // Fetch messages when conversation changes
   useEffect(() => {
@@ -196,9 +227,10 @@ const Home = () => {
 
   const handleMediaSelected = async (files: File[]) => {
     setSelectedFeature(pendingFeature);
+    const limit = pendingFeature === "Compare Pictures" ? 2 : 1;
     // Convert files to base64 data URIs (works for both preview AND backend)
-    const base64Urls = await Promise.all(files.map(fileToBase64));
-    setPreviewImages((prev) => [...prev, ...base64Urls]);
+    const base64Urls = await Promise.all(files.slice(0, limit).map(fileToBase64));
+    setPreviewImages(base64Urls); // replace — fresh selection from feature picker
   };
 
   const handleDeselectFeature = () => {
@@ -210,9 +242,21 @@ const Home = () => {
     convId: string,
     role: "user" | "assistant",
     content: string,
-    imageUrl?: string
+    imageUrls?: string | string[]
   ): Promise<Message | null> => {
     if (!session?.user?.id) return null;
+
+    // Normalise to a single storable value:
+    // - undefined / empty → undefined
+    // - single item      → plain string (backwards-compatible)
+    // - multiple items   → JSON array string
+    const imageUrlValue = Array.isArray(imageUrls)
+      ? imageUrls.length === 0
+        ? undefined
+        : imageUrls.length === 1
+        ? imageUrls[0]
+        : JSON.stringify(imageUrls)
+      : imageUrls;
 
     try {
       const { data, error } = await externalSupabase
@@ -222,7 +266,7 @@ const Home = () => {
           user_id: session.user.id,
           role,
           content,
-          image_url: imageUrl,
+          image_url: imageUrlValue,
         })
         .select()
         .single();
@@ -257,7 +301,7 @@ const Home = () => {
     try {
       let convId = currentConversationId;
 
-      // Create conversation if it doesn't exist
+      // Create conversation if it doesn't exist, or verify existing one is still in DB
       if (!convId) {
         const newConversation = await createConversation(activeFeatureType || "New Conversation");
         if (!newConversation) {
@@ -268,10 +312,30 @@ const Home = () => {
         convId = newConversation.id;
         setCurrentConversationId(convId);
         isFirstMessage.current = true;
+      } else {
+        // Verify the conversation still exists (sessionStorage may hold a stale/deleted ID)
+        const { data: existingConv } = await externalSupabase
+          .from("conversations")
+          .select("id")
+          .eq("id", convId)
+          .maybeSingle();
+
+        if (!existingConv) {
+          console.warn("Stale conversation ID detected, creating new conversation");
+          const newConversation = await createConversation(activeFeatureType || "New Conversation");
+          if (!newConversation) {
+            console.error("Failed to create conversation");
+            setIsLoading(false);
+            return;
+          }
+          convId = newConversation.id;
+          setCurrentConversationId(convId);
+          isFirstMessage.current = true;
+        }
       }
 
-      // Add user message
-      await insertMessage(convId, "user", userContent, userImages[0]);
+      // Add user message — pass ALL images so they render in the chat bubble
+      await insertMessage(convId, "user", userContent, userImages);
 
       // Generate title from first message
       if (isFirstMessage.current && userContent.trim()) {
@@ -321,18 +385,32 @@ const Home = () => {
     }
   };
 
+  const maxImagesForFeature = selectedFeature === "Compare Pictures" ? 2 : 1;
+
   const handleAddImage = () => {
-    // Route through the gallery permission dialog
+    if (previewImages.length >= maxImagesForFeature) return; // already at limit
     setGalleryDialogOpen(true);
   };
 
   const handleGalleryMediaSelected = async (files: File[]) => {
-    const base64Urls = await Promise.all(files.map(fileToBase64));
+    const remaining = maxImagesForFeature - previewImages.length;
+    if (remaining <= 0) return;
+    const base64Urls = await Promise.all(files.slice(0, remaining).map(fileToBase64));
     setPreviewImages((prev) => [...prev, ...base64Urls]);
   };
 
   const removePreviewImage = (index: number) => {
     setPreviewImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleNewChat = () => {
+    setCurrentConversationId(null);
+    sessionStorage.removeItem(CONV_STORAGE_KEY);
+    setMessages([]);
+    setInput("");
+    setPreviewImages([]);
+    setSelectedFeature(null);
+    isFirstMessage.current = true;
   };
 
   const handleDownloadImage = async (imageUrl: string, index: number) => {
@@ -367,6 +445,19 @@ const Home = () => {
       <div className="flex flex-col h-[calc(100vh-64px)] md:h-[calc(100vh-72px)] max-w-5xl w-full mx-auto px-3 sm:px-4 lg:px-6">
         {/* Continuous chat container — messages + input in one box */}
         <div className="flex-1 flex flex-col min-h-0 rounded-2xl border border-border/50 bg-card/40 dark:bg-card/20 overflow-hidden">
+          {/* New Chat button — shown when inside a conversation */}
+          {currentConversationId && (
+            <div className="flex items-center justify-end px-4 pt-3 pb-1">
+              <button
+                onClick={handleNewChat}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-border/50 transition-all duration-200"
+                title="Start a new chat"
+              >
+                <Plus className="w-4 h-4" />
+                <span>New Chat</span>
+              </button>
+            </div>
+          )}
           {/* Messages Area */}
           <div ref={scrollAreaWrapRef} className="flex-1 min-h-0 overflow-y-auto chat-scrollbar">
             <div className="space-y-3 sm:space-y-4 pb-4 pt-4 px-4 sm:px-6">
@@ -700,8 +791,13 @@ const Home = () => {
               {/* Gallery / Image Upload — routes through permission dialog */}
               <button
                 onClick={handleAddImage}
-                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
-                title="Upload image"
+                disabled={previewImages.length >= maxImagesForFeature}
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                title={
+                  previewImages.length >= maxImagesForFeature
+                    ? `Maximum ${maxImagesForFeature} image${maxImagesForFeature > 1 ? "s" : ""} allowed`
+                    : "Upload image"
+                }
               >
                 <ImageIcon className="w-[18px] h-[18px]" />
               </button>
@@ -731,6 +827,7 @@ const Home = () => {
         onOpenChange={setMediaDialogOpen}
         onMediaSelected={handleMediaSelected}
         featureTitle={pendingFeature}
+        maxImages={pendingFeature === "Compare Pictures" ? 2 : 1}
       />
 
       {/* Gallery Dialog — for the gallery icon in input bar */}
@@ -739,6 +836,7 @@ const Home = () => {
         onOpenChange={setGalleryDialogOpen}
         onMediaSelected={handleGalleryMediaSelected}
         featureTitle={selectedFeature || "Upload Photos"}
+        maxImages={maxImagesForFeature - previewImages.length}
       />
     </DashboardLayout>
   );
