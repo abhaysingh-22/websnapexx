@@ -51,7 +51,7 @@ const History = () => {
   };
 
   const handleOpenConversation = (conversationId: string) => {
-    navigate(`/chat?conversation=${conversationId}`);
+    navigate(`/home?conversation=${conversationId}`);
   };
 
   const formatDate = (dateString: string) => {
