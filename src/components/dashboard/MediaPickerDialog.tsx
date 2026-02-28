@@ -15,6 +15,8 @@ interface MediaPickerDialogProps {
   onOpenChange: (open: boolean) => void;
   onMediaSelected: (files: File[]) => void;
   featureTitle: string;
+  /** Maximum number of images the user may select. Defaults to 1. */
+  maxImages?: number;
 }
 
 type Step = "choose" | "camera-live" | "gallery-permission";
@@ -23,7 +25,8 @@ const MediaPickerDialog = ({
   open, 
   onOpenChange, 
   onMediaSelected,
-  featureTitle 
+  featureTitle,
+  maxImages = 1,
 }: MediaPickerDialogProps) => {
   const [step, setStep] = useState<Step>("choose");
   const { toast } = useToast();
@@ -102,11 +105,13 @@ const MediaPickerDialog = ({
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
-    input.multiple = true;
+    input.multiple = maxImages > 1;
     input.onchange = (e) => {
       const files = (e.target as HTMLInputElement).files;
       if (files && files.length > 0) {
-        onMediaSelected(Array.from(files));
+        // Enforce the hard cap here so even if the OS bypasses `multiple=false`
+        // the user never gets more files than allowed.
+        onMediaSelected(Array.from(files).slice(0, maxImages));
         resetAndClose();
       } else {
         setStep("choose");
@@ -132,7 +137,7 @@ const MediaPickerDialog = ({
             className="space-y-3 sm:space-y-4"
           >
             <p className="text-xs sm:text-sm text-muted-foreground text-center mb-4 sm:mb-6">
-              Choose how you'd like to add photos for <span className="font-semibold text-foreground">{featureTitle}</span>
+              Choose how you'd like to add {maxImages > 1 ? `up to ${maxImages} photos` : "a photo"} for <span className="font-semibold text-foreground">{featureTitle}</span>
             </p>
             
             <motion.button
