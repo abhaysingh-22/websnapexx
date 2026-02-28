@@ -7,14 +7,19 @@
  */
 
 import { EXTERNAL_SUPABASE_URL, EXTERNAL_SUPABASE_ANON_KEY } from "@/integrations/externalSupabase/client";
+import { uploadUserImage, uploadGeneratedImage } from "./storageService";
 
 // ─── Shared types ──────────────────────────────────────────────────────────────
 export interface AIRequestParams {
   message: string;
   imageUrl?: string;
+  /** Multiple images — for Compare Pictures side-by-side analysis */
+  imageUrls?: string[];
   featureType: string;
-  action?: "chat" | "generate_image";
+  action?: "chat" | "generate_image" | "generate_video";
   conversationHistory?: Array<{ role: "user" | "assistant"; content: string }>;
+  /** Authenticated user's ID — used to store images in Supabase Storage */
+  userId?: string;
 }
 
 export interface AIServiceResponse {
@@ -42,7 +47,33 @@ export function isFeatureMode(featureType: string): featureType is VertexAIFeatu
 // ─── Single unified AI call — everything goes through edge function ───────────
 async function callEdgeFunction(params: AIRequestParams): Promise<AIServiceResponse> {
   try {
-    const url = `${EXTERNAL_SUPABASE_URL}/functions/v1/ai-chat`;
+    let imageUrl = params.imageUrl;
+
+    // ── Step 1a: Upload single user image to Supabase Storage ─────────────────
+    if (imageUrl?.startsWith("data:") && params.userId) {
+      const uploadResult = await uploadUserImage(imageUrl, params.userId);
+      if (uploadResult.success && uploadResult.signedUrl) {
+        imageUrl = uploadResult.signedUrl;
+        console.log("[aiService] User image stored:", uploadResult.storagePath);
+      } else {
+        console.warn("[aiService] Storage upload failed, using base64:", uploadResult.error);
+      }
+    }
+
+    // ── Step 1b: Upload all images in imageUrls array (Compare Pictures) ───────
+    let imageUrls = params.imageUrls;
+    if (imageUrls && imageUrls.length > 0 && params.userId) {
+      const uploaded = await Promise.all(
+        imageUrls.map(async (img) => {
+          if (!img.startsWith("data:")) return img;
+          const res = await uploadUserImage(img, params.userId!);
+          return res.success && res.signedUrl ? res.signedUrl : img;
+        })
+      );
+      imageUrls = uploaded;
+    }
+
+    const url = `${EXTERNAL_SUPABASE_URL}/functions/v1/ai-gateway`;
 
     const res = await fetch(url, {
       method: "POST",
@@ -53,10 +84,12 @@ async function callEdgeFunction(params: AIRequestParams): Promise<AIServiceRespo
       },
       body: JSON.stringify({
         message: params.message,
-        imageUrl: params.imageUrl,
+        imageUrl,
+        imageUrls,
         featureType: params.featureType,
         action: params.action ?? "chat",
         conversationHistory: params.conversationHistory ?? [],
+        userId: params.userId,
       }),
     });
 
@@ -68,10 +101,22 @@ async function callEdgeFunction(params: AIRequestParams): Promise<AIServiceRespo
       return { success: false, error: errMsg };
     }
 
+    // ── Step 2: Upload AI-generated image to Supabase Storage ───────────────────
+    let generatedImageUrl = data.imageUrl as string | undefined;
+    if (generatedImageUrl?.startsWith("data:") && params.userId) {
+      const genUpload = await uploadGeneratedImage(generatedImageUrl, params.userId);
+      if (genUpload.success && genUpload.signedUrl) {
+        generatedImageUrl = genUpload.signedUrl;
+        console.log("[aiService] Generated image stored:", genUpload.storagePath);
+      } else {
+        console.warn("[aiService] Generated image storage failed, keeping base64:", genUpload.error);
+      }
+    }
+
     return {
       success: true,
       message: data.message,
-      imageUrl: data.imageUrl,
+      imageUrl: generatedImageUrl,
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : "AI service call failed";
@@ -91,11 +136,12 @@ export const aiService = {
   },
 
   /** Explicitly trigger image generation for "Prompt to Picture" */
-  async generateImage(prompt: string): Promise<AIServiceResponse> {
+  async generateImage(prompt: string, userId?: string): Promise<AIServiceResponse> {
     return callEdgeFunction({
       message: prompt,
       featureType: "Prompt to Picture",
       action: "generate_image",
+      userId,
     });
   },
 };
