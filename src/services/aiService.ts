@@ -26,6 +26,7 @@ export interface AIServiceResponse {
   success: boolean;
   message?: string;
   imageUrl?: string;
+  videoUrl?: string;
   error?: string;
 }
 
@@ -117,6 +118,7 @@ async function callEdgeFunction(params: AIRequestParams): Promise<AIServiceRespo
       success: true,
       message: data.message,
       imageUrl: generatedImageUrl,
+      videoUrl: data.videoUrl as string | undefined,
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : "AI service call failed";
