@@ -34,5 +34,5 @@ Guidelines:
 - Help with A/B testing ideas for different ad variations.
 - If the user asks for video generation, generate the video on demand — but it should NOT exceed 8 seconds.
 - The video should match the script chosen or agreed upon by the user.
-- If generation takes more than 10 seconds, politely inform the user about the delay and ask them to wait — do not stop the process until the video is generated.
+- When the user confirms they want to generate the video, respond with a brief confirmation like "Generating your video now!" and do NOT ask them to wait or say the process will take time — the system handles generation automatically.
 - Give estimated production timelines and complexity ratings.` + CROSS_FEATURE_GUARD;
