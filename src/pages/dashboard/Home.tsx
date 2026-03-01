@@ -114,6 +114,7 @@ interface DisplayMessage {
   role: "user" | "assistant";
   content: string;
   images?: string[];
+  videoUrl?: string;
   timestamp: Date;
 }
 
@@ -171,13 +172,20 @@ const Home = () => {
 
   // Convert DB messages to display format
   const messages: DisplayMessage[] = dbMessages.map((msg: Message) => {
+    const rawUrl = msg.image_url;
+    const isVideo = rawUrl ? rawUrl.includes('.mp4') : false;
     let images: string[] | undefined;
-    if (msg.image_url) {
-      try {
-        const parsed = JSON.parse(msg.image_url);
-        images = Array.isArray(parsed) ? parsed : [msg.image_url];
-      } catch {
-        images = [msg.image_url];
+    let videoUrl: string | undefined;
+    if (rawUrl) {
+      if (isVideo) {
+        videoUrl = rawUrl;
+      } else {
+        try {
+          const parsed = JSON.parse(rawUrl);
+          images = Array.isArray(parsed) ? parsed : [rawUrl];
+        } catch {
+          images = [rawUrl];
+        }
       }
     }
     return {
@@ -185,6 +193,7 @@ const Home = () => {
       role: msg.role,
       content: msg.content,
       images,
+      videoUrl,
       timestamp: new Date(msg.created_at),
     };
   });
@@ -362,7 +371,7 @@ const Home = () => {
       });
 
       if (aiResult.success && aiResult.message) {
-        await insertMessage(convId!, "assistant", aiResult.message, aiResult.imageUrl);
+        await insertMessage(convId!, "assistant", aiResult.message, aiResult.videoUrl ?? aiResult.imageUrl);
       } else {
         await insertMessage(
           convId!,
@@ -559,6 +568,15 @@ const Home = () => {
                       )}
                     </div>
                     <div className={`max-w-[85%] sm:max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
+                      {message.videoUrl && (
+                        <div className="mb-2">
+                          <video
+                            src={message.videoUrl}
+                            controls
+                            className="w-full max-w-xs sm:max-w-sm rounded-xl border border-border"
+                          />
+                        </div>
+                      )}
                       {message.images && message.images.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
                           {message.images.map((img, imgIndex) => (
@@ -566,7 +584,7 @@ const Home = () => {
                               <img
                                 src={img}
                                 alt={`Uploaded ${imgIndex + 1}`}
-                                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-lg border border-border"
+                                className="w-48 h-48 sm:w-64 sm:h-64 md:w-72 md:h-72 object-cover rounded-xl border border-border"
                               />
                               <button
                                 onClick={() => handleDownloadImage(img, imgIndex)}
