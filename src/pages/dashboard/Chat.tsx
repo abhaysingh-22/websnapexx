@@ -73,6 +73,7 @@ const Chat = () => {
   
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [streamingContent, setStreamingContent] = useState("");
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const scrollAreaWrapRef = useRef<HTMLDivElement>(null);
@@ -80,6 +81,12 @@ const Chat = () => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const shouldAutoScrollRef = useRef(false);
   const isFirstMessage = useRef(true);
+  const typingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Cancel any in-progress typewriter on unmount
+  useEffect(() => {
+    return () => { if (typingIntervalRef.current) clearInterval(typingIntervalRef.current); };
+  }, []);
 
   // Convert DB messages to display format
   const messages: DisplayMessage[] = dbMessages.map((msg: Message) => {
@@ -222,7 +229,7 @@ const Chat = () => {
         content: m.content,
       }));
 
-      // Call real AI via Supabase Edge Function
+      // Call AI and typewriter-animate the response word-by-word
       const aiResult = await aiService.sendMessage({
         message: userContent,
         imageUrl: userImages[0],
@@ -232,7 +239,22 @@ const Chat = () => {
       });
 
       if (aiResult.success && aiResult.message) {
-        // Pass generated videoUrl (Veo) or imageUrl (Imagen) if present
+        // Animate word-by-word then persist
+        await new Promise<void>((resolve) => {
+          const tokens = aiResult.message!.split(" ");
+          let i = 0;
+          typingIntervalRef.current = setInterval(() => {
+            i++;
+            setStreamingContent(tokens.slice(0, i).join(" "));
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            if (i >= tokens.length) {
+              clearInterval(typingIntervalRef.current!);
+              typingIntervalRef.current = null;
+              resolve();
+            }
+          }, 18);
+        });
+        setStreamingContent("");
         await insertMessage(convId!, "assistant", aiResult.message, aiResult.videoUrl ?? aiResult.imageUrl);
       } else {
         await insertMessage(
@@ -438,14 +460,21 @@ const Chat = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="flex gap-2 sm:gap-3"
                   >
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-secondary flex items-center justify-center">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-secondary flex items-center justify-center shrink-0">
                       <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
                     </div>
-                    <div className="bg-muted rounded-2xl rounded-tl-sm px-3 py-2 sm:px-4 sm:py-3">
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
-                        <span className="text-xs sm:text-sm text-muted-foreground">Thinking...</span>
-                      </div>
+                    <div className="bg-muted rounded-2xl rounded-tl-sm px-3 py-2 sm:px-4 sm:py-3 max-w-[75vw] sm:max-w-[60vw]">
+                      {streamingContent ? (
+                        <div className="text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:bg-background/60 prose-pre:text-xs prose-code:text-xs prose-code:bg-background/60 prose-code:px-1 prose-code:rounded">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{streamingContent}</ReactMarkdown>
+                          <span className="inline-block w-[2px] h-[14px] bg-foreground/60 ml-0.5 animate-pulse align-middle" />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
+                          <span className="text-xs sm:text-sm text-muted-foreground">Thinking...</span>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}

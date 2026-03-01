@@ -135,6 +135,7 @@ const Home = () => {
 
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [streamingContent, setStreamingContent] = useState("");
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const scrollAreaWrapRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -144,6 +145,12 @@ const Home = () => {
   const isFirstMessage = useRef(
     !searchParams.get("conversation") && !sessionStorage.getItem(CONV_STORAGE_KEY)
   );
+  const typingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Cancel any in-progress typewriter on unmount
+  useEffect(() => {
+    return () => { if (typingIntervalRef.current) clearInterval(typingIntervalRef.current); };
+  }, []);
 
   // Feature / tool selection
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
@@ -360,17 +367,33 @@ const Home = () => {
         content: m.content,
       }));
 
-      // Call AI
+      // Call AI and typewriter-animate the response word-by-word
       const aiResult = await aiService.sendMessage({
         message: userContent,
-        imageUrl: userImages[0],          // primary image (single-image features)
-        imageUrls: userImages.length > 1 ? userImages : undefined, // multi-image (Compare Pictures)
+        imageUrl: userImages[0],
+        imageUrls: userImages.length > 1 ? userImages : undefined,
         featureType: activeFeatureType,
         conversationHistory,
         userId: session?.user?.id,
       });
 
       if (aiResult.success && aiResult.message) {
+        // Animate word-by-word then persist
+        await new Promise<void>((resolve) => {
+          const tokens = aiResult.message!.split(" ");
+          let i = 0;
+          typingIntervalRef.current = setInterval(() => {
+            i++;
+            setStreamingContent(tokens.slice(0, i).join(" "));
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            if (i >= tokens.length) {
+              clearInterval(typingIntervalRef.current!);
+              typingIntervalRef.current = null;
+              resolve();
+            }
+          }, 18);
+        });
+        setStreamingContent("");
         await insertMessage(convId!, "assistant", aiResult.message, aiResult.videoUrl ?? aiResult.imageUrl);
       } else {
         await insertMessage(
@@ -624,21 +647,28 @@ const Home = () => {
                   </motion.div>
                 ))}
 
-                {/* Loading indicator */}
+                {/* Loading / streaming indicator */}
                 {isLoading && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="flex gap-2 sm:gap-3"
                   >
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center shrink-0">
                       <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
                     </div>
-                    <div className="bg-muted rounded-2xl rounded-tl-sm px-3 py-2 sm:px-4 sm:py-3">
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin text-accent" />
-                        <span className="text-xs sm:text-sm text-muted-foreground">Thinking...</span>
-                      </div>
+                    <div className="bg-muted rounded-2xl rounded-tl-sm px-3 py-2 sm:px-4 sm:py-3 max-w-[75vw] sm:max-w-[60vw]">
+                      {streamingContent ? (
+                        <div className="text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:bg-background/60 prose-pre:text-xs prose-code:text-xs prose-code:bg-background/60 prose-code:px-1 prose-code:rounded">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{streamingContent}</ReactMarkdown>
+                          <span className="inline-block w-[2px] h-[14px] bg-foreground/60 ml-0.5 animate-pulse align-middle" />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin text-accent" />
+                          <span className="text-xs sm:text-sm text-muted-foreground">Thinking...</span>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}

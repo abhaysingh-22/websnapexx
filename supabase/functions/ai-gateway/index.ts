@@ -25,6 +25,7 @@
 import { getCachedAccessToken, detectImageIntent, GCP_PROJECT_ID } from "./auth/gcpAuth.ts";
 import {
   callVertexGemini,
+  callVertexGeminiStream,
   GEMINI_FLASH_MODEL,
   GEMINI_PRO_IMAGE_MODEL,
 } from "./models/gemini.ts";
@@ -216,7 +217,7 @@ Deno.serve(async (req) => {
         conversationHistory,
         accessToken,
         model: GEMINI_PRO_IMAGE_MODEL,
-        withImageOutput: !!imageUrl, // generate edited image only when source image is present
+        withImageOutput: !!imageUrl,
       });
       return jsonOk({
         message: result.text,
