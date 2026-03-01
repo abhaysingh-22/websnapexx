@@ -53,6 +53,7 @@ interface DisplayMessage {
   role: "user" | "assistant";
   content: string;
   images?: string[];
+  videoUrl?: string;
   timestamp: Date;
 }
 
@@ -81,13 +82,18 @@ const Chat = () => {
   const isFirstMessage = useRef(true);
 
   // Convert DB messages to display format
-  const messages: DisplayMessage[] = dbMessages.map((msg: Message) => ({
-    id: msg.id,
-    role: msg.role,
-    content: msg.content,
-    images: msg.image_url ? [msg.image_url] : undefined,
-    timestamp: new Date(msg.created_at),
-  }));
+  const messages: DisplayMessage[] = dbMessages.map((msg: Message) => {
+    const rawUrl = msg.image_url;
+    const isVideo = rawUrl ? rawUrl.includes('.mp4') : false;
+    return {
+      id: msg.id,
+      role: msg.role,
+      content: msg.content,
+      images: rawUrl && !isVideo ? [rawUrl] : undefined,
+      videoUrl: rawUrl && isVideo ? rawUrl : undefined,
+      timestamp: new Date(msg.created_at),
+    };
+  });
 
   // Initialize - load existing conversation or prepare for new one
   useEffect(() => {
@@ -226,8 +232,8 @@ const Chat = () => {
       });
 
       if (aiResult.success && aiResult.message) {
-        // Pass generated imageUrl (Vertex AI Imagen) if present
-        await insertMessage(convId!, "assistant", aiResult.message, aiResult.imageUrl);
+        // Pass generated videoUrl (Veo) or imageUrl (Imagen) if present
+        await insertMessage(convId!, "assistant", aiResult.message, aiResult.videoUrl ?? aiResult.imageUrl);
       } else {
         await insertMessage(
           convId!,
@@ -373,6 +379,15 @@ const Chat = () => {
                       )}
                     </div>
                     <div className={`max-w-[85%] sm:max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
+                      {message.videoUrl && (
+                        <div className="mb-2">
+                          <video
+                            src={message.videoUrl}
+                            controls
+                            className="w-full max-w-xs sm:max-w-sm rounded-xl border border-border"
+                          />
+                        </div>
+                      )}
                       {message.images && message.images.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
                           {message.images.map((img, imgIndex) => (
@@ -380,7 +395,7 @@ const Chat = () => {
                               <img
                                 src={img}
                                 alt={`Uploaded ${imgIndex + 1}`}
-                                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-cover rounded-lg border border-border"
+                                className="w-48 h-48 sm:w-64 sm:h-64 md:w-72 md:h-72 object-cover rounded-xl border border-border"
                               />
                               <button
                                 onClick={() => handleDownloadImage(img, imgIndex)}
@@ -454,7 +469,7 @@ const Chat = () => {
                   <img
                     src={img}
                     alt={`Preview ${index + 1}`}
-                    className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg sm:rounded-xl border-2 border-border"
+                    className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-lg sm:rounded-xl border-2 border-border"
                   />
                   <button
                     onClick={() => removePreviewImage(index)}
