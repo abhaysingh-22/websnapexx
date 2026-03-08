@@ -124,13 +124,7 @@ const UserAvatarDropdown = ({ displayName, email }: UserAvatarDropdownProps) => 
   };
 
   const handleContactUs = () => {
-    // Small delay to allow dropdown to close first
-    setTimeout(() => {
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth'
-      });
-    }, 100);
+    navigate("/faqs", { state: { scrollToContact: true } });
   };
 
   const handleFeedback = () => {
