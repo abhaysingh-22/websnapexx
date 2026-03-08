@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Cookie } from "lucide-react";
 import Logo from "@/components/ui/Logo";
@@ -37,6 +37,8 @@ const sections = [
 ];
 
 const CookiePolicy = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -45,13 +47,13 @@ const CookiePolicy = () => {
           <Link to="/" className="flex items-center">
             <Logo size="sm" />
           </Link>
-          <Link
-            to="/"
+          <button
+            onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
-          </Link>
+          </button>
         </div>
       </div>
 
