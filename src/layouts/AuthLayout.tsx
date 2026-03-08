@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import Logo from "@/components/ui/Logo";
-import editorInterface from "@/assets/editor-interface.jpg";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -9,50 +7,44 @@ interface AuthLayoutProps {
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Hero */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative overflow-hidden rounded-none">
-        <img 
-          src={editorInterface} 
-          alt="AI Photo Editing Interface" 
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-        {/* Gradient overlay: dark at left (for text legibility), fades to reveal image */}
-        <div className="auth-hero-overlay" />
-        
-        <div className="relative z-10 p-8 lg:p-10 xl:p-12 flex flex-col h-full">
-          {/* Force white logo text always — hero is always over a dark overlay */}
-          <div className="flex items-center gap-3">
-            <img src="/SE_circlelogo.png" alt="SnapExx" className="w-10 h-10 object-contain drop-shadow-md" />
-            <span className="font-bold text-xl text-white drop-shadow-md">SnapExx</span>
-          </div>
-          
-          <div className="flex-1 flex flex-col justify-center max-w-lg">
-            <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-4 lg:mb-6 leading-tight" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.7)' }}>
-              Join the Future of<br />AI Photo Editing
-            </h1>
-            <p className="text-white/90 text-base lg:text-lg" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>
-              Experience the NextEra of professional photo dashboard and advanced AI editing tools. 
-              Unleash your creativity with seamless neural processing.
-            </p>
-          </div>
+    <div className="relative h-screen bg-[#0b1120] overflow-hidden flex flex-col">
+      {/* Decorative background patterns */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        {/* Circle grid patterns */}
+        <defs>
+          <pattern id="circleGrid" x="0" y="0" width="34" height="34" patternUnits="userSpaceOnUse">
+            <circle cx="17" cy="17" r="6.5" fill="none" stroke="rgba(0,255,220,0.15)" strokeWidth="0.8" />
+          </pattern>
+        </defs>
+        <rect x="0" y="6%" width="28%" height="38%" rx="20" fill="url(#circleGrid)" />
+        <rect x="66%" y="56%" width="26%" height="32%" rx="20" fill="url(#circleGrid)" />
 
-          <div className="flex flex-wrap items-center gap-4 lg:gap-6 text-white/75 text-xs lg:text-sm">
-            <span>© 2026 SnapExx</span>
-            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link to="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link>
-          </div>
-        </div>
+        {/* Flowing accent curves */}
+        <path d="M -20 150 Q 140 40 200 350 Q 260 680 60 880" fill="none" stroke="rgba(0,255,220,0.22)" strokeWidth="2" />
+        <path d="M 980 -20 Q 1120 160 1340 100" fill="none" stroke="rgba(0,255,220,0.22)" strokeWidth="2" />
+        <path d="M 1060 360 Q 1220 510 1400 680" fill="none" stroke="rgba(0,255,220,0.22)" strokeWidth="2" />
+        <path d="M 380 880 Q 620 790 920 960" fill="none" stroke="rgba(0,255,220,0.16)" strokeWidth="1.5" />
+      </svg>
+
+      {/* Logo - top left */}
+      <div className="relative z-10 px-5 py-4 sm:px-7 sm:py-5">
+        <Link to="/" className="inline-flex items-center gap-2.5 group">
+          <img src="/SE_circlelogo.png" alt="SnapExx" className="w-8 h-8 object-contain" />
+          <span className="font-bold text-base text-white/90 group-hover:text-white transition-colors">SnapExx</span>
+        </Link>
       </div>
 
-      {/* Right Side - Form */}
-      <div className="flex-1 flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 lg:p-12 bg-background min-h-screen">
-        {/* Mobile Logo */}
-        <div className="lg:hidden mb-8">
-          <Logo size="lg" />
-        </div>
+      {/* Form content - centered */}
+      <div className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6">
         {children}
+      </div>
+
+      {/* Footer legal links */}
+      <div className="relative z-10 py-4 flex flex-wrap items-center justify-center gap-4 sm:gap-5 text-[11px] sm:text-xs text-white/40">
+        <span>© 2026 SnapExx</span>
+        <Link to="/terms" className="hover:text-white/70 transition-colors">Terms of Service</Link>
+        <Link to="/privacy" className="hover:text-white/70 transition-colors">Privacy Policy</Link>
+        <Link to="/cookies" className="hover:text-white/70 transition-colors">Cookie Policy</Link>
       </div>
     </div>
   );
