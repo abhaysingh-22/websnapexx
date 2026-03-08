@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Clock, Crown, User, HelpCircle, Menu, Moon, Sun } from "lucide-react";
+import { Home, Clock, Crown, User, HelpCircle, Menu, Moon, Sun, BookOpen } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import Footer from "@/components/ui/Footer";
 import { cn } from "@/lib/utils";
@@ -70,6 +70,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             {/* Right Section */}
             <div className="flex items-center gap-2 md:gap-4">
+              {/* Blog Link - Desktop (opens in new tab) */}
+              <a 
+                href="/blog"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden md:flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span className="hidden lg:inline">Blog</span>
+              </a>
+
               {/* Help Link - Desktop */}
               <Link 
                 to="/faqs"
@@ -139,6 +150,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
                     {/* Mobile Bottom Section */}
                     <div className="p-4 border-t border-border">
+                      {/* Blog - opens in new tab */}
+                      <a 
+                        href="/blog"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <BookOpen className="w-5 h-5" />
+                        Blog
+                      </a>
                       {/* Help */}
                       <Link 
                         to="/faqs"
