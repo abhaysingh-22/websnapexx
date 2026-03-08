@@ -41,6 +41,10 @@ export interface VeoCallParams {
   durationSeconds?: 4 | 6 | 8;   // Veo 3.x accepted values, default 8
   /** Override the default poll ceiling of DEFAULT_MAX_POLLS. */
   maxPolls?: number;
+  /** Optional reference image for image-to-video generation (base64-encoded). */
+  imageBase64?: string;
+  /** MIME type of the reference image (e.g. "image/png", "image/jpeg"). */
+  imageMimeType?: string;
 }
 
 // ─── GCS Signed URL (V4 — RSA-SHA256) ────────────────────────────────────────
@@ -142,12 +146,24 @@ async function submitVeoJob(
   params: VeoCallParams,
   outputGcsUri: string
 ): Promise<{ operationName?: string; error?: string }> {
-  const { prompt, accessToken, sampleCount = 1, durationSeconds = 8 } = params;
+  const { prompt, accessToken, sampleCount = 1, durationSeconds = 8, imageBase64, imageMimeType } = params;
 
   const endpoint =
     `https://${VERTEX_LOCATION}-aiplatform.googleapis.com/v1` +
     `/projects/${GCP_PROJECT_ID}/locations/${VERTEX_LOCATION}` +
     `/publishers/google/models/${VEO_MODEL}:predictLongRunning`;
+
+  // Build instance — include reference image when provided (image-to-video)
+  const instance: Record<string, unknown> = { prompt };
+  if (imageBase64 && imageMimeType) {
+    instance.image = {
+      bytesBase64Encoded: imageBase64,
+      mimeType: imageMimeType,
+    };
+    console.log("[veo] Image-to-video mode — reference image attached");
+  } else {
+    console.log("[veo] Text-to-video mode — no reference image");
+  }
 
   const res = await fetch(endpoint, {
     method: "POST",
@@ -156,7 +172,7 @@ async function submitVeoJob(
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
-      instances: [{ prompt }],
+      instances: [instance],
       parameters: {
         storageUri: outputGcsUri,
         sampleCount,          // integer 1–4
