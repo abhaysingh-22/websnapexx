@@ -10,7 +10,7 @@ const ContinueButton = ({ onClick, label = "Continue" }: ContinueButtonProps) =>
   return (
     <motion.button
       onClick={onClick}
-      className="btn-primary flex items-center justify-center gap-2 min-w-[160px] sm:min-w-[200px] text-sm sm:text-base px-4 sm:px-6 py-2.5 sm:py-3"
+      className="flex items-center justify-center gap-2 min-w-[180px] sm:min-w-[220px] text-sm sm:text-base px-5 sm:px-7 py-2.5 sm:py-3 bg-cyan-400 text-black font-semibold rounded-lg hover:bg-cyan-300 transition-colors"
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
     >
