@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { HelpCircle, ChevronDown, ChevronUp, MessageCircle, Search, Send, X } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -130,6 +131,18 @@ const FAQs = () => {
   const [contactMessage, setContactMessage] = useState("");
   const [sending, setSending] = useState(false);
   const { session } = useAuthContext();
+  const location = useLocation();
+
+  useEffect(() => {
+    if ((location.state as { scrollToContact?: boolean })?.scrollToContact) {
+      setTimeout(() => {
+        const el = document.getElementById("contact-us");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 300);
+    }
+  }, [location.state]);
 
   const handleSendMessage = async () => {
     if (!contactSubject.trim() || !contactMessage.trim()) {
