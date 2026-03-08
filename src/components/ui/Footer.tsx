@@ -42,7 +42,7 @@ const Footer = () => {
           </motion.div>
 
           {/* Contact Us */}
-          <motion.div variants={itemVariants}>
+          <motion.div variants={itemVariants} id="contact-us">
             <h3 className="text-sm font-bold tracking-widest text-accent uppercase mb-3 sm:mb-4">Contact Us</h3>
             <div className="space-y-2 sm:space-y-3">
               <a 
