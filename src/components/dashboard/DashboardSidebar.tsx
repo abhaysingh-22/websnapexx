@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Clock, Diamond, User, HelpCircle, ArrowUp, Menu } from "lucide-react";
+import { Home, Clock, Diamond, User, HelpCircle, ArrowUp, Menu, BookOpen } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import {
   Sidebar,
@@ -84,6 +84,17 @@ const DashboardSidebar = () => {
           <ArrowUp className="w-4 h-4" />
           Upgrade to Pro
         </Link> */}
+
+        {/* Blog - opens in new tab */}
+        <a 
+          href="/blog" 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <BookOpen className="w-5 h-5" />
+          Blog
+        </a>
 
         {/* Help */}
         <Link 
