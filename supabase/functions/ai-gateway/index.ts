@@ -146,6 +146,42 @@ Deno.serve(async (req) => {
         return jsonError("GCS_VIDEO_BUCKET secret is required for video generation.", 500);
       }
 
+      // ── Resolve reference image for image-to-video ──────────────────────
+      let imageBase64: string | undefined;
+      let imageMimeType: string | undefined;
+
+      if (imageUrl) {
+        try {
+          if (imageUrl.startsWith("data:")) {
+            // Already base64 data URI — extract parts
+            const match = imageUrl.match(/^data:(image\/\w+);base64,(.+)$/);
+            if (match) {
+              imageMimeType = match[1];
+              imageBase64 = match[2];
+            }
+          } else {
+            // HTTPS URL (e.g. Supabase signed URL) — fetch and convert to base64
+            const imgRes = await fetch(imageUrl);
+            if (imgRes.ok) {
+              const contentType = imgRes.headers.get("content-type") || "image/jpeg";
+              imageMimeType = contentType.split(";")[0].trim();
+              const buf = await imgRes.arrayBuffer();
+              // Convert to base64 using Deno's btoa
+              const bytes = new Uint8Array(buf);
+              let binary = "";
+              for (let i = 0; i < bytes.length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+              }
+              imageBase64 = btoa(binary);
+            } else {
+              console.warn("[ai-gateway] Failed to fetch reference image, falling back to text-to-video");
+            }
+          }
+        } catch (err) {
+          console.warn("[ai-gateway] Error processing reference image, falling back to text-to-video:", err);
+        }
+      }
+
       const veoResult = await generateVideo({
         prompt: message,
         accessToken,
@@ -153,6 +189,8 @@ Deno.serve(async (req) => {
         userId,
         sampleCount: 1,
         durationSeconds: 8,
+        imageBase64,
+        imageMimeType,
       });
 
       if (veoResult.error) {
