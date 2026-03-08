@@ -30,6 +30,7 @@ import History from "./pages/dashboard/History";
 import Premium from "./pages/dashboard/Premium";
 import Profile from "./pages/dashboard/Profile";
 import FAQs from "./pages/dashboard/FAQs";
+import Blog from "./pages/Blog";
 
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PublicOnlyRoute } from "@/components/auth/PublicOnlyRoute";
@@ -86,6 +87,9 @@ const App = () => (
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/faqs" element={<ProtectedRoute><FAQs /></ProtectedRoute>} />
               
+              {/* Blog */}
+              <Route path="/blog" element={<Blog />} />
+
               {/* Legal */}
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
