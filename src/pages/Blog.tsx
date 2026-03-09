@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Sparkles, Users, PenTool, Megaphone, Rocket, Globe, Clock, Zap } from "lucide-react";
+import { ArrowLeft, Sparkles, Users, PenTool, Megaphone, Rocket, Globe, Clock, Zap, Brain, MessageSquare, Image, Video } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import Footer from "@/components/ui/Footer";
 import { useTheme } from "@/hooks/use-theme";
@@ -373,6 +373,85 @@ const Blog = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </motion.section>
+
+        {/* AI Memory & Context Section */}
+        <motion.section variants={itemVariants} className="mb-16">
+          <div className="prose-section">
+            <h2 className="section-heading">How SnapExx Remembers Your Conversations</h2>
+            <p className="section-text">
+              One of the most important aspects of any <strong className="text-foreground">AI content video tool</strong> is
+              how well it understands context. SnapExx is built with intelligent conversation memory — meaning the AI
+              does not treat every message as an isolated request. It remembers what you said, what you asked for, and
+              what it already delivered.
+            </p>
+            <p className="section-text">
+              When you work inside a SnapExx session, the AI retains the last 30 messages of your conversation. This
+              gives it enough context to handle multi-step creative workflows — refining a video concept, adjusting
+              tone, iterating on a script — without you having to repeat yourself.
+            </p>
+          </div>
+
+          {/* Memory cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+            {[
+              {
+                icon: MessageSquare,
+                label: "30-Message Memory",
+                desc: "The AI remembers your last 30 messages for rich, multi-turn creative sessions.",
+                gradient: "from-blue-500/20 to-indigo-600/20",
+                borderColor: "border-blue-500/30",
+                iconColor: "text-blue-400",
+              },
+              {
+                icon: Image,
+                label: "Live Image Context",
+                desc: "Upload an image and the AI sees it in real time — perfect for image-to-video generation.",
+                gradient: "from-emerald-500/20 to-teal-600/20",
+                borderColor: "border-emerald-500/30",
+                iconColor: "text-emerald-400",
+              },
+              {
+                icon: Brain,
+                label: "Context-Aware Responses",
+                desc: "The AI tracks your creative direction across turns so refinements feel natural and seamless.",
+                gradient: "from-purple-500/20 to-fuchsia-600/20",
+                borderColor: "border-purple-500/30",
+                iconColor: "text-purple-400",
+              },
+            ].map((card) => (
+              <div
+                key={card.label}
+                className={`flex flex-col items-center text-center p-6 rounded-2xl bg-gradient-to-br ${card.gradient} border ${card.borderColor} hover:scale-[1.02] transition-all`}
+              >
+                <div className={`w-11 h-11 rounded-xl bg-card/80 backdrop-blur flex items-center justify-center mb-3 ${card.iconColor}`}>
+                  <card.icon className="w-5 h-5" />
+                </div>
+                <h4 className="text-sm font-semibold text-foreground mb-1.5">{card.label}</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="prose-section mt-8">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3">What Does This Mean in Practice?</h3>
+            <p className="section-text">
+              Suppose you are working on an ad video. You describe the product, the AI suggests a concept, you ask for
+              a different hook — all within the same conversation. Because SnapExx remembers the full thread (up to 30
+              messages), it does not lose track of your product details or creative preferences. You get coherent,
+              iterative collaboration instead of starting from scratch each time.
+            </p>
+            <p className="section-text">
+              For image-based workflows, the AI can see the image you upload in the current message and use it directly
+              — whether that means editing a photo, generating a video from it, or analyzing its composition. This is
+              what makes SnapExx feel less like a tool and more like a creative partner that pays attention.
+            </p>
+            <p className="section-text">
+              This approach to AI memory is deliberate. A 30-message window keeps responses fast, costs predictable,
+              and context sharp — without the latency that comes from processing thousands of messages. It is the right
+              balance between remembering enough and staying responsive.
+            </p>
           </div>
         </motion.section>
 
