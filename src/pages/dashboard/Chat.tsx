@@ -223,8 +223,8 @@ const Chat = () => {
         isFirstMessage.current = false;
       }
 
-      // Build conversation history for context (last 10 messages)
-      const conversationHistory = messages.slice(-10).map((m) => ({
+      // Build conversation history for context (last 30 messages)
+      const conversationHistory = messages.slice(-30).map((m) => ({
         role: m.role as "user" | "assistant",
         content: m.content,
       }));
