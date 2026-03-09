@@ -77,7 +77,7 @@ async function buildContents(
 ): Promise<unknown[]> {
   const { message, imageUrl, imageUrls, conversationHistory } = params;
 
-  const contents: unknown[] = conversationHistory.slice(-10).map((m) => ({
+  const contents: unknown[] = conversationHistory.slice(-30).map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
     parts: [{ text: m.content }],
   }));
