@@ -15,10 +15,10 @@ interface DashboardLayoutProps {
 }
 
 const navItems = [
-  { path: "/home", label: "Home", icon: Home },
-  { path: "/history", label: "History", icon: Clock },
-  { path: "/premium", label: "Premium", icon: Crown },
-  { path: "/profile", label: "Profile", icon: User },
+  { path: "/app/home", label: "Home", icon: Home },
+  { path: "/app/history", label: "History", icon: Clock },
+  { path: "/app/premium", label: "Premium", icon: Crown },
+  { path: "/app/profile", label: "Profile", icon: User },
 ];
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
@@ -39,7 +39,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8">
           <div className="h-14 sm:h-16 md:h-[72px] flex items-center justify-between gap-2 sm:gap-4">
             {/* Logo — icon-only on xs to save space */}
-            <Link to="/home" className="flex items-center shrink-0">
+            <Link to="/app/home" className="flex items-center shrink-0">
               <span className="sm:hidden"><Logo size="sm" iconOnly /></span>
               <span className="hidden sm:inline-flex"><Logo size="md" /></span>
             </Link>
@@ -184,7 +184,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col">
-        {location.pathname === "/home" ? (
+        {location.pathname === "/app/home" ? (
           <div className="flex-1 flex flex-col">
             {children}
           </div>
@@ -196,7 +196,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </main>
 
       {/* Footer - hidden on Home/Chat tab */}
-      {location.pathname !== "/home" && <Footer />}
+      {location.pathname !== "/app/home" && <Footer />}
     </div>
   );
 };

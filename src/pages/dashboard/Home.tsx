@@ -201,12 +201,12 @@ const Home = () => {
     };
   });
 
-  // Fetch messages when conversation changes
+  // Fetch messages when conversation changes or session becomes available
   useEffect(() => {
-    if (currentConversationId) {
+    if (currentConversationId && session?.user?.id) {
       fetchMessages();
     }
-  }, [currentConversationId]);
+  }, [currentConversationId, session?.user?.id]);
 
   // Auto-scroll when messages change
   useEffect(() => {
@@ -484,9 +484,9 @@ const Home = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col h-[calc(100dvh-64px)] md:h-[calc(100dvh-72px)] max-w-5xl w-full mx-auto px-2 sm:px-4 lg:px-6">
-        {/* Continuous chat container — messages + input in one box */}
-        <div className="flex-1 flex flex-col min-h-0 rounded-2xl border border-border/50 bg-card/40 dark:bg-card/20 overflow-hidden">
+      <div className="flex flex-col h-[calc(100dvh-64px)] md:h-[calc(100dvh-72px)] max-w-5xl w-full mx-auto px-2 sm:px-4 lg:px-6 py-2 sm:py-3">
+        {/* Continuous chat container — distinct card surface */}
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-card dark:bg-[hsl(217,45%,9%)] rounded-2xl border border-border/40 shadow-sm dark:border-white/[0.06]">
           {/* New Chat button — shown when inside a conversation */}
           {currentConversationId && (
             <div className="flex items-center justify-end px-4 pt-3 pb-1">
