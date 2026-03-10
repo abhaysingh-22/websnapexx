@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { MessageSquarePlus, Frown, Meh, Smile, Send, User, Mail, Settings, LogOut, Trash2, Loader2 } from "lucide-react";
+import { MessageSquarePlus, Frown, Meh, Smile, Send, User, Mail, Settings, LogOut, Trash2, Loader2, LogIn, UserPlus } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import TypewriterPlaceholder from "@/components/ui/TypewriterPlaceholder";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -49,12 +49,7 @@ const Profile = () => {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      navigate('/signin');
-    }
-  }, [isLoading, isAuthenticated, navigate]);
+  // No redirect for guests — they can view the profile page
 
   const handleLogout = async () => {
     setIsSigningOut(true);
@@ -186,11 +181,13 @@ const Profile = () => {
   };
 
   // User display data - use full_name from user metadata (set during registration)
-  const displayName = user?.user_metadata?.full_name || profile?.full_name || 'User';
-  const displayEmail = user?.email || 'No email';
-  const memberSince = user?.created_at 
+  const displayName = isAuthenticated
+    ? (user?.user_metadata?.full_name || profile?.full_name || 'User')
+    : 'Guest User';
+  const displayEmail = isAuthenticated ? (user?.email || 'No email') : 'Not signed in';
+  const memberSince = isAuthenticated && user?.created_at 
     ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-    : 'N/A';
+    : null;
 
   if (isLoading) {
     return (
@@ -220,8 +217,10 @@ const Profile = () => {
               <h1 className="text-xl sm:text-2xl font-bold">{displayName}</h1>
               <p className="text-muted-foreground text-sm sm:text-base">{displayEmail}</p>
               <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
-                <span className="badge-pro">Creative Director</span>
-                <span className="text-xs text-muted-foreground">Since {memberSince}</span>
+                <span className="badge-pro">{isAuthenticated ? 'Creative Director' : 'Guest'}</span>
+                {memberSince && (
+                  <span className="text-xs text-muted-foreground">Since {memberSince}</span>
+                )}
               </div>
             </div>
           </div>
@@ -281,6 +280,16 @@ const Profile = () => {
             </div>
           </div>
 
+          {!isAuthenticated ? (
+            <div className="text-center py-6 space-y-3">
+              <p className="text-muted-foreground text-sm">Please sign in to share your feedback.</p>
+              <div className="flex items-center justify-center gap-3">
+                <Link to="/signin" className="btn-primary text-sm font-semibold px-5 py-2">Sign In</Link>
+                <Link to="/register" className="text-sm font-medium text-accent hover:underline">Create Account</Link>
+              </div>
+            </div>
+          ) : (
+          <>
           <TypewriterPlaceholder
             placeholder="Type your suggestions here..."
             value={feedback}
@@ -334,9 +343,12 @@ const Profile = () => {
               )}
             </motion.button>
           </div>
+          </>
+          )}
         </motion.div>
 
-        {/* Account Actions */}
+        {/* Account Actions — only for authenticated users */}
+        {isAuthenticated ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Logout */}
           <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
@@ -389,6 +401,33 @@ const Profile = () => {
             </motion.button>
           </motion.div>
         </div>
+        ) : (
+        <motion.div variants={itemVariants} className="card-elevated p-6 sm:p-8 text-center">
+          <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+            <UserPlus className="w-7 h-7 text-accent" />
+          </div>
+          <h2 className="text-lg sm:text-xl font-bold mb-2">Join SnapExx AI</h2>
+          <p className="text-muted-foreground text-sm mb-5 max-w-md mx-auto">
+            Create an account to unlock all features — save conversations, submit feedback, and more.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              to="/register"
+              className="btn-primary flex items-center gap-2 text-sm font-bold px-6 py-2.5"
+            >
+              <UserPlus className="w-4 h-4" />
+              Create Account
+            </Link>
+            <Link
+              to="/signin"
+              className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-6 py-2.5 border border-border rounded-xl hover:bg-secondary"
+            >
+              <LogIn className="w-4 h-4" />
+              Sign In
+            </Link>
+          </div>
+        </motion.div>
+        )}
 
         {/* Footer */}
         <motion.div 
