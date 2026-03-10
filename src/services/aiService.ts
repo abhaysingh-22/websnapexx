@@ -97,9 +97,7 @@ async function callEdgeFunction(params: AIRequestParams): Promise<AIServiceRespo
     const data = await res.json();
 
     if (!res.ok || !data?.success) {
-      const errMsg = data?.error ?? `Edge function returned ${res.status}`;
-      console.error("[aiService] Edge function error:", errMsg, data);
-      return { success: false, error: errMsg };
+      return { success: false, error: "Server busy! Please try again later" };
     }
 
     // ── Step 2: Upload AI-generated image to Supabase Storage ───────────────────
@@ -121,9 +119,7 @@ async function callEdgeFunction(params: AIRequestParams): Promise<AIServiceRespo
       videoUrl: data.videoUrl as string | undefined,
     };
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "AI service call failed";
-    console.error("[aiService] Exception:", err);
-    return { success: false, error: msg };
+    return { success: false, error: "Server busy! Please try again later" };
   }
 }
 
