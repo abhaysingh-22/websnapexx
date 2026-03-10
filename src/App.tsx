@@ -32,7 +32,6 @@ import Profile from "./pages/dashboard/Profile";
 import FAQs from "./pages/dashboard/FAQs";
 import Blog from "./pages/Blog";
 
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { PublicOnlyRoute } from "@/components/auth/PublicOnlyRoute";
 
 const queryClient = new QueryClient();
@@ -80,12 +79,12 @@ const App = () => (
               />
               
               {/* Dashboard */}
-              <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-              <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-              <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
-              <Route path="/premium" element={<ProtectedRoute><Premium /></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-              <Route path="/faqs" element={<ProtectedRoute><FAQs /></ProtectedRoute>} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/premium" element={<Premium />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/faqs" element={<FAQs />} />
               
               {/* Blog */}
               <Route path="/blog" element={<Blog />} />
