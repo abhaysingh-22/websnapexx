@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supportService } from "@/services/supportService";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const faqs = [
   {
@@ -131,6 +132,7 @@ const FAQs = () => {
   const [contactMessage, setContactMessage] = useState("");
   const [sending, setSending] = useState(false);
   const { session } = useAuthContext();
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -263,7 +265,19 @@ const FAQs = () => {
             className="btn-primary font-bold text-sm sm:text-base"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => setContactOpen(true)}
+            onClick={() => {
+              if (!isAuthenticated) {
+                toast("Please login or sign up first", {
+                  description: "You need an account to contact support.",
+                  action: {
+                    label: "Sign Up",
+                    onClick: () => window.location.href = "/register",
+                  },
+                });
+                return;
+              }
+              setContactOpen(true);
+            }}
           >
             Contact Support
           </motion.button>
