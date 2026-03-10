@@ -292,7 +292,7 @@ const ForgotPassword = () => {
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="flex justify-center gap-1.5 sm:gap-2" onPaste={handleOtpPaste}>
+                  <div className="flex justify-center gap-1 sm:gap-2" onPaste={handleOtpPaste}>
                     {otp.map((digit, i) => (
                       <input
                         key={i}
@@ -303,7 +303,7 @@ const ForgotPassword = () => {
                         value={digit}
                         onChange={(e) => handleOtpChange(i, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                        className="w-9 h-10 sm:w-10 sm:h-11 text-center text-lg font-bold rounded-lg border border-white/10 bg-white/[0.06] text-white focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all duration-200"
+                        className="w-8 h-9 sm:w-10 sm:h-11 text-center text-base sm:text-lg font-bold rounded-lg border border-white/10 bg-white/[0.06] text-white focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all duration-200"
                         disabled={isLoading}
                         autoFocus={i === 0}
                       />

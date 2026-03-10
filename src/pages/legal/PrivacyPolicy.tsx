@@ -40,7 +40,7 @@ const PrivacyPolicy = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       {/* Header */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
@@ -71,8 +71,8 @@ const PrivacyPolicy = () => {
             </div>
             <span className="text-sm font-semibold text-accent uppercase tracking-widest">Legal</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-foreground mb-4">Privacy Policy</h1>
-          <p className="text-muted-foreground text-lg">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground mb-4">Privacy Policy</h1>
+          <p className="text-muted-foreground text-base sm:text-lg">
             Last updated: February 2026
           </p>
         </motion.div>
@@ -85,7 +85,7 @@ const PrivacyPolicy = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: i * 0.07 }}
-              className="flex gap-6 p-6 rounded-2xl bg-card border border-border/50 hover:border-accent/30 transition-colors"
+              className="flex gap-4 sm:gap-6 p-4 sm:p-6 rounded-2xl bg-card border border-border/50 hover:border-accent/30 transition-colors"
             >
               <span className="text-3xl font-extrabold text-accent/20 leading-none select-none hidden sm:block">
                 {section.number}
@@ -103,7 +103,7 @@ const PrivacyPolicy = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-12 p-6 rounded-2xl bg-accent/5 border border-accent/20 text-sm text-muted-foreground"
+          className="mt-8 sm:mt-12 p-4 sm:p-6 rounded-2xl bg-accent/5 border border-accent/20 text-sm text-muted-foreground"
         >
           For any privacy-related questions, contact us at{" "}
           <a href="mailto:nextera.inbox@gmail.com" className="text-accent font-medium hover:underline">

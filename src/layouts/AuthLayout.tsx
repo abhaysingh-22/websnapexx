@@ -7,7 +7,7 @@ interface AuthLayoutProps {
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
-    <div className="relative h-screen bg-[#0b1120] overflow-hidden flex flex-col">
+    <div className="relative h-dvh bg-[#0b1120] overflow-hidden flex flex-col">
       {/* Decorative background patterns */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         {/* Circle grid patterns */}
@@ -40,7 +40,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
       </div>
 
       {/* Footer legal links */}
-      <div className="relative z-10 py-4 flex flex-wrap items-center justify-center gap-4 sm:gap-5 text-[11px] sm:text-xs text-white/40">
+      <div className="relative z-10 py-4 safe-area-bottom flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-[11px] sm:text-xs text-white/40 px-4">
         <span>© 2026 SnapExx</span>
         <Link to="/terms" className="hover:text-white/70 transition-colors">Terms of Service</Link>
         <Link to="/privacy" className="hover:text-white/70 transition-colors">Privacy Policy</Link>

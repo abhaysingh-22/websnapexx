@@ -323,7 +323,7 @@ const Chat = () => {
 
   return (
     <ChatLayout>
-      <div className="flex flex-col h-[calc(100vh-16px)] sm:h-[calc(100vh-32px)] md:h-[calc(100vh-64px)] max-w-4xl mx-auto px-2 sm:px-0">
+      <div className="flex flex-col h-[calc(100dvh-16px)] sm:h-[calc(100dvh-32px)] md:h-[calc(100dvh-64px)] max-w-4xl mx-auto px-2 sm:px-4">
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -352,9 +352,9 @@ const Chat = () => {
         </motion.div>
 
         {/* Messages */}
-        <div ref={scrollAreaWrapRef} className="flex-1 min-h-0 pr-2 sm:pr-4 overflow-hidden">
+        <div ref={scrollAreaWrapRef} className="flex-1 min-h-0 overflow-hidden">
           <ScrollArea className="h-full">
-            <div className="space-y-3 sm:space-y-4 pb-4">
+            <div className="space-y-3 sm:space-y-4 pb-4 px-1 sm:px-2">
               <AnimatePresence>
                 {messages.length === 0 && (
                   <motion.div

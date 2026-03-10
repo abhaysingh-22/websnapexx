@@ -136,8 +136,8 @@ const UserAvatarDropdown = ({ displayName, email }: UserAvatarDropdownProps) => 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2 md:gap-3 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-medium">{displayName}</p>
+            <div className="text-right hidden lg:block">
+              <p className="text-sm font-medium truncate max-w-[120px]">{displayName}</p>
             </div>
             <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-secondary flex items-center justify-center ring-2 ring-accent">
               <User className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />

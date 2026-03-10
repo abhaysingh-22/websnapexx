@@ -33,14 +33,15 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     : 'Guest User';
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-dvh flex flex-col bg-background safe-area-x">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="h-16 md:h-[72px] flex items-center justify-between gap-4">
-            {/* Logo */}
-            <Link to="/home" className="flex items-center">
-              <Logo size="md" />
+      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border safe-area-top">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8">
+          <div className="h-14 sm:h-16 md:h-[72px] flex items-center justify-between gap-2 sm:gap-4">
+            {/* Logo — icon-only on xs to save space */}
+            <Link to="/home" className="flex items-center shrink-0">
+              <span className="sm:hidden"><Logo size="sm" iconOnly /></span>
+              <span className="hidden sm:inline-flex"><Logo size="md" /></span>
             </Link>
             
             {/* Vertical Separator */}
@@ -57,7 +58,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                      "flex items-center gap-2 px-3 lg:px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                       isActive 
                         ? "bg-accent/10 text-accent" 
                         : "text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -71,7 +72,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </nav>
 
             {/* Right Section */}
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4">
               {/* Blog Link - Desktop (opens in new tab) */}
               <a 
                 href="/blog"
@@ -95,13 +96,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               {/* Theme Toggle */}
               <button 
                 onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-secondary transition-colors"
+                className="p-1.5 sm:p-2 rounded-full hover:bg-secondary transition-colors"
                 aria-label="Toggle theme"
               >
                 {theme === "dark" ? (
-                  <Sun className="w-5 h-5 text-muted-foreground" />
+                  <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                 ) : (
-                  <Moon className="w-5 h-5 text-muted-foreground" />
+                  <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
                 )}
               </button>
 
@@ -188,7 +189,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             {children}
           </div>
         ) : (
-          <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-8 w-full">
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 py-6 md:py-8 w-full">
             {children}
           </div>
         )}

@@ -44,7 +44,7 @@ const ComparisonSlider = ({
   return (
     <motion.div 
       ref={containerRef}
-      className="relative w-full max-w-[240px] sm:max-w-[300px] md:max-w-[360px] aspect-square rounded-xl overflow-hidden shadow-elevated cursor-ew-resize"
+      className="relative w-full max-w-[240px] sm:max-w-[300px] md:max-w-[360px] lg:max-w-[400px] aspect-square rounded-xl overflow-hidden shadow-elevated cursor-ew-resize"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}

@@ -24,7 +24,7 @@ const OnboardingLayout = ({
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen bg-[#0b1120] flex flex-col overflow-hidden">
+    <div className="h-dvh bg-[#0b1120] flex flex-col overflow-hidden">
       {/* Decorative background patterns */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>

@@ -27,7 +27,7 @@ const Onboarding3 = () => {
           <img 
             src={watchProduct} 
             alt="Luxury Watch" 
-            className="w-full h-40 sm:h-52 md:h-60 object-cover"
+            className="w-full h-36 sm:h-48 md:h-60 object-cover"
           />
           
           {/* Badges */}
