@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, LogOut, Trash2, MessageSquarePlus, Mail, Loader2 } from "lucide-react";
+import { User, LogOut, Trash2, MessageSquarePlus, Mail, Loader2, LogIn, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,7 +27,7 @@ interface UserAvatarDropdownProps {
 
 const UserAvatarDropdown = ({ displayName, email }: UserAvatarDropdownProps) => {
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, isAuthenticated } = useAuth();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
@@ -146,48 +146,69 @@ const UserAvatarDropdown = ({ displayName, email }: UserAvatarDropdownProps) => 
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56 bg-card border border-border z-[100]">
           <div className="px-3 py-2 border-b border-border">
-            <p className="text-sm font-medium">{displayName}</p>
-            <p className="text-xs text-muted-foreground truncate">{email}</p>
+            <p className="text-sm font-medium">{isAuthenticated ? displayName : 'Guest User'}</p>
+            <p className="text-xs text-muted-foreground truncate">{isAuthenticated ? email : 'Not signed in'}</p>
           </div>
-          <DropdownMenuItem 
-            onClick={handleFeedback}
-            className="cursor-pointer"
-          >
-            <MessageSquarePlus className="w-4 h-4 mr-2" />
-            Feedback
-          </DropdownMenuItem>
-          <DropdownMenuItem 
-            onClick={handleContactUs}
-            className="cursor-pointer"
-          >
-            <Mail className="w-4 h-4 mr-2" />
-            Contact Us
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem 
-            onClick={handleLogout}
-            disabled={isSigningOut}
-            className="cursor-pointer"
-          >
-            {isSigningOut ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Logging out...
-              </>
-            ) : (
-              <>
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </>
-            )}
-          </DropdownMenuItem>
-          <DropdownMenuItem 
-            onClick={handleDeleteAccount}
-            className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete Account
-          </DropdownMenuItem>
+          {isAuthenticated ? (
+            <>
+              <DropdownMenuItem 
+                onClick={handleFeedback}
+                className="cursor-pointer"
+              >
+                <MessageSquarePlus className="w-4 h-4 mr-2" />
+                Feedback
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleContactUs}
+                className="cursor-pointer"
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                Contact Us
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={handleLogout}
+                disabled={isSigningOut}
+                className="cursor-pointer"
+              >
+                {isSigningOut ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Logging out...
+                  </>
+                ) : (
+                  <>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleDeleteAccount}
+                className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Account
+              </DropdownMenuItem>
+            </>
+          ) : (
+            <>
+              <DropdownMenuItem 
+                onClick={() => navigate("/signin")}
+                className="cursor-pointer"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Sign In
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => navigate("/register")}
+                className="cursor-pointer"
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                Create Account
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
