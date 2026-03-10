@@ -94,7 +94,7 @@ const OnboardingLayout = ({
 
             {/* Skip Link */}
             <Link 
-              to="/register"
+              to="/app/home"
               className="text-xs text-white/40 hover:text-white/70 transition-colors"
             >
               Skip

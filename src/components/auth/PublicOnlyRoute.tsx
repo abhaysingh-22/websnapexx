@@ -6,7 +6,7 @@ export function PublicOnlyRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) return null;
-  if (isAuthenticated) return <Navigate to="/home" replace />;
+  if (isAuthenticated) return <Navigate to="/app/home" replace />;
 
   return <>{children}</>;
 }

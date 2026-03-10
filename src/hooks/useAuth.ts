@@ -119,7 +119,7 @@ export const useAuth = () => {
   const signInWithGoogle = async () => {
     // Use the current app's origin so the redirect always comes back to this app,
     // never to Lovable or any other deployment.
-    const redirectTo = `${window.location.origin}/home`;
+    const redirectTo = `${window.location.origin}/app/home`;
     const { data, error } = await externalSupabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo },

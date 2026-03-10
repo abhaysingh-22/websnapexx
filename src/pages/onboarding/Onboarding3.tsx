@@ -114,7 +114,7 @@ const Onboarding3 = () => {
           transition={{ delay: 0.5 }}
         >
           <ContinueButton 
-            onClick={() => navigate('/home')} 
+            onClick={() => navigate('/app/home')} 
             label="Get Started"
           />
         </motion.div>
