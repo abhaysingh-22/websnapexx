@@ -28,7 +28,7 @@ const OnboardingHeader = ({
     if (onSkip) {
       onSkip();
     } else {
-      navigate('/register');
+      navigate('/home');
     }
   };
 
