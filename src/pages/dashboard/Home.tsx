@@ -35,6 +35,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { aiService, getStarterPrompts, isFeatureMode } from "@/services/aiService";
 import { useAuth } from "@/hooks/useAuth";
 import MediaPickerDialog from "@/components/dashboard/MediaPickerDialog";
+import { toast } from "sonner";
 
 // ─── Feature definitions ─────────────────────────────────────────────────────
 interface FeatureDef {
@@ -170,12 +171,7 @@ const Home = () => {
     }
   }, [currentConversationId]);
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      navigate("/signin");
-    }
-  }, [authLoading, isAuthenticated, navigate]);
+  // No redirect — guests can browse the app freely
 
   // Convert DB messages to display format
   const messages: DisplayMessage[] = dbMessages.map((msg: Message) => {
@@ -221,8 +217,10 @@ const Home = () => {
     }
   }, [messages.length, isLoading]);
 
-  // Get display name
-  const displayName = user?.user_metadata?.full_name || "there";
+  // Get display name — show welcome for guests too
+  const displayName = isAuthenticated
+    ? (user?.user_metadata?.full_name || "there")
+    : "there";
 
   // Current active feature title for AI routing
   const activeFeatureType = selectedFeature || "General Chat";
@@ -305,6 +303,18 @@ const Home = () => {
 
   const handleSend = async () => {
     if (!input.trim() && previewImages.length === 0) return;
+
+    // Block guests from using chat
+    if (!isAuthenticated) {
+      toast("Please login or sign up to use SnapExx AI", {
+        description: "Create a free account to start chatting.",
+        action: {
+          label: "Sign Up",
+          onClick: () => navigate("/register"),
+        },
+      });
+      return;
+    }
 
     const userContent = input;
     const userImages = [...previewImages];
