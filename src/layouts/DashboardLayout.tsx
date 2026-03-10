@@ -25,10 +25,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   
   // Get user's full name from metadata (set during registration)
-  const displayName = user?.user_metadata?.full_name || 'User';
+  const displayName = isAuthenticated
+    ? (user?.user_metadata?.full_name || 'User')
+    : 'Guest User';
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
