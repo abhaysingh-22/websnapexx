@@ -260,14 +260,20 @@ const Chat = () => {
         await insertMessage(
           convId!,
           "assistant",
-          `Sorry, I encountered an error: ${aiResult.error || "Unknown error"}. Please try again.`
+          "Server busy! Please try again later"
         );
       }
       shouldAutoScrollRef.current = true;
       setIsLoading(false);
       
     } catch (error) {
-      console.error("Error sending message:", error);
+      if (currentConversationId) {
+        await insertMessage(
+          currentConversationId,
+          "assistant",
+          "Server busy! Please try again later"
+        );
+      }
       setIsLoading(false);
     }
   };
