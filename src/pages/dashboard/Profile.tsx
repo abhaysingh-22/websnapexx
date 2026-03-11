@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useNavigate, Link } from "react-router-dom";
 import TypewriterPlaceholder from "@/components/ui/TypewriterPlaceholder";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { externalSupabase } from "@/integrations/externalSupabase/client";
 import { feedbackService } from "@/services/feedbackService";
@@ -39,7 +39,7 @@ const itemVariants = {
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, profile, isLoading, isAuthenticated, signOut } = useAuth();
+  const { user, profile, isLoading, isAuthenticated, signOut } = useAuthContext();
   const [rating, setRating] = useState<number | null>(null);
   const [feedback, setFeedback] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
