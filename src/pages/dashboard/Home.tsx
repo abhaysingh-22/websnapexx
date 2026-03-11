@@ -33,7 +33,7 @@ import { useMessages } from "@/hooks/useMessages";
 import { externalSupabase } from "@/integrations/externalSupabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { aiService, getStarterPrompts, isFeatureMode } from "@/services/aiService";
-import { useAuth } from "@/hooks/useAuth";
+
 import MediaPickerDialog from "@/components/dashboard/MediaPickerDialog";
 import { toast } from "sonner";
 
@@ -124,8 +124,7 @@ const CONV_STORAGE_KEY = "snapexx_active_conversation";
 const Home = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, isLoading: authLoading, isAuthenticated } = useAuth();
-  const { session } = useAuthContext();
+  const { user, isLoading: authLoading, isAuthenticated, session } = useAuthContext();
 
   // Chat state — seed from URL → sessionStorage so refresh & tab-switching both restore the conversation
   const { createConversation, updateConversationTitle } = useConversations();
