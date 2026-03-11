@@ -7,6 +7,7 @@ import {
   isSessionExpired,
   clearSessionExpiry,
   getSessionTimeRemaining,
+  INITIAL_URL_HASH,
 } from "@/integrations/externalSupabase/client";
 
 export const useAuth = () => {
@@ -18,6 +19,7 @@ export const useAuth = () => {
 
   /** Sign out and clear all session metadata */
   const forceSignOut = useCallback(async () => {
+    console.log('[AUTH] forceSignOut called');
     clearSessionExpiry();
     if (expiryTimerRef.current) clearTimeout(expiryTimerRef.current);
     await externalSupabase.auth.signOut({ scope: "local" });
@@ -37,11 +39,42 @@ export const useAuth = () => {
   }, [forceSignOut]);
 
   useEffect(() => {
+    // 0) Handle OAuth callback: manually extract tokens from URL hash
+    //    (supabase-js v2.91 _initialize() fails to detect them reliably)
+    const hash = window.location.hash || INITIAL_URL_HASH;
+    if (hash && hash.includes('access_token')) {
+      const params = new URLSearchParams(hash.substring(1));
+      const access_token = params.get('access_token');
+      const refresh_token = params.get('refresh_token');
+      if (access_token && refresh_token) {
+        console.log('[AUTH] OAuth tokens detected in URL hash — manually setting session');
+        // Clean the URL immediately (security: don't leave tokens in address bar)
+        window.history.replaceState(null, '', window.location.pathname);
+        externalSupabase.auth
+          .setSession({ access_token, refresh_token })
+          .then(({ data, error }) => {
+            console.log('[AUTH] Manual setSession result:', !!data.session, error?.message);
+            if (!error && data.session) {
+              setSession(data.session);
+              setUser(data.session.user);
+              setProfile(null);
+              setSessionExpiry(false);
+              scheduleAutoLogout();
+            }
+            setIsLoading(false);
+          });
+        // Return early — we're handling session manually, skip normal init
+        return;
+      }
+    }
+
     // 1) Subscribe first (prevents missing events)
     const {
       data: { subscription },
     } = externalSupabase.auth.onAuthStateChange((event, nextSession) => {
+      console.log('[AUTH] onAuthStateChange:', event, 'session:', !!nextSession, 'user:', nextSession?.user?.email);
       if (event === "SIGNED_OUT") {
+        console.log('[AUTH] SIGNED_OUT → clearing state');
         setSession(null);
         setUser(null);
         setProfile(null);
@@ -57,6 +90,7 @@ export const useAuth = () => {
       // If there's an active session, enforce expiry
       if (nextSession) {
         if (isSessionExpired()) {
+          console.log('[AUTH] session expired on auth state change → forcing sign out');
           forceSignOut();
           return;
         }
@@ -67,23 +101,53 @@ export const useAuth = () => {
           setSessionExpiry(false);
         }
         scheduleAutoLogout();
+        console.log('[AUTH] session applied from onAuthStateChange, user:', nextSession.user?.email);
       }
     });
 
     // 2) Then load current session
+    console.log('[AUTH] init: loading session...');
     externalSupabase.auth
       .getSession()
-      .then(({ data }) => {
-        if (data.session && isSessionExpired()) {
-          forceSignOut();
+      .then(async ({ data }) => {
+        console.log('[AUTH] getSession result:', !!data.session, data.session?.user?.email);
+        if (!data.session) {
+          console.log('[AUTH] no session → guest user');
+          setIsLoading(false);
           return;
         }
+
+        if (isSessionExpired()) {
+          console.log('[AUTH] session expired → forceSignOut');
+          await forceSignOut();
+          setIsLoading(false);
+          return;
+        }
+
+        const { error: userError } = await externalSupabase.auth.getUser();
+        console.log('[AUTH] getUser validation:', userError ? 'FAILED: ' + userError.message : 'OK');
+        if (userError) {
+          await forceSignOut();
+          setIsLoading(false);
+          return;
+        }
+
         setSession(data.session);
-        setUser(data.session?.user ?? null);
+        setUser(data.session.user);
         setProfile(null);
-        if (data.session) scheduleAutoLogout();
+        scheduleAutoLogout();
+        setIsLoading(false);
+        console.log('[AUTH] session valid & applied, user:', data.session.user?.email);
       })
-      .finally(() => setIsLoading(false));
+      .catch((err) => {
+        console.error('[AUTH] init error:', err);
+        externalSupabase.auth.getSession().then(({ data }) => {
+          setSession(data.session);
+          setUser(data.session?.user ?? null);
+          setProfile(null);
+          setIsLoading(false);
+        });
+      });
 
     return () => {
       subscription.unsubscribe();
@@ -93,6 +157,7 @@ export const useAuth = () => {
 
   const signUp = async (email: string, password: string, fullName: string) => {
     const emailRedirectTo = `${window.location.origin}/onboarding/1`;
+    console.log('[AUTH] signUp called, email:', email, 'redirectTo:', emailRedirectTo);
     const { data, error } = await externalSupabase.auth.signUp({
       email,
       password,
@@ -101,14 +166,17 @@ export const useAuth = () => {
         emailRedirectTo,
       },
     });
+    console.log('[AUTH] signUp result:', { hasSession: !!data?.session, hasUser: !!data?.user, error: error?.message });
     return { data, error };
   };
 
   const signIn = async (email: string, password: string, rememberMe = false) => {
+    console.log('[AUTH] signIn called, email:', email);
     const { data, error } = await externalSupabase.auth.signInWithPassword({
       email,
       password,
     });
+    console.log('[AUTH] signIn result:', { hasSession: !!data?.session, error: error?.message });
     if (!error && data.session) {
       setSessionExpiry(rememberMe);
       scheduleAutoLogout();
@@ -122,7 +190,12 @@ export const useAuth = () => {
     const redirectTo = `${window.location.origin}/app/home`;
     const { data, error } = await externalSupabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo },
+      options: {
+        redirectTo,
+        queryParams: {
+          prompt: "select_account",
+        },
+      },
     });
     // Note: setSessionExpiry is handled inside onAuthStateChange (SIGNED_IN event)
     // because OAuth does a full page reload before the session is established.
