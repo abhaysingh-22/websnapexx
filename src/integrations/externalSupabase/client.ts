@@ -40,6 +40,13 @@ export const getSessionTimeRemaining = (): number => {
   return Math.max(0, Number(expiresAt) - Date.now());
 };
 
+// Debug: capture URL before Supabase client strips tokens
+console.log('[SUPABASE-CLIENT] Module load URL:', window.location.href);
+console.log('[SUPABASE-CLIENT] Hash:', window.location.hash ? 'has hash tokens' : 'no hash');
+console.log('[SUPABASE-CLIENT] Search:', window.location.search ? window.location.search : 'no query params');
+
+export const INITIAL_URL_HASH = window.location.hash;
+
 // Default session: 2 hours (7200 seconds)
 export const externalSupabase = createClient(
   EXTERNAL_SUPABASE_URL,
@@ -49,6 +56,8 @@ export const externalSupabase = createClient(
       storage: localStorage,
       persistSession: true,
       autoRefreshToken: true,
+      flowType: 'implicit',
+      detectSessionInUrl: false, // Disabled so we can manually parse the hash in useAuth.ts
     },
     global: {
       headers: {
