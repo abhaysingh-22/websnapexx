@@ -3,12 +3,12 @@ import { motion } from "framer-motion";
 import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import AuthLayout from "@/layouts/AuthLayout";
 import { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn, signInWithGoogle } = useAuthContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -31,7 +31,7 @@ const SignIn = () => {
     }
 
     toast.success("Welcome back!");
-    navigate('/home');
+    navigate('/app/home');
   };
 
   const handleGoogle = async () => {
