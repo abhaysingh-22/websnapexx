@@ -3,14 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Mail, ArrowRight, ArrowLeft, Loader2, KeyRound, Lock, CheckCircle2, ShieldCheck } from "lucide-react";
 import AuthLayout from "@/layouts/AuthLayout";
 import { useState, useEffect, useRef } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 type Step = "email" | "otp" | "password";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const { sendOtp, verifyOtp, updatePassword, signOut } = useAuth();
+  const { sendOtp, verifyOtp, updatePassword, signOut } = useAuthContext();
 
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
