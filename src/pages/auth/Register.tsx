@@ -3,12 +3,12 @@ import { motion } from "framer-motion";
 import { User, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import AuthLayout from "@/layouts/AuthLayout";
 import { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { signUp, signInWithGoogle } = useAuth();
+  const { signUp, signInWithGoogle } = useAuthContext();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,15 +42,10 @@ const Register = () => {
       return;
     }
 
-    if (!data?.session) {
-      toast.success("Account created — please verify your email, then sign in.");
-      setIsLoading(false);
-      navigate('/signin');
-      return;
-    }
-
-    toast.success("Account created successfully!");
-    navigate('/onboarding/1');
+    toast.success("Account created — please verify your email, then sign in.");
+    setIsLoading(false);
+    navigate('/signin');
+    return;
   };
 
   const handleGoogle = async () => {
