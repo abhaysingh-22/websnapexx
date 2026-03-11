@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { User, LogOut, Trash2, MessageSquarePlus, Mail, Loader2, LogIn, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/contexts/AuthContext";
 import { externalSupabase } from "@/integrations/externalSupabase/client";
 import {
   DropdownMenu,
@@ -27,7 +27,7 @@ interface UserAvatarDropdownProps {
 
 const UserAvatarDropdown = ({ displayName, email }: UserAvatarDropdownProps) => {
   const navigate = useNavigate();
-  const { signOut, isAuthenticated } = useAuth();
+  const { signOut, isAuthenticated } = useAuthContext();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
