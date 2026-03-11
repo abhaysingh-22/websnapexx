@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "@/hooks/use-theme";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext } from "@/contexts/AuthContext";
 import UserAvatarDropdown from "@/components/dashboard/UserAvatarDropdown";
 
 interface DashboardLayoutProps {
@@ -25,7 +25,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuthContext();
   
   // Get user's full name from metadata (set during registration)
   const displayName = isAuthenticated
