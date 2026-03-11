@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supportService } from "@/services/supportService";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { useAuth } from "@/hooks/useAuth";
 
 const faqs = [
   {
@@ -131,8 +130,7 @@ const FAQs = () => {
   const [contactSubject, setContactSubject] = useState("");
   const [contactMessage, setContactMessage] = useState("");
   const [sending, setSending] = useState(false);
-  const { session } = useAuthContext();
-  const { isAuthenticated } = useAuth();
+  const { session, isAuthenticated } = useAuthContext();
   const location = useLocation();
 
   useEffect(() => {
