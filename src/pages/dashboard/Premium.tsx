@@ -130,6 +130,60 @@ const Premium = () => {
           </p>
         </motion.div>
 
+        {/* here this banner starts */}
+        {/* Launch Offer Card */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ scale: 1.02, y: -4 }}
+          transition={{ duration: 0.3 }}
+          className="mb-8 sm:mb-12 relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-red-400 to-pink-400 opacity-75 blur-lg animate-pulse" />
+          <div className="relative bg-gradient-to-br from-purple-500 via-red-400 to-pink-500 rounded-3xl p-8 sm:p-10 shadow-2xl border border-white/20">
+            <div className="absolute top-0 right-0 opacity-10 text-8xl">✨</div>
+            
+            <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                className="flex-shrink-0 text-5xl sm:text-6xl"
+              >
+                🎯
+              </motion.div>
+              
+              <div className="flex-1">
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-xs sm:text-sm font-bold tracking-widest text-white/90 uppercase mb-2"
+                >
+                  🎉 Special Launch Offer
+                </motion.p>
+                <motion.h3 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-2xl sm:text-4xl font-extrabold text-white mb-1"
+                >
+                  Unlimited Credits
+                </motion.h3>
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-sm sm:text-base text-white/90 font-medium"
+                >
+                  You have unlimited credits to explore all features
+                </motion.p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+
+        {/* here this banner ends */}
+
         {/* Pricing Cards */}
         <motion.div 
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12"
