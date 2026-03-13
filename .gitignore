@@ -26,3 +26,6 @@ dist-ssr
 .env
 
 *.rest
+
+question.txt
+arch.txt
