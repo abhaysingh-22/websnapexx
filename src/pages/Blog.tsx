@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Sparkles, Users, PenTool, Megaphone, Rocket, Globe, Clock, Zap, Brain, MessageSquare, Image, Video } from "lucide-react";
 import Logo from "@/components/ui/Logo";
@@ -107,55 +106,40 @@ const Blog = () => {
       </header>
 
       {/* Hero Section */}
-      <motion.section
+      <section
         className="relative overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
+                                 >
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-purple-500/5 pointer-events-none" />
         <div className="absolute top-20 left-1/4 w-72 h-72 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-purple-500/8 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-16 pb-12 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-8"
+          <div
+                                                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-8"
           >
             <Globe className="w-4 h-4" />
             SnapExx Blog
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight mb-6"
+          <h1
+                                                   className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight mb-6"
           >
             How SnapExx Helps You Create{" "}
             <span className="bg-gradient-to-r from-accent to-purple-400 bg-clip-text text-transparent">
               Videos from Any Website
             </span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+          <p
+                                                   className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
           >
             A practical guide to using SnapExx — the AI video generator that turns web pages into
             professional videos — for SaaS founders, bloggers, creators, marketers, and startups.
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-            className="flex items-center justify-center gap-4 mt-8 text-sm text-muted-foreground"
+          <div
+                                                   className="flex items-center justify-center gap-4 mt-8 text-sm text-muted-foreground"
           >
             <span className="flex items-center gap-1.5">
               <Clock className="w-4 h-4" />
@@ -163,19 +147,16 @@ const Blog = () => {
             </span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
             <span>March 2026</span>
-          </motion.div>
+          </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Article Content */}
-      <motion.article
+      <article
         className="max-w-4xl mx-auto px-4 sm:px-6 pb-20"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
+                                 >
         {/* Intro Section */}
-        <motion.section variants={itemVariants} className="mb-16">
+        <section  className="mb-16">
           <div className="prose-section">
             <h2 className="section-heading">The Problem With Video Content Today</h2>
             <p className="section-text">
@@ -189,16 +170,16 @@ const Blog = () => {
               startups, solo creators, lean marketing departments — this bottleneck is a real problem.
             </p>
           </div>
-        </motion.section>
+        </section>
 
         {/* What is SnapExx */}
-        <motion.section variants={itemVariants} className="mb-16">
+        <section  className="mb-16">
           <div className="prose-section">
             <h2 className="section-heading">What Is SnapExx?</h2>
             <p className="section-text">
               SnapExx is an <strong className="text-foreground">AI video generator</strong> that converts any web page
               into a professional video. You provide a URL. The AI analyzes the page — its text, structure, images, and
-              layout — and produces a video that communicates the same message visually.
+               — and produces a video that communicates the same message visually.
             </p>
             <p className="section-text">
               It is not screen recording. It is not a slideshow. SnapExx uses advanced AI models to understand
@@ -227,10 +208,10 @@ const Blog = () => {
               ))}
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* How It Works */}
-        <motion.section variants={itemVariants} className="mb-16">
+        <section  className="mb-16">
           <div className="prose-section">
             <h2 className="section-heading">How It Works</h2>
             <p className="section-text">The process is straightforward:</p>
@@ -275,10 +256,10 @@ const Blog = () => {
               ))}
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* Who Benefits Section */}
-        <motion.section variants={itemVariants} className="mb-16">
+        <section  className="mb-16">
           <div className="prose-section">
             <h2 className="section-heading">Who Benefits from SnapExx?</h2>
             <p className="section-text">
@@ -293,10 +274,9 @@ const Blog = () => {
             {audienceCards.map((card, idx) => {
               const Icon = card.icon;
               return (
-                <motion.div
+                <div
                   key={card.title}
-                  variants={itemVariants}
-                  className={`relative overflow-hidden rounded-2xl border ${card.border} bg-gradient-to-br ${card.color} p-6 sm:p-8 transition-all hover:scale-[1.01] hover:shadow-lg`}
+                                     className={`relative overflow-hidden rounded-2xl border ${card.border} bg-gradient-to-br ${card.color} p-6 sm:p-8 transition-all hover:scale-[1.01] hover:shadow-lg`}
                 >
                   <div className="flex items-start gap-4">
                     <div
@@ -309,14 +289,14 @@ const Blog = () => {
                       <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{card.content}</p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
-        </motion.section>
+        </section>
 
         {/* Why It Matters */}
-        <motion.section variants={itemVariants} className="mb-16">
+        <section  className="mb-16">
           <div className="prose-section">
             <h2 className="section-heading">Why This Matters Now</h2>
             <p className="section-text">
@@ -334,10 +314,10 @@ const Blog = () => {
               millions of businesses, creators, and marketers who need it but cannot afford traditional production.
             </p>
           </div>
-        </motion.section>
+        </section>
 
         {/* What Makes SnapExx Different */}
-        <motion.section variants={itemVariants} className="mb-16">
+        <section  className="mb-16">
           <div className="prose-section">
             <h2 className="section-heading">What Makes SnapExx Different</h2>
             <p className="section-text">
@@ -374,10 +354,10 @@ const Blog = () => {
               ))}
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* AI Memory & Context Section */}
-        <motion.section variants={itemVariants} className="mb-16">
+        <section  className="mb-16">
           <div className="prose-section">
             <h2 className="section-heading">How SnapExx Remembers Your Conversations</h2>
             <p className="section-text">
@@ -453,10 +433,10 @@ const Blog = () => {
               balance between remembering enough and staying responsive.
             </p>
           </div>
-        </motion.section>
+        </section>
 
         {/* Final Section */}
-        <motion.section variants={itemVariants} className="mb-12">
+        <section  className="mb-12">
           <div className="prose-section">
             <h2 className="section-heading">Getting Started</h2>
             <p className="section-text">
@@ -491,8 +471,8 @@ const Blog = () => {
               Try SnapExx Now
             </Link>
           </div>
-        </motion.section>
-      </motion.article>
+        </section>
+      </article>
 
       <Footer />
 

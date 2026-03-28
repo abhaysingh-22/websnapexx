@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Check, X, Crown, Zap, Shield } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { cn } from "@/lib/utils";
@@ -110,14 +109,11 @@ const cardVariants = {
 const Premium = () => {
   return (
     <DashboardLayout>
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="max-w-7xl mx-auto"
+      <div
+                                   className="max-w-7xl mx-auto"
       >
         {/* Header */}
-        <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
+        <div  className="mb-6 sm:mb-8">
           <p className="text-xs font-bold tracking-widest text-accent uppercase mb-2">
             SNAPEXX ECOSYSTEM
           </p>
@@ -128,76 +124,58 @@ const Premium = () => {
             Elevate your professional workflow with SnapExx's AI tools. 
             Choose the plan that scales with your creativity.
           </p>
-        </motion.div>
+        </div>
 
         {/* here this banner starts */}
         {/* Launch Offer Card */}
-        <motion.div
-          variants={cardVariants}
-          whileHover={{ scale: 1.02, y: -4 }}
-          transition={{ duration: 0.3 }}
-          className="mb-8 sm:mb-12 relative overflow-hidden"
+        <div
+                                           className="mb-8 sm:mb-12 relative overflow-hidden"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-red-400 to-pink-400 opacity-75 blur-lg animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-red-400 to-pink-400 opacity-75 blur-lg" />
           <div className="relative bg-gradient-to-br from-purple-500 via-red-400 to-pink-500 rounded-3xl p-8 sm:p-10 shadow-2xl border border-white/20">
             <div className="absolute top-0 right-0 opacity-10 text-8xl">✨</div>
             
             <div className="flex items-center gap-4 sm:gap-6 relative z-10">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                className="flex-shrink-0 text-5xl sm:text-6xl"
+              <div
+                                                  className="flex-shrink-0 text-5xl sm:text-6xl"
               >
                 🎯
-              </motion.div>
+              </div>
               
               <div className="flex-1">
-                <motion.p 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-xs sm:text-sm font-bold tracking-widest text-white/90 uppercase mb-2"
+                <p 
+                                                                           className="text-xs sm:text-sm font-bold tracking-widest text-white/90 uppercase mb-2"
                 >
                   🎉 Special Launch Offer
-                </motion.p>
-                <motion.h3 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-2xl sm:text-4xl font-extrabold text-white mb-1"
+                </p>
+                <h3 
+                                                                           className="text-2xl sm:text-4xl font-extrabold text-white mb-1"
                 >
                   Unlimited Credits
-                </motion.h3>
-                <motion.p 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-sm sm:text-base text-white/90 font-medium"
+                </h3>
+                <p 
+                                                                           className="text-sm sm:text-base text-white/90 font-medium"
                 >
                   You have unlimited credits to explore all features
-                </motion.p>
+                </p>
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
 
         {/* here this banner ends */}
 
         {/* Pricing Cards */}
-        <motion.div 
+        <div 
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12"
-          variants={containerVariants}
-        >
+                   >
           {plans.map((plan) => {
             const Icon = plan.icon;
             return (
-              <motion.div 
+              <div 
                 key={plan.name}
-                variants={cardVariants}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                className={cn(
+                                                                   className={cn(
                   "rounded-2xl p-5 sm:p-6 relative",
                   plan.featured 
                     ? "bg-blue-50 text-blue-900 shadow-lg ring-1 ring-blue-200 dark:bg-blue-900/20 dark:text-blue-100 dark:ring-blue-700/40" 
@@ -205,16 +183,13 @@ const Premium = () => {
                 )}
               >
                 {plan.featured && (
-                  <motion.div 
+                  <div 
                     className="absolute -top-3 left-1/2 -translate-x-1/2"
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                  >
+                                                                                 >
                     <span className="px-3 py-1 bg-accent text-accent-foreground text-xs font-bold rounded-full whitespace-nowrap">
                       ⭐ RECOMMENDED
                     </span>
-                  </motion.div>
+                  </div>
                 )}
 
                 <div className={cn(
@@ -245,28 +220,23 @@ const Premium = () => {
                   </span>
                 </div>
 
-                <motion.button 
+                <button 
                   className={cn(
                     "w-full py-2.5 sm:py-3 rounded-xl font-bold mb-4 sm:mb-6 text-sm sm:text-base transition-all duration-300",
                     plan.featured 
                       ? "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400" 
                       : "bg-secondary text-foreground hover:bg-secondary/80"
                   )}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
+                                                      >
                   {plan.buttonLabel}
-                </motion.button>
+                </button>
 
                 <ul className="space-y-2 sm:space-y-3">
                   {plan.features.map((feature, idx) => (
-                    <motion.li 
+                    <li 
                       key={idx} 
                       className="flex items-center gap-2 text-xs sm:text-sm font-medium"
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + idx * 0.1 }}
-                    >
+                                                                                         >
                       {feature.included ? (
                         <Check className={cn("w-4 h-4 flex-shrink-0", plan.featured ? "text-blue-600 dark:text-blue-200" : "text-accent")} />
                       ) : (
@@ -280,16 +250,16 @@ const Premium = () => {
                       )}>
                         {feature.text}
                       </span>
-                    </motion.li>
+                    </li>
                   ))}
                 </ul>
-              </motion.div>
+              </div>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* Detailed Comparison Table */}
-        <motion.div variants={itemVariants} className="card-elevated overflow-hidden">
+        <div  className="card-elevated overflow-hidden">
           <h2 className="text-xl sm:text-2xl font-bold text-center py-4 sm:py-6">Detailed Comparison</h2>
           
           {/* Mobile Comparison Cards */}
@@ -343,13 +313,9 @@ const Premium = () => {
               </thead>
               <tbody className="divide-y divide-border">
                 {comparisonData.map((row, idx) => (
-                  <motion.tr 
+                  <tr 
                     key={idx}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    viewport={{ once: true }}
-                    className="hover:bg-secondary/30 transition-colors duration-300"
+                                                                                                        className="hover:bg-secondary/30 transition-colors duration-300"
                   >
                     <td className="p-3 sm:p-4 font-semibold text-xs sm:text-sm">{row.feature}</td>
                     <td className="p-3 sm:p-4 text-muted-foreground font-medium text-xs sm:text-sm">
@@ -367,7 +333,7 @@ const Premium = () => {
                         row.power ? <Check className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-200" /> : <X className="w-4 h-4 sm:w-5 sm:h-5 text-blue-200/70 dark:text-blue-200/40" />
                       ) : row.power}
                     </td>
-                  </motion.tr>
+                  </tr>
                 ))}
               </tbody>
             </table>
@@ -380,8 +346,8 @@ const Premium = () => {
             <span className="hidden sm:inline mx-2">•</span>
             <span className="block sm:inline">Power</span>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </DashboardLayout>
   );
 };

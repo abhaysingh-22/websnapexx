@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import AuthLayout from "@/layouts/AuthLayout";
 import { useState } from "react";
@@ -46,12 +45,9 @@ const SignIn = () => {
 
   return (
     <AuthLayout>
-      <motion.div 
+      <div 
         className="w-full max-w-[400px] bg-white/[0.04] border border-white/[0.08] rounded-xl px-6 py-6 sm:px-8 sm:py-7 backdrop-blur-sm shadow-2xl shadow-black/20"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-      >
+                                 >
         {/* Header */}
         <div className="text-center mb-5">
           <h1 className="text-xl sm:text-2xl font-bold text-white">Welcome Back</h1>
@@ -109,12 +105,10 @@ const SignIn = () => {
             </Link>
           </div>
 
-          <motion.button 
+          <button 
             type="submit"
             className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-500 text-gray-900 font-semibold text-xs flex items-center justify-center gap-2 hover:from-cyan-300 hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            whileHover={{ scale: isLoading ? 1 : 1.01 }}
-            whileTap={{ scale: isLoading ? 1 : 0.99 }}
-            disabled={isLoading}
+                                      disabled={isLoading}
           >
             {isLoading ? (
               <>
@@ -127,7 +121,7 @@ const SignIn = () => {
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
-          </motion.button>
+          </button>
         </form>
 
         {/* Divider */}
@@ -170,7 +164,7 @@ const SignIn = () => {
           , and{" "}
           <Link to="/cookies" target="_blank" className="text-white/40 hover:text-cyan-400 hover:underline">Cookie Policy</Link>
         </p>
-      </motion.div>
+      </div>
     </AuthLayout>
   );
 };

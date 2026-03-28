@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 
@@ -59,11 +58,8 @@ const PrivacyPolicy = () => {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-12"
+        <div
+                                           className="mb-12"
         >
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
@@ -75,17 +71,14 @@ const PrivacyPolicy = () => {
           <p className="text-muted-foreground text-base sm:text-lg">
             Last updated: February 2026
           </p>
-        </motion.div>
+        </div>
 
         {/* Sections */}
         <div className="space-y-8">
           {sections.map((section, i) => (
-            <motion.div
+            <div
               key={section.number}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.07 }}
-              className="flex gap-4 sm:gap-6 p-4 sm:p-6 rounded-2xl bg-card border border-border/50 hover:border-accent/30 transition-colors"
+                                                           className="flex gap-4 sm:gap-6 p-4 sm:p-6 rounded-2xl bg-card border border-border/50 hover:border-accent/30 transition-colors"
             >
               <span className="text-3xl font-extrabold text-accent/20 leading-none select-none hidden sm:block">
                 {section.number}
@@ -94,16 +87,13 @@ const PrivacyPolicy = () => {
                 <h2 className="text-lg font-bold text-foreground mb-2">{section.title}</h2>
                 <p className="text-muted-foreground leading-relaxed">{section.body}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Footer note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-8 sm:mt-12 p-4 sm:p-6 rounded-2xl bg-accent/5 border border-accent/20 text-sm text-muted-foreground"
+        <div
+                                           className="mt-8 sm:mt-12 p-4 sm:p-6 rounded-2xl bg-accent/5 border border-accent/20 text-sm text-muted-foreground"
         >
           For any privacy-related questions, contact us at{" "}
           <a href="mailto:nextera.inbox@gmail.com" className="text-accent font-medium hover:underline">
@@ -113,7 +103,7 @@ const PrivacyPolicy = () => {
           <Link to="/terms" className="text-accent font-medium hover:underline">Terms of Service</Link>
           {" "}and{" "}
           <Link to="/cookies" className="text-accent font-medium hover:underline">Cookie Policy</Link>.
-        </motion.div>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { HelpCircle, ChevronDown, ChevronUp, MessageCircle, Search, Send, X } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useState, useEffect } from "react";
@@ -79,47 +78,35 @@ const FAQItem = ({
   onToggle: () => void;
 }) => {
   return (
-    <motion.div 
-      variants={itemVariants}
-      className="border border-border rounded-xl overflow-hidden"
-      whileHover={{ scale: 1.01 }}
-      transition={{ duration: 0.2 }}
-    >
-      <motion.button
+    <div 
+             className="border border-border rounded-xl overflow-hidden"
+                  >
+      <button
         onClick={onToggle}
         className={cn(
           "w-full flex items-center justify-between p-3 sm:p-4 md:p-6 text-left transition-all duration-300",
           isOpen ? "bg-secondary" : "hover:bg-secondary/50"
         )}
-        whileTap={{ scale: 0.99 }}
-      >
+               >
         <span className="font-semibold text-xs sm:text-sm md:text-base pr-3 sm:pr-4">{question}</span>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex-shrink-0"
+        <div
+                                className="flex-shrink-0"
         >
           {isOpen ? (
             <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
           ) : (
             <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
           )}
-        </motion.div>
-      </motion.button>
-      <motion.div
-        initial={false}
-        animate={{ 
-          height: isOpen ? "auto" : 0, 
-          opacity: isOpen ? 1 : 0 
-        }}
-        transition={{ duration: 0.3 }}
-        className="overflow-hidden"
+        </div>
+      </button>
+      <div
+                                   className="overflow-hidden"
       >
         <p className="p-3 sm:p-4 md:p-6 pt-0 text-muted-foreground text-xs sm:text-sm md:text-base leading-relaxed">
           {answer}
         </p>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
@@ -181,21 +168,16 @@ const FAQs = () => {
 
   return (
     <DashboardLayout>
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="max-w-4xl mx-auto"
+      <div
+                                   className="max-w-4xl mx-auto"
       >
         {/* Header */}
-        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start gap-4 mb-6 sm:mb-8">
-          <motion.div 
+        <div  className="flex flex-col sm:flex-row items-start gap-4 mb-6 sm:mb-8">
+          <div 
             className="icon-box-blue flex-shrink-0"
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            transition={{ duration: 0.2 }}
-          >
+                                    >
             <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6" />
-          </motion.div>
+          </div>
           <div className="flex-1">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-1 sm:mb-2">
               Frequently Asked Questions
@@ -204,10 +186,10 @@ const FAQs = () => {
               Find answers to common questions about SnapExx AI
             </p>
           </div>
-        </motion.div>
+        </div>
 
         {/* Search */}
-        <motion.div variants={itemVariants} className="mb-4 sm:mb-6">
+        <div  className="mb-4 sm:mb-6">
           <div className="relative">
             <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
             <input
@@ -218,13 +200,12 @@ const FAQs = () => {
               className="input-field pl-10 sm:pl-12 text-sm sm:text-base"
             />
           </div>
-        </motion.div>
+        </div>
 
         {/* FAQ List */}
-        <motion.div 
+        <div 
           className="space-y-2 sm:space-y-3"
-          variants={containerVariants}
-        >
+                   >
           {filteredFaqs.length > 0 ? (
             filteredFaqs.map((faq, index) => (
               <FAQItem
@@ -236,22 +217,18 @@ const FAQs = () => {
               />
             ))
           ) : (
-            <motion.div 
-              variants={itemVariants}
-              className="text-center py-8 sm:py-12"
+            <div 
+                             className="text-center py-8 sm:py-12"
             >
               <p className="text-muted-foreground text-sm sm:text-base">No FAQs found matching your search.</p>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
+        </div>
 
         {/* Contact Support */}
-        <motion.div 
-          variants={itemVariants}
-          className="card-elevated p-4 sm:p-6 mt-6 sm:mt-8 text-center"
-          whileHover={{ scale: 1.01 }}
-          transition={{ duration: 0.2 }}
-        >
+        <div 
+                     className="card-elevated p-4 sm:p-6 mt-6 sm:mt-8 text-center"
+                              >
           <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-3 sm:mb-4">
             <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 text-accent" />
           </div>
@@ -259,11 +236,9 @@ const FAQs = () => {
           <p className="text-muted-foreground text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed max-w-md mx-auto">
             Can't find the answer you're looking for? Reach out to our support team.
           </p>
-          <motion.button 
+          <button 
             className="btn-primary font-bold text-sm sm:text-base"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
+                                      onClick={() => {
               if (!isAuthenticated) {
                 toast("Please login or sign up first", {
                   description: "You need an account to contact support.",
@@ -278,9 +253,9 @@ const FAQs = () => {
             }}
           >
             Contact Support
-          </motion.button>
-        </motion.div>
-      </motion.div>
+          </button>
+        </div>
+      </div>
 
       {/* Contact Support Dialog */}
       <Dialog open={contactOpen} onOpenChange={setContactOpen}>

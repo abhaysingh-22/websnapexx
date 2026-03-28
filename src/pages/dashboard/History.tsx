@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Calendar, Clock, Trash2, MessageSquare, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -73,27 +72,22 @@ const History = () => {
 
   return (
     <DashboardLayout>
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="max-w-7xl mx-auto"
+      <div
+                                   className="max-w-7xl mx-auto"
       >
-        <motion.h1 
-          variants={itemVariants}
-          className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-6 sm:mb-8"
+        <h1 
+                     className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-6 sm:mb-8"
         >
           Your Activity
-        </motion.h1>
+        </h1>
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : conversations.length === 0 ? (
-          <motion.div
-            variants={itemVariants}
-            className="card-elevated p-8 text-center"
+          <div
+                         className="card-elevated p-8 text-center"
           >
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
               <MessageSquare className="w-8 h-8 text-primary" />
@@ -105,16 +99,15 @@ const History = () => {
             <Button onClick={() => navigate("/home")}>
               Go to Home
             </Button>
-          </motion.div>
+          </div>
         ) : (
           <>
             {/* Mobile Cards View */}
             <div className="block lg:hidden space-y-4">
               {conversations.map((item) => (
-                <motion.div
+                <div
                   key={item.id}
-                  variants={itemVariants}
-                  className="card-elevated p-4 hover:shadow-lg transition-all duration-300"
+                                     className="card-elevated p-4 hover:shadow-lg transition-all duration-300"
                 >
                   <div className="flex gap-4">
                     <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -132,28 +125,26 @@ const History = () => {
                   </div>
                   <div className="flex items-center justify-end mt-3 pt-3 border-t border-border">
                     <div className="flex gap-2">
-                      <motion.button 
+                      <button 
                         className="p-2 rounded-lg hover:bg-secondary transition-all duration-300 text-accent"
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleOpenConversation(item.id)}
+                                                 onClick={() => handleOpenConversation(item.id)}
                       >
                         <Eye className="w-4 h-4" />
-                      </motion.button>
-                      <motion.button 
+                      </button>
+                      <button 
                         className="p-2 rounded-lg hover:bg-destructive/10 transition-all duration-300 text-destructive"
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setDeleteId(item.id)}
+                                                 onClick={() => setDeleteId(item.id)}
                       >
                         <Trash2 className="w-4 h-4" />
-                      </motion.button>
+                      </button>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
 
             {/* Desktop Table View */}
-            <motion.div variants={itemVariants} className="hidden lg:block card-elevated overflow-hidden">
+            <div  className="hidden lg:block card-elevated overflow-hidden">
               {/* Table Header */}
               <div className="table-header grid grid-cols-12 gap-4 p-4">
                 <div className="col-span-1 font-bold"></div>
@@ -163,17 +154,14 @@ const History = () => {
               </div>
 
               {/* Table Body */}
-              <motion.div 
+              <div 
                 className="divide-y divide-border"
-                variants={containerVariants}
-              >
+                               >
                 {conversations.map((item) => (
-                  <motion.div 
+                  <div 
                     key={item.id}
-                    variants={itemVariants}
-                    className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-secondary/50 transition-all duration-300"
-                    whileHover={{ x: 4 }}
-                  >
+                                         className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-secondary/50 transition-all duration-300"
+                                       >
                     <div className="col-span-1">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                         <MessageSquare className="w-5 h-5 text-primary" />
@@ -187,30 +175,26 @@ const History = () => {
                       <p className="text-sm text-muted-foreground">{formatTime(item.updated_at)}</p>
                     </div>
                     <div className="col-span-2 flex justify-end gap-2">
-                      <motion.button 
+                      <button 
                         className="p-2 rounded-lg hover:bg-secondary transition-all duration-300 text-accent"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleOpenConversation(item.id)}
+                                                                          onClick={() => handleOpenConversation(item.id)}
                       >
                         <Eye className="w-5 h-5" />
-                      </motion.button>
-                      <motion.button 
+                      </button>
+                      <button 
                         className="p-2 rounded-lg hover:bg-destructive/10 transition-all duration-300 text-destructive"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setDeleteId(item.id)}
+                                                                          onClick={() => setDeleteId(item.id)}
                       >
                         <Trash2 className="w-5 h-5" />
-                      </motion.button>
+                      </button>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </>
         )}
-      </motion.div>
+      </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>

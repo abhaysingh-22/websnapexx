@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { motion } from "framer-motion";
 import { ChevronsLeftRight, Hand } from "lucide-react";
 
 interface ComparisonSliderProps {
@@ -42,7 +41,7 @@ const ComparisonSlider = ({
   const handleMouseUp = () => setIsDragging(false);
 
   return (
-    <motion.div 
+    <div 
       ref={containerRef}
       className="relative w-full max-w-[240px] sm:max-w-[300px] md:max-w-[360px] lg:max-w-[400px] aspect-square rounded-xl overflow-hidden shadow-elevated cursor-ew-resize"
       onMouseMove={handleMouseMove}
@@ -50,10 +49,7 @@ const ComparisonSlider = ({
       onMouseLeave={handleMouseUp}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleMouseUp}
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+                         >
       {/* After Image (Full) */}
       <img 
         src={afterImage} 
@@ -101,7 +97,7 @@ const ComparisonSlider = ({
           SLIDE TO REVEAL
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 export default ComparisonSlider;

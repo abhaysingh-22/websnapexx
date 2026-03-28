@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import OnboardingLayout from "@/layouts/OnboardingLayout";
 import ContinueButton from "@/components/onboarding/ContinueButton";
 import { Video, Sparkles, FileText, ImageIcon, File } from "lucide-react";
@@ -18,12 +17,9 @@ const Onboarding3 = () => {
     <OnboardingLayout currentStep={3}>
       <div className="w-full max-w-3xl mx-auto px-4">
         {/* Product Image */}
-        <motion.div 
+        <div 
           className="relative rounded-xl overflow-hidden shadow-elevated mb-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+                                         >
           <img 
             src={watchProduct} 
             alt="Luxury Watch" 
@@ -48,15 +44,12 @@ const Onboarding3 = () => {
               SNAPEXX AI ENGINE
             </span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Title and Description */}
-        <motion.div 
+        <div 
           className="text-center mb-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
+                                         >
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 text-white">
             Create anything
           </h1>
@@ -66,15 +59,12 @@ const Onboarding3 = () => {
           <p className="text-white/50 max-w-lg mx-auto text-sm sm:text-base">
             Instant Ad & Video generation for professionals and creators.
           </p>
-        </motion.div>
+        </div>
 
         {/* Prompt Box */}
-        <motion.div 
+        <div 
           className="bg-white/[0.04] rounded-lg border border-white/[0.08] p-3 sm:p-4 mb-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
+                                         >
           <div className="flex items-center justify-between gap-2">
             <div className="flex-1 min-w-0">
               <p className="text-[11px] sm:text-xs font-medium text-white/40 mb-1">PROMPT</p>
@@ -86,15 +76,12 @@ const Onboarding3 = () => {
               <Sparkles className="w-4 h-4" />
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Tool Buttons */}
-        <motion.div 
+        <div 
           className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
+                                         >
           {tools.map((tool) => (
             <button 
               key={tool.label}
@@ -104,20 +91,17 @@ const Onboarding3 = () => {
               <span className="text-xs sm:text-sm">{tool.label}</span>
             </button>
           ))}
-        </motion.div>
+        </div>
 
         {/* Get Started Button */}
-        <motion.div 
+        <div 
           className="flex justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
+                                         >
           <ContinueButton 
             onClick={() => navigate('/app/home')} 
             label="Get Started"
           />
-        </motion.div>
+        </div>
       </div>
     </OnboardingLayout>
   );

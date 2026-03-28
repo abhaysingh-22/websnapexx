@@ -9,9 +9,9 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
 // Onboarding Pages
-import Onboarding1 from "./pages/onboarding/Onboarding1";
-import Onboarding2 from "./pages/onboarding/Onboarding2";
-import Onboarding3 from "./pages/onboarding/Onboarding3";
+// import Onboarding1 from "./pages/onboarding/Onboarding1";
+// import Onboarding2 from "./pages/onboarding/Onboarding2";
+// import Onboarding3 from "./pages/onboarding/Onboarding3";
 
 // Auth Pages
 import Register from "./pages/auth/Register";
@@ -61,9 +61,9 @@ const App = () => (
               <Route path="/cookies" element={<CookiePolicy />} />
 
               {/* ─── Onboarding ─── */}
-              <Route path="/onboarding/1" element={<Onboarding1 />} />
-              <Route path="/onboarding/2" element={<Onboarding2 />} />
-              <Route path="/onboarding/3" element={<Onboarding3 />} />
+              {/* <Route path="/onboarding/1" element={<Onboarding1 />} /> */}
+              {/* <Route path="/onboarding/2" element={<Onboarding2 />} /> */}
+              {/* <Route path="/onboarding/3" element={<Onboarding3 />} /> */}
 
               {/* ─── Auth (public-only, redirects authenticated users) ─── */}
               <Route

@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Linkedin, Instagram, Twitter, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
 import Logo from "@/components/ui/Logo";
 
 const Footer = () => {
@@ -24,25 +23,21 @@ const Footer = () => {
 
   return (
     <footer className="bg-card border-t border-border">
-      <motion.div 
+      <div 
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-50px" }}
-      >
+                                          >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {/* About Us */}
-          <motion.div variants={itemVariants} className="sm:col-span-2 lg:col-span-1">
+          <div  className="sm:col-span-2 lg:col-span-1">
             <h3 className="text-sm font-bold tracking-widest text-accent uppercase mb-3 sm:mb-4">About Us</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               SnapExx AI is a cutting-edge photo editing platform powered by artificial intelligence. 
               We transform ordinary images into stunning visuals with professional-grade enhancements.
             </p>
-          </motion.div>
+          </div>
 
           {/* Contact Us */}
-          <motion.div variants={itemVariants} id="contact-us">
+          <div  id="contact-us">
             <h3 className="text-sm font-bold tracking-widest text-accent uppercase mb-3 sm:mb-4">Contact Us</h3>
             <div className="space-y-2 sm:space-y-3">
               <a 
@@ -64,10 +59,10 @@ const Footer = () => {
                 <span>Pune , Maharashtra</span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Quick Links */}
-          <motion.div variants={itemVariants}>
+          <div >
             <h3 className="text-sm font-bold tracking-widest text-accent uppercase mb-3 sm:mb-4">Quick Links</h3>
             <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
               {[
@@ -86,10 +81,10 @@ const Footer = () => {
                 </Link>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Connect With Us */}
-          <motion.div variants={itemVariants}>
+          <div >
             <h3 className="text-sm font-bold tracking-widest text-accent uppercase mb-3 sm:mb-4">Follow Us On</h3>
             <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6">
               <a 
@@ -120,13 +115,12 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground leading-relaxed">
               Stay updated with our latest features and AI innovations.
             </p>
-          </motion.div>
+          </div>
         </div>
 
         {/* Bottom Bar */}
-        <motion.div 
-          variants={itemVariants}
-          className="pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4"
+        <div 
+                     className="pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4"
         >
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
             <Logo size="sm" />
@@ -145,8 +139,8 @@ const Footer = () => {
               Cookie Policy
             </Link>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </footer>
   );
 };

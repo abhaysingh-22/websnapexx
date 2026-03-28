@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 import { Mail, ArrowRight, ArrowLeft, Loader2, KeyRound, Lock, CheckCircle2, ShieldCheck } from "lucide-react";
 import AuthLayout from "@/layouts/AuthLayout";
 import { useState, useEffect, useRef } from "react";
@@ -176,12 +175,9 @@ const ForgotPassword = () => {
 
   return (
     <AuthLayout>
-      <motion.div
+      <div
         className="w-full max-w-[400px] bg-white/[0.04] border border-white/[0.08] rounded-xl px-6 py-6 sm:px-8 sm:py-7 backdrop-blur-sm shadow-2xl shadow-black/20"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-      >
+                                 >
         {/* Header */}
         <div className="text-center mb-5">
           <h1 className="text-xl sm:text-2xl font-bold text-white">Reset Password</h1>
@@ -223,18 +219,14 @@ const ForgotPassword = () => {
         </div>
 
         <div>
-            <AnimatePresence mode="wait">
+            
               {/* ── Step 1: Email ── */}
               {step === "email" && (
-                <motion.form
+                <form
                   key="email"
                   onSubmit={handleSendOtp}
                   className="space-y-3.5"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                >
+                                                                                            >
                   <div>
                     <label className="block text-xs font-medium text-white/70 mb-1.5">Email Address</label>
                     <div className="relative">
@@ -252,12 +244,10 @@ const ForgotPassword = () => {
                     </div>
                   </div>
 
-                  <motion.button
+                  <button
                     type="submit"
                     className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-500 text-gray-900 font-semibold text-xs flex items-center justify-center gap-2 hover:from-cyan-300 hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    whileHover={{ scale: isLoading ? 1 : 1.01 }}
-                    whileTap={{ scale: isLoading ? 1 : 0.99 }}
-                    disabled={isLoading}
+                                                              disabled={isLoading}
                   >
                     {isLoading ? (
                       <>
@@ -270,7 +260,7 @@ const ForgotPassword = () => {
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
-                  </motion.button>
+                  </button>
 
                   <p className="text-center text-xs text-white/40">
                     Remember your password?{" "}
@@ -278,20 +268,16 @@ const ForgotPassword = () => {
                       Sign In
                     </Link>
                   </p>
-                </motion.form>
+                </form>
               )}
 
               {/* ── Step 2: OTP ── */}
               {step === "otp" && (
-                <motion.form
+                <form
                   key="otp"
                   onSubmit={handleVerifyOtp}
                   className="space-y-4"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                >
+                                                                                            >
                   <div className="flex justify-center gap-1 sm:gap-2" onPaste={handleOtpPaste}>
                     {otp.map((digit, i) => (
                       <input
@@ -310,12 +296,10 @@ const ForgotPassword = () => {
                     ))}
                   </div>
 
-                  <motion.button
+                  <button
                     type="submit"
                     className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-500 text-gray-900 font-semibold text-xs flex items-center justify-center gap-2 hover:from-cyan-300 hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    whileHover={{ scale: isLoading ? 1 : 1.01 }}
-                    whileTap={{ scale: isLoading ? 1 : 0.99 }}
-                    disabled={isLoading}
+                                                              disabled={isLoading}
                   >
                     {isLoading ? (
                       <>
@@ -328,7 +312,7 @@ const ForgotPassword = () => {
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
-                  </motion.button>
+                  </button>
 
                   <div className="flex items-center justify-between text-xs">
                     <button
@@ -352,20 +336,16 @@ const ForgotPassword = () => {
                       {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend OTP"}
                     </button>
                   </div>
-                </motion.form>
+                </form>
               )}
 
               {/* ── Step 3: New Password ── */}
               {step === "password" && (
-                <motion.form
+                <form
                   key="password"
                   onSubmit={handleUpdatePassword}
                   className="space-y-3.5"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3 }}
-                >
+                                                                                            >
                   <div>
                     <label className="block text-xs font-medium text-white/70 mb-1.5">New Password</label>
                     <div className="relative">
@@ -415,12 +395,10 @@ const ForgotPassword = () => {
                     )}
                   </div>
 
-                  <motion.button
+                  <button
                     type="submit"
                     className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-500 text-gray-900 font-semibold text-xs flex items-center justify-center gap-2 hover:from-cyan-300 hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    whileHover={{ scale: isLoading ? 1 : 1.01 }}
-                    whileTap={{ scale: isLoading ? 1 : 0.99 }}
-                    disabled={isLoading || (confirmPassword.length > 0 && newPassword !== confirmPassword)}
+                                                              disabled={isLoading || (confirmPassword.length > 0 && newPassword !== confirmPassword)}
                   >
                     {isLoading ? (
                       <>
@@ -433,12 +411,12 @@ const ForgotPassword = () => {
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}
-                  </motion.button>
-                </motion.form>
+                  </button>
+                </form>
               )}
-            </AnimatePresence>
+            
         </div>
-      </motion.div>
+      </div>
     </AuthLayout>
   );
 };

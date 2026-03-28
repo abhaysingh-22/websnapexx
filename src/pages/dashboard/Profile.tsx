@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { MessageSquarePlus, Frown, Meh, Smile, Send, User, Mail, Settings, LogOut, Trash2, Loader2, LogIn, UserPlus } from "lucide-react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useState, useEffect } from "react";
@@ -201,14 +200,11 @@ const Profile = () => {
 
   return (
     <DashboardLayout>
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="max-w-4xl mx-auto space-y-4 sm:space-y-6"
+      <div
+                                   className="max-w-4xl mx-auto space-y-4 sm:space-y-6"
       >
         {/* Profile Header Card */}
-        <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
+        <div  className="card-profile p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center ring-4 ring-accent/20">
               <User className="w-8 h-8 sm:w-10 sm:h-10 text-accent-foreground" />
@@ -224,10 +220,10 @@ const Profile = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Account Details */}
-        <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
+        <div  className="card-profile p-4 sm:p-6">
           <div className="flex items-center gap-3 mb-4 sm:mb-6">
             <div className="icon-box-blue">
               <Settings className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -260,18 +256,16 @@ const Profile = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Feedback */}
-        <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
+        <div  className="card-profile p-4 sm:p-6">
           <div className="flex items-start gap-3 sm:gap-4 mb-4">
-            <motion.div 
+            <div 
               className="icon-box-purple"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ duration: 0.2 }}
-            >
+                                          >
               <MessageSquarePlus className="w-5 h-5 sm:w-6 sm:h-6" />
-            </motion.div>
+            </div>
             <div>
               <h2 className="text-lg sm:text-xl font-bold">Feedback</h2>
               <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
@@ -305,12 +299,10 @@ const Profile = () => {
                 { icon: Meh, value: 2, label: "Okay" },
                 { icon: Smile, value: 3, label: "Great" },
               ].map(({ icon: Icon, value, label }) => (
-                <motion.button
+                <button
                   key={value}
                   onClick={() => setRating(value)}
-                  whileHover={{ scale: 1.15 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={cn(
+                                                        className={cn(
                     "w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full border flex items-center justify-center transition-all duration-300",
                     rating === value 
                       ? "border-accent text-accent bg-accent/10" 
@@ -319,17 +311,15 @@ const Profile = () => {
                   title={label}
                 >
                   <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                </motion.button>
+                </button>
               ))}
             </div>
 
-            <motion.button 
+            <button 
               onClick={handleSendFeedback}
               disabled={isSubmittingFeedback}
               className="btn-primary flex items-center gap-2 text-sm font-bold w-full sm:w-auto justify-center"
-              whileHover={{ scale: isSubmittingFeedback ? 1 : 1.05 }}
-              whileTap={{ scale: isSubmittingFeedback ? 1 : 0.98 }}
-            >
+                                          >
               {isSubmittingFeedback ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -341,17 +331,17 @@ const Profile = () => {
                   <Send className="w-4 h-4" />
                 </>
               )}
-            </motion.button>
+            </button>
           </div>
           </>
           )}
-        </motion.div>
+        </div>
 
         {/* Account Actions — only for authenticated users */}
         {isAuthenticated ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Logout */}
-          <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
+          <div  className="card-profile p-4 sm:p-6">
             <div className="flex items-start gap-3 mb-3">
               <LogOut className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
               <div>
@@ -362,13 +352,11 @@ const Profile = () => {
               </div>
             </div>
 
-            <motion.button
+            <button
               onClick={handleLogout}
               disabled={isSigningOut}
               className="btn-primary w-full flex items-center justify-center gap-2"
-              whileHover={{ scale: isSigningOut ? 1 : 1.02 }}
-              whileTap={{ scale: isSigningOut ? 1 : 0.98 }}
-            >
+                                          >
               {isSigningOut ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -377,11 +365,11 @@ const Profile = () => {
               ) : (
                 "Logout"
               )}
-            </motion.button>
-          </motion.div>
+            </button>
+          </div>
 
           {/* Delete Account */}
-          <motion.div variants={itemVariants} className="card-elevated p-4 sm:p-6">
+          <div  className="card-profile p-4 sm:p-6">
             <div className="flex items-start gap-3 mb-3">
               <Trash2 className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
               <div>
@@ -391,18 +379,16 @@ const Profile = () => {
                 </p>
               </div>
             </div>
-            <motion.button 
+            <button 
               onClick={handleDeleteAccount}
               className="btn-primary w-full flex items-center justify-center gap-2 bg-destructive hover:bg-destructive/90"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
+                                          >
               Delete Account
-            </motion.button>
-          </motion.div>
+            </button>
+          </div>
         </div>
         ) : (
-        <motion.div variants={itemVariants} className="card-elevated p-6 sm:p-8 text-center">
+        <div  className="card-profile p-6 sm:p-8 text-center">
           <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
             <UserPlus className="w-7 h-7 text-accent" />
           </div>
@@ -426,17 +412,16 @@ const Profile = () => {
               Sign In
             </Link>
           </div>
-        </motion.div>
+        </div>
         )}
 
         {/* Footer */}
-        <motion.div 
-          variants={itemVariants}
-          className="text-center text-xs text-muted-foreground py-4 sm:py-6 font-medium"
+        <div 
+                     className="text-center text-xs text-muted-foreground py-4 sm:py-6 font-medium"
         >
           © 2024 SnapEx AI. All rights reserved.
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Delete Account Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

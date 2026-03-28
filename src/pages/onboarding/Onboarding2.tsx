@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import OnboardingLayout from "@/layouts/OnboardingLayout";
 import ContinueButton from "@/components/onboarding/ContinueButton";
 import StepIndicator from "@/components/onboarding/StepIndicator";
@@ -15,12 +14,9 @@ const Onboarding2 = () => {
     <OnboardingLayout currentStep={2}>
       <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-12 max-w-5xl mx-auto px-4">
         {/* Left - Image Comparison */}
-        <motion.div 
+        <div 
           className="relative w-full max-w-xs sm:max-w-sm lg:max-w-none"
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+                                         >
           <div className="relative flex rounded-2xl overflow-hidden shadow-elevated">
             {/* Original Side */}
             <div className="relative w-1/2 lg:w-52">
@@ -57,15 +53,12 @@ const Onboarding2 = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Right - Content */}
-        <motion.div 
+        <div 
           className="flex-1 text-center lg:text-left"
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
+                                         >
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-1 text-white">
             Professional AI
           </h1>
@@ -91,7 +84,7 @@ const Onboarding2 = () => {
           <div className="mt-4 sm:mt-5 flex justify-center lg:justify-start">
             <ContinueButton onClick={() => navigate('/onboarding/3')} />
           </div>
-        </motion.div>
+        </div>
       </div>
     </OnboardingLayout>
   );

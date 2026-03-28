@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Camera, Images, ChevronRight, X } from "lucide-react";
 import {
   Dialog,
@@ -130,22 +129,17 @@ const MediaPickerDialog = ({
     switch (step) {
       case "choose":
         return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="space-y-3 sm:space-y-4"
+          <div
+                                                   className="space-y-3 sm:space-y-4"
           >
             <p className="text-xs sm:text-sm text-muted-foreground text-center mb-4 sm:mb-6">
               Choose how you'd like to add {maxImages > 1 ? `up to ${maxImages} photos` : "a photo"} for <span className="font-semibold text-foreground">{featureTitle}</span>
             </p>
             
-            <motion.button
+            <button
               onClick={handleTakePhoto}
               className="w-full p-3 sm:p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-3 sm:gap-4 group"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
+                                          >
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
                 <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </div>
@@ -154,14 +148,12 @@ const MediaPickerDialog = ({
                 <p className="text-[10px] sm:text-xs text-muted-foreground">Capture a new photo using your camera</p>
               </div>
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0" />
-            </motion.button>
+            </button>
 
-            <motion.button
+            <button
               onClick={handleChooseGallery}
               className="w-full p-3 sm:p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 flex items-center gap-3 sm:gap-4 group"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
+                                          >
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-secondary/50 flex items-center justify-center group-hover:bg-secondary transition-colors flex-shrink-0">
                 <Images className="w-5 h-5 sm:w-6 sm:h-6 text-secondary-foreground" />
               </div>
@@ -170,17 +162,14 @@ const MediaPickerDialog = ({
                 <p className="text-[10px] sm:text-xs text-muted-foreground">Select photos from your device</p>
               </div>
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0" />
-            </motion.button>
-          </motion.div>
+            </button>
+          </div>
         );
 
       case "camera-live":
         return (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="space-y-4"
+          <div
+                                                   className="space-y-4"
           >
             {/* Live camera viewfinder */}
             <div className="relative rounded-xl overflow-hidden bg-black aspect-[4/3]">
@@ -222,16 +211,13 @@ const MediaPickerDialog = ({
                 Capture
               </Button>
             </div>
-          </motion.div>
+          </div>
         );
 
       case "gallery-permission":
         return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="text-center space-y-4 sm:space-y-6"
+          <div
+                                                   className="text-center space-y-4 sm:space-y-6"
           >
             <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-secondary/30 flex items-center justify-center">
               <Images className="w-8 h-8 sm:w-10 sm:h-10 text-secondary-foreground" />
@@ -257,7 +243,7 @@ const MediaPickerDialog = ({
                 Allow Access
               </Button>
             </div>
-          </motion.div>
+          </div>
         );
 
       default:
@@ -273,9 +259,9 @@ const MediaPickerDialog = ({
             {step === "camera-live" ? "Take Photo" : "Add Photos"}
           </DialogTitle>
         </DialogHeader>
-        <AnimatePresence mode="wait">
+        
           {renderStep()}
-        </AnimatePresence>
+        
       </DialogContent>
     </Dialog>
   );
