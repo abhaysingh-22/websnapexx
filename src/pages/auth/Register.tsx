@@ -60,12 +60,12 @@ const Register = () => {
   return (
     <AuthLayout>
       <div 
-        className="w-full max-w-[400px] bg-white/[0.04] border border-white/[0.08] rounded-xl px-6 py-6 sm:px-8 sm:py-7 backdrop-blur-sm shadow-2xl shadow-black/20"
+        className="w-full max-w-[400px] bg-white dark:bg-white/[0.04] shadow-xl border border-slate-200 dark:border-white/[0.08] rounded-xl px-6 py-6 sm:px-8 sm:py-7 backdrop-blur-sm"
                                  >
         {/* Header */}
         <div className="text-center mb-5">
-          <h1 className="text-xl sm:text-2xl font-bold text-white">Create Account</h1>
-          <p className="text-white/50 mt-1.5 text-xs">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Create Account</h1>
+          <p className="text-muted-foreground mt-1.5 text-sm">
             Start your professional journey with SnapExx AI
           </p>
         </div>
@@ -73,15 +73,15 @@ const Register = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3.5">
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Full Name</label>
+            <label className="block text-sm font-medium text-foreground mb-1.5">Full Name</label>
             <div className="relative">
-              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input 
                 type="text" 
                 placeholder="Enter your full name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white/[0.06] border border-white/10 text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-xs"
+                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-sm"
                 required
                 disabled={isLoading}
               />
@@ -89,15 +89,15 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Email Address</label>
+            <label className="block text-sm font-medium text-foreground mb-1.5">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input 
                 type="email" 
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white/[0.06] border border-white/10 text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-xs"
+                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-sm"
                 required
                 disabled={isLoading}
               />
@@ -105,15 +105,15 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Password</label>
+            <label className="block text-sm font-medium text-foreground mb-1.5">Password</label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input 
                 type="password" 
                 placeholder="Create a strong password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white/[0.06] border border-white/10 text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-xs"
+                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-sm"
                 required
                 disabled={isLoading}
                 minLength={6}
@@ -124,24 +124,24 @@ const Register = () => {
           <label className="flex items-start gap-2.5 cursor-pointer select-none">
             <input
               type="checkbox"
-              className="mt-0.5 rounded border-white/20 bg-white/5 accent-cyan-400"
+              className="mt-0.5 rounded bg-accent/40 accent-cyan-600 dark:accent-cyan-400"
               checked={agreedToTerms}
               onChange={(e) => setAgreedToTerms(e.target.checked)}
               disabled={isLoading}
             />
-            <span className="text-[11px] text-white/40 leading-relaxed">
+            <span className="text-sm text-muted-foreground leading-relaxed">
               I agree to the{" "}
-              <Link to="/terms" target="_blank" className="text-cyan-400 hover:text-cyan-300 hover:underline">Terms of Service</Link>
+              <Link to="/terms" target="_blank" className="text-cyan-600 hover:text-cyan-700 dark:text-cyan-400 dark:hover:text-cyan-300 hover:underline">Terms of Service</Link>
               ,{" "}
-              <Link to="/privacy" target="_blank" className="text-cyan-400 hover:text-cyan-300 hover:underline">Privacy Policy</Link>
+              <Link to="/privacy" target="_blank" className="text-cyan-600 hover:text-cyan-700 dark:text-cyan-400 dark:hover:text-cyan-300 hover:underline">Privacy Policy</Link>
               , and{" "}
-              <Link to="/cookies" target="_blank" className="text-cyan-400 hover:text-cyan-300 hover:underline">Cookie Policy</Link>
+              <Link to="/cookies" target="_blank" className="text-cyan-600 hover:text-cyan-700 dark:text-cyan-400 dark:hover:text-cyan-300 hover:underline">Cookie Policy</Link>
             </span>
           </label>
 
           <button 
             type="submit"
-            className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-500 text-gray-900 font-semibold text-xs flex items-center justify-center gap-2 hover:from-cyan-300 hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-cyan-400 dark:to-cyan-500 text-white dark:text-gray-900 font-semibold text-sm flex items-center justify-center gap-2 hover:from-cyan-600 hover:to-cyan-700 dark:hover:from-cyan-300 dark:hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                       disabled={isLoading || !agreedToTerms}
           >
             {isLoading ? (
@@ -160,14 +160,14 @@ const Register = () => {
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-4">
-          <div className="flex-1 border-t border-white/10" />
-          <span className="text-[11px] text-white/30 uppercase tracking-wider">or</span>
-          <div className="flex-1 border-t border-white/10" />
+          <div className="flex-1 border-t" />
+          <span className="text-sm text-muted-foreground uppercase tracking-wider">or</span>
+          <div className="flex-1 border-t" />
         </div>
 
         {/* Google button */}
         <button 
-          className="w-full flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] text-white/80 text-xs font-medium transition-colors disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-lg border bg-secondary hover:bg-secondary/80 text-foreground text-sm font-medium transition-colors disabled:opacity-50"
           disabled={isLoading || !agreedToTerms}
           type="button"
           onClick={handleGoogle}
@@ -182,9 +182,9 @@ const Register = () => {
         </button>
 
         {/* Sign in link */}
-        <p className="text-center text-xs text-white/40 mt-4">
+        <p className="text-center text-sm text-muted-foreground mt-4">
           Already have an account?{" "}
-          <Link to="/signin" className="text-cyan-400 font-medium hover:text-cyan-300 hover:underline">
+          <Link to="/signin" className="text-cyan-600 dark:text-cyan-400 font-medium hover:text-cyan-700 dark:hover:text-cyan-300 hover:underline">
             Sign In
           </Link>
         </p>

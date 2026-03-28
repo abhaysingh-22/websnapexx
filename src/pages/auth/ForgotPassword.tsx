@@ -176,12 +176,12 @@ const ForgotPassword = () => {
   return (
     <AuthLayout>
       <div
-        className="w-full max-w-[400px] bg-white/[0.04] border border-white/[0.08] rounded-xl px-6 py-6 sm:px-8 sm:py-7 backdrop-blur-sm shadow-2xl shadow-black/20"
+        className="w-full max-w-[400px] bg-white dark:bg-white/[0.04] shadow-xl border border-slate-200 dark:border-white/[0.08] rounded-xl px-6 py-6 sm:px-8 sm:py-7 backdrop-blur-sm"
                                  >
         {/* Header */}
         <div className="text-center mb-5">
-          <h1 className="text-xl sm:text-2xl font-bold text-white">Reset Password</h1>
-          <p className="text-white/50 mt-1.5 text-xs">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Reset Password</h1>
+          <p className="text-muted-foreground mt-1.5 text-sm">
             {step === "email" && "Enter your email to receive a verification code"}
             {step === "otp" && `Enter the 8-digit code sent to ${email}`}
             {step === "password" && "Choose a strong new password"}
@@ -194,10 +194,10 @@ const ForgotPassword = () => {
                 <div
                   className={`flex items-center justify-center w-7 h-7 rounded-full text-[10px] font-bold transition-all duration-300 ${
                     i < currentIdx
-                      ? "bg-green-500 text-white"
+                      ? "bg-green-500 text-foreground"
                       : i === currentIdx
-                        ? "bg-cyan-400 text-gray-900"
-                        : "bg-white/10 text-white/40"
+                        ? "bg-cyan-400 text-primary-foreground font-medium"
+                        : "bg-accent/80 text-muted-foreground"
                   }`}
                 >
                   {i < currentIdx ? (
@@ -209,7 +209,7 @@ const ForgotPassword = () => {
                 {i < steps.length - 1 && (
                   <div
                     className={`w-7 h-0.5 transition-all duration-300 ${
-                      i < currentIdx ? "bg-green-500" : "bg-white/10"
+                      i < currentIdx ? "bg-green-500" : "bg-accent/80"
                     }`}
                   />
                 )}
@@ -228,15 +228,15 @@ const ForgotPassword = () => {
                   className="space-y-3.5"
                                                                                             >
                   <div>
-                    <label className="block text-xs font-medium text-white/70 mb-1.5">Email Address</label>
+                    <label className="block text-sm font-medium text-foreground mb-1.5">Email Address</label>
                     <div className="relative">
-                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input
                         type="email"
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white/[0.06] border border-white/10 text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-xs"
+                        className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-sm"
                         required
                         disabled={isLoading}
                         autoFocus
@@ -246,7 +246,7 @@ const ForgotPassword = () => {
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-500 text-gray-900 font-semibold text-xs flex items-center justify-center gap-2 hover:from-cyan-300 hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-cyan-400 dark:to-cyan-500 text-white dark:text-gray-900 font-semibold text-sm flex items-center justify-center gap-2 hover:from-cyan-600 hover:to-cyan-700 dark:hover:from-cyan-300 dark:hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                                               disabled={isLoading}
                   >
                     {isLoading ? (
@@ -262,9 +262,9 @@ const ForgotPassword = () => {
                     )}
                   </button>
 
-                  <p className="text-center text-xs text-white/40">
+                  <p className="text-center text-sm text-muted-foreground">
                     Remember your password?{" "}
-                    <Link to="/signin" className="text-cyan-400 font-medium hover:text-cyan-300 hover:underline">
+                    <Link to="/signin" className="text-cyan-600 dark:text-cyan-400 font-medium hover:text-cyan-700 dark:hover:text-cyan-300 hover:underline">
                       Sign In
                     </Link>
                   </p>
@@ -289,7 +289,7 @@ const ForgotPassword = () => {
                         value={digit}
                         onChange={(e) => handleOtpChange(i, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                        className="w-8 h-9 sm:w-10 sm:h-11 text-center text-base sm:text-lg font-bold rounded-lg border border-white/10 bg-white/[0.06] text-white focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all duration-200"
+                        className="w-8 h-9 sm:w-10 sm:h-11 text-center text-base sm:text-lg font-bold rounded-lg border bg-background text-foreground focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all duration-200"
                         disabled={isLoading}
                         autoFocus={i === 0}
                       />
@@ -298,7 +298,7 @@ const ForgotPassword = () => {
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-500 text-gray-900 font-semibold text-xs flex items-center justify-center gap-2 hover:from-cyan-300 hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-cyan-400 dark:to-cyan-500 text-white dark:text-gray-900 font-semibold text-sm flex items-center justify-center gap-2 hover:from-cyan-600 hover:to-cyan-700 dark:hover:from-cyan-300 dark:hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                                               disabled={isLoading}
                   >
                     {isLoading ? (
@@ -314,11 +314,11 @@ const ForgotPassword = () => {
                     )}
                   </button>
 
-                  <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center justify-between text-sm">
                     <button
                       type="button"
                       onClick={() => setStep("email")}
-                      className="flex items-center gap-1 text-white/40 hover:text-white/70 transition-colors"
+                      className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <ArrowLeft className="w-3.5 h-3.5" />
                       Change email
@@ -329,8 +329,8 @@ const ForgotPassword = () => {
                       disabled={cooldown > 0 || isLoading}
                       className={`font-medium transition-colors ${
                         cooldown > 0
-                          ? "text-white/30 cursor-not-allowed"
-                          : "text-cyan-400 hover:text-cyan-300 hover:underline"
+                          ? "text-muted-foreground cursor-not-allowed"
+                          : "text-cyan-600 hover:text-cyan-700 dark:text-cyan-400 dark:hover:text-cyan-300 hover:underline"
                       }`}
                     >
                       {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend OTP"}
@@ -347,15 +347,15 @@ const ForgotPassword = () => {
                   className="space-y-3.5"
                                                                                             >
                   <div>
-                    <label className="block text-xs font-medium text-white/70 mb-1.5">New Password</label>
+                    <label className="block text-sm font-medium text-foreground mb-1.5">New Password</label>
                     <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input
                         type="password"
                         placeholder="Enter new password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white/[0.06] border border-white/10 text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-xs"
+                        className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-sm"
                         required
                         minLength={8}
                         disabled={isLoading}
@@ -365,39 +365,39 @@ const ForgotPassword = () => {
                     {/* Strength bar */}
                     {newPassword && (
                       <div className="mt-1.5 space-y-0.5">
-                        <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div className="h-1 bg-accent/80 rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all duration-300 ${strength.color} ${strength.width}`}
                           />
                         </div>
-                        <p className="text-[10px] text-white/40 text-right">{strength.label}</p>
+                        <p className="text-[10px] text-muted-foreground text-right">{strength.label}</p>
                       </div>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-white/70 mb-1.5">Confirm Password</label>
+                    <label className="block text-sm font-medium text-foreground mb-1.5">Confirm Password</label>
                     <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input
                         type="password"
                         placeholder="Confirm new password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white/[0.06] border border-white/10 text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-xs"
+                        className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white dark:bg-white/[0.06] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400/40 transition-all text-sm"
                         required
                         minLength={8}
                         disabled={isLoading}
                       />
                     </div>
                     {confirmPassword && newPassword !== confirmPassword && (
-                      <p className="text-xs text-destructive mt-1">Passwords do not match</p>
+                      <p className="text-sm text-destructive mt-1">Passwords do not match</p>
                     )}
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-cyan-500 text-gray-900 font-semibold text-xs flex items-center justify-center gap-2 hover:from-cyan-300 hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-cyan-400 dark:to-cyan-500 text-white dark:text-gray-900 font-semibold text-sm flex items-center justify-center gap-2 hover:from-cyan-600 hover:to-cyan-700 dark:hover:from-cyan-300 dark:hover:to-cyan-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                                               disabled={isLoading || (confirmPassword.length > 0 && newPassword !== confirmPassword)}
                   >
                     {isLoading ? (

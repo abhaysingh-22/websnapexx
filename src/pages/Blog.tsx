@@ -23,45 +23,45 @@ const audienceCards = [
   {
     icon: Rocket,
     title: "SaaS Founders",
-    color: "from-violet-500/20 to-purple-600/20",
+    color: "from-violet-600/20 dark:from-violet-500/20 to-purple-700/20 dark:to-purple-600/20",
     border: "border-violet-500/30",
-    iconColor: "text-violet-400",
+    iconColor: "text-violet-600 dark:text-violet-400",
     content:
       "Running a SaaS means shipping fast and communicating value clearly. SnapExx lets you turn changelogs, feature pages, and landing pages into polished videos in minutes — no video editor, no freelancer, no delays. Paste your URL. Pick a style. Get a video that explains your product the way your customers actually consume content. Use it on your homepage, in onboarding emails, or across social channels. SaaS founders using AI video generators like SnapExx cut their content production cycle from days to under an hour — freeing up bandwidth for what matters: building and selling.",
   },
   {
     icon: PenTool,
     title: "Bloggers",
-    color: "from-cyan-500/20 to-blue-600/20",
+    color: "from-cyan-600/20 dark:from-cyan-500/20 to-blue-700/20 dark:to-blue-600/20",
     border: "border-cyan-500/30",
-    iconColor: "text-cyan-400",
+    iconColor: "text-cyan-600 dark:text-cyan-400",
     content:
       "Long-form blog content is powerful — but not everyone reads. Studies show that adding video to a blog post can increase organic traffic by over 150%. With SnapExx, bloggers can convert website to video directly from existing articles. The AI reads your post, extracts key points, and generates a visual walkthrough that can be embedded or shared on YouTube, Instagram, or TikTok. There is no need to learn editing software or spend hours on production. Your written content becomes your script. SnapExx does the rest. For bloggers looking to repurpose content efficiently, this is the most practical AI content video tool available today.",
   },
   {
     icon: Sparkles,
     title: "Content Creators",
-    color: "from-amber-500/20 to-orange-600/20",
+    color: "from-amber-600/20 dark:from-amber-500/20 to-orange-700/20 dark:to-orange-600/20",
     border: "border-amber-500/30",
-    iconColor: "text-amber-400",
+    iconColor: "text-amber-600 dark:text-amber-400",
     content:
       "Content creators live and die by output volume. The algorithm rewards consistency, but quality still matters. SnapExx gives creators a way to produce high-quality video content at scale — without a studio, a camera, or an editing suite. Convert a portfolio page into a highlight reel. Turn a product review blog into a visual breakdown. Transform a newsletter into a short-form explainer. SnapExx is not a toy with preset templates. It uses AI to understand your content and build videos that actually make sense. For creators managing multiple platforms, it is a genuine time-saver and a competitive advantage.",
   },
   {
     icon: Megaphone,
     title: "Marketing Teams",
-    color: "from-emerald-500/20 to-green-600/20",
+    color: "from-emerald-600/20 dark:from-emerald-500/20 to-green-700/20 dark:to-green-600/20",
     border: "border-emerald-500/30",
-    iconColor: "text-emerald-400",
+    iconColor: "text-emerald-600 dark:text-emerald-400",
     content:
       "Marketing teams are under constant pressure to deliver more content, faster, across more channels. SnapExx plugs directly into that workflow. Instead of briefing a designer, waiting for a draft, reviewing, revising, and approving — you paste a URL and get a video. Use it for campaign landing pages, event promotions, product launches, or partner co-marketing. The AI video generator adapts to the structure and tone of the source material, producing videos that match your brand's voice without manual intervention. Teams that adopt SnapExx report a measurable reduction in creative bottlenecks and a faster time-to-publish across all channels.",
   },
   {
     icon: Rocket,
     title: "Startup Founders",
-    color: "from-rose-500/20 to-pink-600/20",
+    color: "from-rose-600/20 dark:from-rose-500/20 to-pink-700/20 dark:to-pink-600/20",
     border: "border-rose-500/30",
-    iconColor: "text-rose-400",
+    iconColor: "text-rose-600 dark:text-rose-400",
     content:
       "Early-stage startups rarely have the budget for a video production team. But investors, customers, and partners all expect professional visual content. SnapExx levels the playing field. Convert your pitch deck landing page into a video walkthrough. Turn your product documentation into an explainer. Generate social-ready clips from your company blog. You do not need to choose between spending money and looking polished. SnapExx is the website to video tool that lets bootstrapped founders punch above their weight — with content that looks like it came from a funded marketing department.",
   },
@@ -126,7 +126,7 @@ const Blog = () => {
                                                    className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight mb-6"
           >
             How SnapExx Helps You Create{" "}
-            <span className="bg-gradient-to-r from-accent to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-accent to-purple-600 dark:to-purple-400 bg-clip-text text-transparent">
               Videos from Any Website
             </span>
           </h1>
@@ -380,25 +380,25 @@ const Blog = () => {
                 icon: MessageSquare,
                 label: "30-Message Memory",
                 desc: "The AI remembers your last 30 messages for rich, multi-turn creative sessions.",
-                gradient: "from-blue-500/20 to-indigo-600/20",
+                gradient: "from-blue-600/20 dark:from-blue-500/20 to-indigo-700/20 dark:to-indigo-600/20",
                 borderColor: "border-blue-500/30",
-                iconColor: "text-blue-400",
+                iconColor: "text-blue-600 dark:text-blue-400",
               },
               {
                 icon: Image,
                 label: "Live Image Context",
                 desc: "Upload an image and the AI sees it in real time — perfect for image-to-video generation.",
-                gradient: "from-emerald-500/20 to-teal-600/20",
+                gradient: "from-emerald-600/20 dark:from-emerald-500/20 to-teal-700/20 dark:to-teal-600/20",
                 borderColor: "border-emerald-500/30",
-                iconColor: "text-emerald-400",
+                iconColor: "text-emerald-600 dark:text-emerald-400",
               },
               {
                 icon: Brain,
                 label: "Context-Aware Responses",
                 desc: "The AI tracks your creative direction across turns so refinements feel natural and seamless.",
-                gradient: "from-purple-500/20 to-fuchsia-600/20",
+                gradient: "from-purple-600/20 dark:from-purple-500/20 to-fuchsia-700/20 dark:to-fuchsia-600/20",
                 borderColor: "border-purple-500/30",
-                iconColor: "text-purple-400",
+                iconColor: "text-purple-600 dark:text-purple-400",
               },
             ].map((card) => (
               <div
