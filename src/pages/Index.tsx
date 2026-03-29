@@ -8,12 +8,20 @@ import {
   Lock,
 } from "lucide-react";
 import Logo from "@/components/ui/Logo";
+import { useSEO } from "@/hooks/useSEO";
 
 const Index = () => {
   const navigate = useNavigate();
+  const seo = useSEO({
+    title: "SnapExx — AI Image & Video Generator",
+    description: "Generate high-fidelity AI images and videos instantly. Transform your ideas into stunning visuals with SnapExx's advanced AI models.",
+    url: "https://snapexx.tech/",
+  });
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
+    <>
+      <seo.Helmet />
+      <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
       {/* Navigation */}
       <header className="px-6 py-4 flex items-center justify-between border-b border-border/50 bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="flex items-center gap-2">
@@ -141,6 +149,7 @@ const Index = () => {
         </div>
       </footer>
     </div>
+    </>
   );
 };
 

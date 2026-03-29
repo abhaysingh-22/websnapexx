@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, FileText } from "lucide-react";
 import Logo from "@/components/ui/Logo";
+import { useSEO } from "@/hooks/useSEO";
 
 const sections = [
   {
@@ -37,9 +38,16 @@ const sections = [
 
 const TermsOfService = () => {
   const navigate = useNavigate();
+  const seo = useSEO({
+    title: "Terms of Service - SnapExx",
+    description: "Review SnapExx's terms of service. Understand your rights and responsibilities when using our AI image and video generation platform.",
+    url: "https://snapexx.tech/terms",
+  });
 
   return (
-    <div className="min-h-dvh bg-background">
+    <>
+      <seo.Helmet />
+      <div className="min-h-dvh bg-background">
       {/* Header */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
@@ -99,7 +107,8 @@ const TermsOfService = () => {
           <Link to="/cookies" className="text-accent font-medium hover:underline">Cookie Policy</Link>.
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

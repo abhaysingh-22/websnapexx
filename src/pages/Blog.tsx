@@ -5,6 +5,7 @@ import Footer from "@/components/ui/Footer";
 import { useTheme } from "@/hooks/use-theme";
 import { Moon, Sun } from "lucide-react";
 import { useEffect } from "react";
+import { useSEO } from "@/hooks/useSEO";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -54,13 +55,20 @@ const audienceCards = [
 
 const Blog = () => {
   const { theme, toggleTheme } = useTheme();
+  const seo = useSEO({
+    title: "Blog - SnapExx",
+    description: "Stay updated with SnapExx's latest blog posts about AI image generation, video creation, and professional content creation tips.",
+    url: "https://snapexx.tech/blog",
+  });
 
   useEffect(() => {
-    document.title = "SnapExx Blog";
+    // document.title is now managed by react-helmet via useSEO hook
   }, []);
 
   return (
-    <div className="min-h-dvh bg-background">
+    <>
+      <seo.Helmet />
+      <div className="min-h-dvh bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
@@ -473,7 +481,8 @@ const Blog = () => {
           position: relative;
         }
       `}</style>
-    </div>
+      </div>
+    </>
   );
 };
 
