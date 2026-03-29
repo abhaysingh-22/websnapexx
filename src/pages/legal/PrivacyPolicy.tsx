@@ -80,7 +80,7 @@ const PrivacyPolicy = () => {
               key={section.number}
                                                            className="flex gap-4 sm:gap-6 p-4 sm:p-6 rounded-2xl bg-card border border-border/50 hover:border-accent/30 transition-colors"
             >
-              <span className="text-3xl font-extrabold text-accent/20 leading-none select-none hidden sm:block">
+              <span className="text-3xl font-extrabold text-accent/60 dark:text-accent/20 leading-none select-none hidden sm:block">
                 {section.number}
               </span>
               <div>
@@ -93,7 +93,7 @@ const PrivacyPolicy = () => {
 
         {/* Footer note */}
         <div
-                                           className="mt-8 sm:mt-12 p-4 sm:p-6 rounded-2xl bg-accent/5 border border-accent/20 text-sm text-muted-foreground"
+                                           className="mt-8 sm:mt-12 p-4 sm:p-6 rounded-2xl bg-accent/10 border border-accent/30 dark:bg-accent/5 dark:border-accent/20 text-sm text-muted-foreground"
         >
           For any privacy-related questions, contact us at{" "}
           <a href="mailto:nextera.inbox@gmail.com" className="text-accent font-medium hover:underline">

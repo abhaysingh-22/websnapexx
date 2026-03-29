@@ -29,7 +29,10 @@ export function useConversations() {
 
   // Fetch all conversations for the user
   const fetchConversations = useCallback(async () => {
-    if (!session?.user?.id) return;
+    if (!session?.user?.id) {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     try {

@@ -99,13 +99,13 @@ const FAQItem = ({
           )}
         </div>
       </button>
-      <div
-                                   className="overflow-hidden"
-      >
-        <p className="p-3 sm:p-4 md:p-6 pt-0 text-muted-foreground text-xs sm:text-sm md:text-base leading-relaxed">
-          {answer}
-        </p>
-      </div>
+      {isOpen && (
+        <div className="overflow-hidden">
+          <p className="p-3 sm:p-4 md:p-6 pt-0 text-muted-foreground text-xs sm:text-sm md:text-base leading-relaxed">
+            {answer}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
