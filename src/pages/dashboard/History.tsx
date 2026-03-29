@@ -96,7 +96,7 @@ const History = () => {
             <p className="text-sm text-muted-foreground mb-4">
               Start a conversation with any AI feature to see your history here
             </p>
-            <Button onClick={() => navigate("/home")}>
+            <Button onClick={() => navigate("/app/home")}>
               Go to Home
             </Button>
           </div>

@@ -15,10 +15,10 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { path: "/home", label: "Home", icon: Home },
-  { path: "/history", label: "History", icon: Clock },
-  { path: "/premium", label: "Premium", icon: Diamond, badge: "PRO" },
-  { path: "/profile", label: "Profile", icon: User },
+  { path: "/app/home", label: "Home", icon: Home },
+  { path: "/app/history", label: "History", icon: Clock },
+  { path: "/app/premium", label: "Premium", icon: Diamond, badge: "PRO" },
+  { path: "/app/profile", label: "Profile", icon: User },
 ];
 
 const DashboardSidebar = () => {
@@ -28,7 +28,9 @@ const DashboardSidebar = () => {
     <Sidebar>
       {/* Logo */}
       <SidebarHeader className="p-6 border-b border-sidebar-border">
-        <Logo size="md" showSubtitle />
+        <Link to="/app/home">
+          <Logo size="md" showSubtitle />
+        </Link>
       </SidebarHeader>
 
       {/* Navigation */}
