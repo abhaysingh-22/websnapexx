@@ -58,36 +58,30 @@ const CookiePolicy = () => {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {/* Hero */}
-        <div
-                                           className="mb-12"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-              <Cookie className="w-5 h-5 text-accent" />
-            </div>
-            <span className="text-sm font-semibold text-accent uppercase tracking-widest">Legal</span>
+        <div className="mb-16 border-b border-border/50 pb-8">
+          <div className="flex items-center gap-2 mb-6 text-sm font-medium text-accent">
+            <Cookie className="w-4 h-4" />
+            <span>Legal Documentation</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground mb-4">Cookie Policy</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4">
+            Cookie Policy
+          </h1>
           <p className="text-muted-foreground text-base sm:text-lg">
-            Last updated: February 2026
+            Effective as of February 2026
           </p>
         </div>
 
         {/* Sections */}
-        <div className="space-y-8">
-          {sections.map((section, i) => (
-            <div
-              key={section.number}
-                                                           className="flex gap-4 sm:gap-6 p-4 sm:p-6 rounded-2xl bg-card border border-border/50 hover:border-accent/30 transition-colors"
-            >
-              <span className="text-3xl font-extrabold text-accent/60 dark:text-accent/20 leading-none select-none hidden sm:block">
-                {section.number}
-              </span>
-              <div>
-                <h2 className="text-lg font-bold text-foreground mb-2">{section.title}</h2>
-                <p className="text-muted-foreground leading-relaxed">{section.body}</p>
-              </div>
-            </div>
+        <div className="max-w-3xl space-y-12">
+          {sections.map((section) => (
+            <section key={section.number} className="scroll-m-20">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground mb-4">
+                {parseInt(section.number)}. {section.title}
+              </h2>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                {section.body}
+              </p>
+            </section>
           ))}
         </div>
 

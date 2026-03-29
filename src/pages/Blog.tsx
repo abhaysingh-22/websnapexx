@@ -23,45 +23,30 @@ const audienceCards = [
   {
     icon: Rocket,
     title: "SaaS Founders",
-    color: "from-violet-600/20 dark:from-violet-500/20 to-purple-700/20 dark:to-purple-600/20",
-    border: "border-violet-500/30",
-    iconColor: "text-violet-600 dark:text-violet-400",
     content:
       "Running a SaaS means shipping fast and communicating value clearly. SnapExx lets you turn changelogs, feature pages, and landing pages into polished videos in minutes — no video editor, no freelancer, no delays. Paste your URL. Pick a style. Get a video that explains your product the way your customers actually consume content. Use it on your homepage, in onboarding emails, or across social channels. SaaS founders using AI video generators like SnapExx cut their content production cycle from days to under an hour — freeing up bandwidth for what matters: building and selling.",
   },
   {
     icon: PenTool,
     title: "Bloggers",
-    color: "from-cyan-600/20 dark:from-cyan-500/20 to-blue-700/20 dark:to-blue-600/20",
-    border: "border-cyan-500/30",
-    iconColor: "text-cyan-600 dark:text-cyan-400",
     content:
       "Long-form blog content is powerful — but not everyone reads. Studies show that adding video to a blog post can increase organic traffic by over 150%. With SnapExx, bloggers can convert website to video directly from existing articles. The AI reads your post, extracts key points, and generates a visual walkthrough that can be embedded or shared on YouTube, Instagram, or TikTok. There is no need to learn editing software or spend hours on production. Your written content becomes your script. SnapExx does the rest. For bloggers looking to repurpose content efficiently, this is the most practical AI content video tool available today.",
   },
   {
     icon: Sparkles,
     title: "Content Creators",
-    color: "from-amber-600/20 dark:from-amber-500/20 to-orange-700/20 dark:to-orange-600/20",
-    border: "border-amber-500/30",
-    iconColor: "text-amber-600 dark:text-amber-400",
     content:
       "Content creators live and die by output volume. The algorithm rewards consistency, but quality still matters. SnapExx gives creators a way to produce high-quality video content at scale — without a studio, a camera, or an editing suite. Convert a portfolio page into a highlight reel. Turn a product review blog into a visual breakdown. Transform a newsletter into a short-form explainer. SnapExx is not a toy with preset templates. It uses AI to understand your content and build videos that actually make sense. For creators managing multiple platforms, it is a genuine time-saver and a competitive advantage.",
   },
   {
     icon: Megaphone,
     title: "Marketing Teams",
-    color: "from-emerald-600/20 dark:from-emerald-500/20 to-green-700/20 dark:to-green-600/20",
-    border: "border-emerald-500/30",
-    iconColor: "text-emerald-600 dark:text-emerald-400",
     content:
       "Marketing teams are under constant pressure to deliver more content, faster, across more channels. SnapExx plugs directly into that workflow. Instead of briefing a designer, waiting for a draft, reviewing, revising, and approving — you paste a URL and get a video. Use it for campaign landing pages, event promotions, product launches, or partner co-marketing. The AI video generator adapts to the structure and tone of the source material, producing videos that match your brand's voice without manual intervention. Teams that adopt SnapExx report a measurable reduction in creative bottlenecks and a faster time-to-publish across all channels.",
   },
   {
     icon: Rocket,
     title: "Startup Founders",
-    color: "from-rose-600/20 dark:from-rose-500/20 to-pink-700/20 dark:to-pink-600/20",
-    border: "border-rose-500/30",
-    iconColor: "text-rose-600 dark:text-rose-400",
     content:
       "Early-stage startups rarely have the budget for a video production team. But investors, customers, and partners all expect professional visual content. SnapExx levels the playing field. Convert your pitch deck landing page into a video walkthrough. Turn your product documentation into an explainer. Generate social-ready clips from your company blog. You do not need to choose between spending money and looking polished. SnapExx is the website to video tool that lets bootstrapped founders punch above their weight — with content that looks like it came from a funded marketing department.",
   },
@@ -109,10 +94,8 @@ const Blog = () => {
       <section
         className="relative overflow-hidden"
                                  >
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-purple-500/5 pointer-events-none" />
-        <div className="absolute top-20 left-1/4 w-72 h-72 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-purple-500/8 rounded-full blur-3xl pointer-events-none" />
+        {/* Minimal Hero Border */}
+        <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-border to-transparent pointer-events-none" />
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-16 pb-12 text-center">
           <div
@@ -126,7 +109,7 @@ const Blog = () => {
                                                    className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight mb-6"
           >
             How SnapExx Helps You Create{" "}
-            <span className="bg-gradient-to-r from-accent to-purple-600 dark:to-purple-400 bg-clip-text text-transparent">
+            <span className="text-accent">
               Videos from Any Website
             </span>
           </h1>
@@ -243,7 +226,7 @@ const Blog = () => {
                   key={s.step}
                   className="flex gap-4 p-5 rounded-xl bg-card border border-border hover:border-accent/20 transition-all group"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-accent/20 to-purple-500/20 flex items-center justify-center">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
                     <span className="text-sm font-bold text-accent">{s.step}</span>
                   </div>
                   <div>
@@ -276,11 +259,11 @@ const Blog = () => {
               return (
                 <div
                   key={card.title}
-                                     className={`relative overflow-hidden rounded-2xl border ${card.border} bg-gradient-to-br ${card.color} p-6 sm:p-8 transition-all hover:scale-[1.01] hover:shadow-lg`}
+                  className="relative overflow-hidden rounded-2xl border border-border/60 bg-card p-6 sm:p-8 transition-colors hover:border-accent/40"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex flex-col sm:flex-row items-start gap-4">
                     <div
-                      className={`flex-shrink-0 w-12 h-12 rounded-xl bg-card/80 backdrop-blur flex items-center justify-center ${card.iconColor}`}
+                      className="flex-shrink-0 w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent"
                     >
                       <Icon className="w-6 h-6" />
                     </div>
@@ -380,32 +363,23 @@ const Blog = () => {
                 icon: MessageSquare,
                 label: "30-Message Memory",
                 desc: "The AI remembers your last 30 messages for rich, multi-turn creative sessions.",
-                gradient: "from-blue-600/20 dark:from-blue-500/20 to-indigo-700/20 dark:to-indigo-600/20",
-                borderColor: "border-blue-500/30",
-                iconColor: "text-blue-600 dark:text-blue-400",
               },
               {
                 icon: Image,
                 label: "Live Image Context",
                 desc: "Upload an image and the AI sees it in real time — perfect for image-to-video generation.",
-                gradient: "from-emerald-600/20 dark:from-emerald-500/20 to-teal-700/20 dark:to-teal-600/20",
-                borderColor: "border-emerald-500/30",
-                iconColor: "text-emerald-600 dark:text-emerald-400",
               },
               {
                 icon: Brain,
                 label: "Context-Aware Responses",
                 desc: "The AI tracks your creative direction across turns so refinements feel natural and seamless.",
-                gradient: "from-purple-600/20 dark:from-purple-500/20 to-fuchsia-700/20 dark:to-fuchsia-600/20",
-                borderColor: "border-purple-500/30",
-                iconColor: "text-purple-600 dark:text-purple-400",
               },
             ].map((card) => (
               <div
                 key={card.label}
-                className={`flex flex-col items-center text-center p-6 rounded-2xl bg-gradient-to-br ${card.gradient} border ${card.borderColor} hover:scale-[1.02] transition-all`}
+                className="flex flex-col items-center text-center p-6 rounded-2xl bg-card border border-border/60 hover:border-accent/40 transition-colors"
               >
-                <div className={`w-11 h-11 rounded-xl bg-card/80 backdrop-blur flex items-center justify-center mb-3 ${card.iconColor}`}>
+                <div className="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-3 text-accent">
                   <card.icon className="w-5 h-5" />
                 </div>
                 <h4 className="text-sm font-semibold text-foreground mb-1.5">{card.label}</h4>
@@ -456,7 +430,7 @@ const Blog = () => {
           </div>
 
           {/* CTA */}
-          <div className="mt-10 p-8 rounded-2xl bg-gradient-to-br from-accent/10 via-purple-500/5 to-accent/10 border border-accent/20 text-center">
+          <div className="mt-10 p-8 rounded-2xl bg-accent/5 border border-accent/20 text-center">
             <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3">
               Ready to turn your website into video?
             </h3>

@@ -9,7 +9,7 @@ import {
   ArrowLeft,
   Loader2,
   User,
-  Bot,
+  Cpu,
   X,
   Download
 } from "lucide-react";
@@ -403,7 +403,7 @@ const Chat = () => {
                       {message.role === "user" ? (
                         <User className="w-3 h-3 sm:w-4 sm:h-4" />
                       ) : (
-                        <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <Cpu className="w-3 h-3 sm:w-4 sm:h-4" />
                       )}
                     </div>
                     <div className={`max-w-[85%] sm:max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}>
@@ -466,9 +466,13 @@ const Chat = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="flex gap-2 sm:gap-3"
                   >
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-secondary flex items-center justify-center shrink-0">
-                      <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
-                    </div>
+                    <motion.div 
+                      className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 bg-gradient-to-br from-accent/30 to-primary/30 border border-accent/40 bg-[length:200%_200%]"
+                      animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Cpu className="w-3 h-3 sm:w-4 sm:h-4 text-accent animate-pulse" />
+                    </motion.div>
                     <div className="bg-muted rounded-2xl rounded-tl-sm px-3 py-2 sm:px-4 sm:py-3 max-w-[75vw] sm:max-w-[60vw]">
                       {streamingContent ? (
                         <div className="text-xs sm:text-sm prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:bg-background/60 prose-pre:text-xs prose-code:text-xs prose-code:bg-background/60 prose-code:px-1 prose-code:rounded">
@@ -477,8 +481,14 @@ const Chat = () => {
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
-                          <span className="text-xs sm:text-sm text-muted-foreground">Thinking...</span>
+                          <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin text-accent" />
+                          <motion.span 
+                            animate={{ opacity: [0.5, 1, 0.5] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                            className="text-xs sm:text-sm text-accent font-medium"
+                          >
+                            Generating response...
+                          </motion.span>
                         </div>
                       )}
                     </div>
